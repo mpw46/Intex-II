@@ -1,0 +1,94 @@
+# ========================
+# OS-specific files
+# ========================
+
+# macOS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+.AppleDouble
+.LSOverride
+
+# Windows
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+Desktop.ini
+$RECYCLE.BIN/
+*.lnk
+
+# ========================
+# IDEs & Editors
+# ========================
+
+# Visual Studio (Windows)
+.vs/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Visual Studio Code (keep shared settings out — each dev has their own)
+.vscode/*
+!.vscode/extensions.json
+
+# JetBrains (Rider, WebStorm, etc.)
+.idea/
+*.iml
+
+# ========================
+# .NET / C# Backend
+# ========================
+
+bin/
+obj/
+*.user
+*.dbmdl
+*.jfm
+*.pfx
+*.publishsettings
+[Pp]ublish/
+[Pp]ublish[Ss]ettings/
+*.nupkg
+*.snupkg
+.nuget/
+
+# ASP.NET Scaffolding
+ScaffoldingReadMe.txt
+
+# ========================
+# Node.js / React / Vite Frontend
+# ========================
+
+node_modules/
+dist/
+dist-ssr/
+.vite/
+*.local
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# ========================
+# Environment & Secrets
+# ========================
+
+.env
+.env.*
+!.env.example
+
+# ========================
+# Misc
+# ========================
+
+*.cache
+*.tmp
+*.temp
