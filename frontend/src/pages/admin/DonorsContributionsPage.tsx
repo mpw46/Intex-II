@@ -1,4 +1,4 @@
-import { useState, type ReactElement } from 'react';
+import { useState } from 'react';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -195,18 +195,6 @@ function StatusPill({ status }: { status: SupporterStatus }) {
   );
 }
 
-interface SummaryStatProps { label: string; value: string; icon: ReactElement }
-function SummaryStat({ label, value, icon }: SummaryStatProps) {
-  return (
-    <div className="bg-white rounded-xl border border-stone-200 shadow-sm p-5">
-      <div className="h-10 w-10 rounded-lg bg-haven-teal-50 text-haven-teal-600
-        flex items-center justify-center mb-4">{icon}</div>
-      <p className="text-2xl font-bold tabular-nums text-stone-900 mb-1">{value}</p>
-      <p className="text-xs font-medium text-stone-500 uppercase tracking-wide">{label}</p>
-    </div>
-  );
-}
-
 // ---------------------------------------------------------------------------
 // Main component
 // ---------------------------------------------------------------------------
@@ -252,10 +240,6 @@ export default function DonorsContributionsPage() {
   const selectedAllocations = selectedDonations.length
     ? fillerAllocations.filter(a => selectedDonations.some(d => d.id === a.donationId))
     : [];
-
-  const totalMonetary = donations
-    .filter(d => d.donationType === 'Monetary' && d.amount !== null)
-    .reduce((s, d) => s + (d.amount ?? 0), 0);
 
   // -------------------------------------------------------------------------
   // Supporter CRUD
@@ -341,18 +325,6 @@ export default function DonorsContributionsPage() {
 
   return (
     <div className="px-4 sm:px-6 py-6 max-w-7xl mx-auto">
-
-      {/* Summary stats */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-        <SummaryStat label="Total Supporters" value={String(supporters.length)}
-          icon={<svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>} />
-        <SummaryStat label="Active Supporters" value={String(supporters.filter(s => s.status === 'Active').length)}
-          icon={<svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="20 6 9 17 4 12"/></svg>} />
-        <SummaryStat label="Total Donations" value={String(donations.length)}
-          icon={<svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>} />
-        <SummaryStat label="Monetary Contributions" value={`₱${totalMonetary.toLocaleString()}`}
-          icon={<svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>} />
-      </div>
 
       <div className="flex flex-col lg:flex-row gap-6">
         {/* ---------------------------------------------------------------- */}

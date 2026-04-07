@@ -4,7 +4,7 @@ import { useState } from 'react';
 // Types
 // ---------------------------------------------------------------------------
 
-type ReportTab = 'donations' | 'outcomes' | 'safehouses' | 'annual';
+type ReportTab = 'donations' | 'social' | 'residents' | 'annual';
 
 interface MonthlyDonation {
   month: string;
@@ -39,6 +39,25 @@ interface AnnualServiceRow {
   total: number;
 }
 
+interface SocialPost {
+  id: string;
+  platform: 'Facebook' | 'Instagram' | 'Twitter / X';
+  contentType: string;
+  date: string;
+  reach: number;
+  likes: number;
+  shares: number;
+  donationsAttributed: number;
+}
+
+interface PlatformStat {
+  platform: 'Facebook' | 'Instagram' | 'Twitter / X';
+  followers: number;
+  totalReach: number;
+  engagementRate: number;
+  donationsAttributed: number;
+}
+
 // ---------------------------------------------------------------------------
 // Filler data
 // ---------------------------------------------------------------------------
@@ -67,12 +86,12 @@ const safehouseOutcomes: SafehouseOutcome[] = [
 
 // TODO: Replace with GET /api/reports/program-outcomes
 const programOutcomes: ProgramOutcome[] = [
-  { category: 'Residents Served',         count: 89,  change: 12, positive: true  },
-  { category: 'Successful Reintegrations',count: 83,  change: 18, positive: true  },
-  { category: 'Education Completions',    count: 61,  change: 8,  positive: true  },
-  { category: 'Health Goal Achieved',     count: 74,  change: 15, positive: true  },
-  { category: 'Counseling Hours Logged',  count: 1840,change: 22, positive: true  },
-  { category: 'Concerns Flagged',         count: 14,  change: 7,  positive: false },
+  { category: 'Residents Served',          count: 89,   change: 12, positive: true  },
+  { category: 'Successful Reintegrations', count: 83,   change: 18, positive: true  },
+  { category: 'Education Completions',     count: 61,   change: 8,  positive: true  },
+  { category: 'Health Goal Achieved',      count: 74,   change: 15, positive: true  },
+  { category: 'Counseling Hours Logged',   count: 1840, change: 22, positive: true  },
+  { category: 'Concerns Flagged',          count: 14,   change: 7,  positive: false },
 ];
 
 // TODO: Replace with GET /api/reports/annual-accomplishment?year=2025
@@ -87,6 +106,23 @@ const annualServiceRows: AnnualServiceRow[] = [
   { service: 'Formal Education Enrolled', serviceType: 'Teaching',q1: 28, q2: 30, q3: 34, q4: 36, total: 128 },
   { service: 'Vocational Training',       serviceType: 'Teaching',q1: 12, q2: 14, q3: 15, q4: 18, total: 59  },
   { service: 'Life Skills Workshops',     serviceType: 'Teaching',q1: 38, q2: 40, q3: 42, q4: 45, total: 165 },
+];
+
+// TODO: Replace with GET /api/social-media/platform-stats
+const platformStats: PlatformStat[] = [
+  { platform: 'Facebook',    followers: 4820, totalReach: 18400, engagementRate: 6.2, donationsAttributed: 45000 },
+  { platform: 'Instagram',   followers: 2340, totalReach: 9800,  engagementRate: 8.7, donationsAttributed: 22000 },
+  { platform: 'Twitter / X', followers: 890,  totalReach: 3200,  engagementRate: 3.1, donationsAttributed: 8500  },
+];
+
+// TODO: Replace with GET /api/social-media/posts?limit=8
+const fillerSocialPosts: SocialPost[] = [
+  { id: 'P1', platform: 'Facebook',    contentType: 'Impact Story',   date: '2026-04-01', reach: 4820, likes: 312, shares: 89,  donationsAttributed: 18500 },
+  { id: 'P2', platform: 'Instagram',   contentType: 'Milestone Post', date: '2026-03-28', reach: 3140, likes: 487, shares: 62,  donationsAttributed: 9200  },
+  { id: 'P3', platform: 'Facebook',    contentType: 'Program Update', date: '2026-03-22', reach: 2890, likes: 218, shares: 44,  donationsAttributed: 6800  },
+  { id: 'P4', platform: 'Twitter / X', contentType: 'Awareness',      date: '2026-03-18', reach: 1620, likes: 104, shares: 211, donationsAttributed: 3200  },
+  { id: 'P5', platform: 'Instagram',   contentType: 'Impact Story',   date: '2026-03-12', reach: 2710, likes: 395, shares: 78,  donationsAttributed: 8100  },
+  { id: 'P6', platform: 'Facebook',    contentType: 'Fundraiser',     date: '2026-03-05', reach: 5340, likes: 441, shares: 132, donationsAttributed: 28000 },
 ];
 
 // ---------------------------------------------------------------------------
@@ -114,16 +150,17 @@ const SERVICE_TYPE_COLORS: Record<AnnualServiceRow['serviceType'], string> = {
 
 function ChevronUpIcon()   { return <svg className="h-3 w-3 inline" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><polyline points="18 15 12 9 6 15"/></svg>; }
 function ChevronDownIcon() { return <svg className="h-3 w-3 inline" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><polyline points="6 9 12 15 18 9"/></svg>; }
+function GlobeIcon()       { return <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>; }
 
 // ---------------------------------------------------------------------------
 // Main component
 // ---------------------------------------------------------------------------
 
 const TABS: { id: ReportTab; label: string }[] = [
-  { id: 'donations',  label: 'Donation Trends' },
-  { id: 'outcomes',   label: 'Resident Outcomes' },
-  { id: 'safehouses', label: 'Safehouse Performance' },
-  { id: 'annual',     label: 'Annual Accomplishment' },
+  { id: 'donations', label: 'Donation & Donor Trends' },
+  { id: 'social',    label: 'Social Media Trends'     },
+  { id: 'residents', label: 'Resident Information'    },
+  { id: 'annual',    label: 'Annual Accomplishment'   },
 ];
 
 const totalMonetary = monthlyDonations.reduce((s, m) => s + m.monetary, 0);
@@ -154,7 +191,7 @@ export default function ReportsPage() {
       </div>
 
       {/* ================================================================== */}
-      {/* DONATION TRENDS                                                     */}
+      {/* DONATION & DONOR TRENDS                                            */}
       {/* ================================================================== */}
       {tab === 'donations' && (
         <div>
@@ -200,7 +237,7 @@ export default function ReportsPage() {
           </div>
 
           {/* Contribution mix */}
-          <div className="bg-white rounded-xl border border-stone-200 shadow-sm overflow-hidden">
+          <div className="bg-white rounded-xl border border-stone-200 shadow-sm overflow-hidden mb-6">
             <div className="px-6 py-4 border-b border-stone-200">
               <h3 className="text-base font-semibold text-stone-900">Contribution Type Breakdown</h3>
             </div>
@@ -231,15 +268,134 @@ export default function ReportsPage() {
               </table>
             </div>
           </div>
+
+          {/* Donor Retention & Growth — filler with TODO */}
+          <div className="bg-white rounded-xl border border-stone-200 shadow-sm p-6">
+            <h3 className="text-base font-semibold text-stone-900 mb-1">Donor Retention & Growth</h3>
+            <p className="text-xs text-stone-400 mb-5">
+              {/* TODO: Replace with GET /api/supporters?status=Active + GET /api/donations (group by supporter) */}
+              Filler data — wire to supporter and donation endpoints when available
+            </p>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div className="bg-stone-50 rounded-xl border border-stone-200 p-5">
+                <p className="text-2xl font-bold tabular-nums text-stone-900 mb-1">71%</p>
+                <p className="text-xs font-medium text-stone-500 uppercase tracking-wide">Returning Donor Rate</p>
+                <p className="text-xs text-emerald-600 mt-2">↑ 6 pts vs last year</p>
+              </div>
+              <div className="bg-stone-50 rounded-xl border border-stone-200 p-5">
+                <p className="text-2xl font-bold tabular-nums text-stone-900 mb-1">14</p>
+                <p className="text-xs font-medium text-stone-500 uppercase tracking-wide">New Donors This Period</p>
+                <p className="text-xs text-emerald-600 mt-2">↑ 2 vs prior period</p>
+              </div>
+              <div className="bg-stone-50 rounded-xl border border-stone-200 p-5">
+                <p className="text-2xl font-bold tabular-nums text-stone-900 mb-1">89</p>
+                <p className="text-xs font-medium text-stone-500 uppercase tracking-wide">Active Donors</p>
+                <p className="text-xs text-emerald-600 mt-2">↑ 5 vs last month</p>
+              </div>
+            </div>
+          </div>
         </div>
       )}
 
       {/* ================================================================== */}
-      {/* RESIDENT OUTCOMES                                                   */}
+      {/* SOCIAL MEDIA TRENDS                                                */}
       {/* ================================================================== */}
-      {tab === 'outcomes' && (
+      {tab === 'social' && (
+        <div>
+          {/* Platform summary cards */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
+            {platformStats.map(p => (
+              <div key={p.platform} className="bg-white rounded-xl border border-stone-200 shadow-sm p-6">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="h-9 w-9 rounded-lg bg-haven-teal-50 flex items-center justify-center
+                    text-haven-teal-600">
+                    <GlobeIcon />
+                  </div>
+                  <span className="text-xs font-semibold text-stone-400">{p.platform}</span>
+                </div>
+                <p className="text-2xl font-bold tabular-nums text-stone-900 mb-1">
+                  {p.followers.toLocaleString()}
+                </p>
+                <p className="text-xs text-stone-500 uppercase tracking-wide mb-4">Followers</p>
+                <div className="space-y-2 text-sm">
+                  <div className="flex justify-between">
+                    <span className="text-stone-500">Monthly Reach</span>
+                    <span className="font-medium text-stone-700">{p.totalReach.toLocaleString()}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-stone-500">Engagement Rate</span>
+                    <span className="font-medium text-stone-700">{p.engagementRate}%</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-stone-500">Donations Attributed</span>
+                    <span className="font-medium text-emerald-600">{formatPHP(p.donationsAttributed)}</span>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Platform totals summary */}
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
+            {[
+              { label: 'Total Followers', value: platformStats.reduce((s, p) => s + p.followers, 0).toLocaleString() },
+              { label: 'Total Reach',     value: platformStats.reduce((s, p) => s + p.totalReach, 0).toLocaleString() },
+              { label: 'Avg Engagement',  value: `${(platformStats.reduce((s, p) => s + p.engagementRate, 0) / platformStats.length).toFixed(1)}%` },
+              { label: 'Total Donations', value: formatPHP(platformStats.reduce((s, p) => s + p.donationsAttributed, 0)) },
+            ].map(item => (
+              <div key={item.label} className="bg-haven-teal-900 rounded-xl p-5 text-white">
+                <p className="text-2xl font-bold tabular-nums mb-1">{item.value}</p>
+                <p className="text-xs text-white/60 uppercase tracking-wide">{item.label}</p>
+              </div>
+            ))}
+          </div>
+
+          {/* Posts table */}
+          {/* TODO: Replace with GET /api/socialmediaposts?limit=8 */}
+          <div className="bg-white rounded-xl border border-stone-200 shadow-sm overflow-hidden">
+            <div className="px-6 py-4 border-b border-stone-200">
+              <h3 className="text-base font-semibold text-stone-900">Recent Posts</h3>
+            </div>
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="bg-stone-50 border-b border-stone-200">
+                    {['Date', 'Platform', 'Content Type', 'Reach', 'Likes', 'Shares', 'Donations'].map(h => (
+                      <th key={h} className="text-left text-xs font-semibold uppercase tracking-wider
+                        text-stone-500 px-4 py-3 whitespace-nowrap">
+                        {h}
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-stone-100">
+                  {fillerSocialPosts.map(post => (
+                    <tr key={post.id} className="hover:bg-stone-50 transition-colors duration-100">
+                      <td className="px-4 py-3 text-stone-500 whitespace-nowrap">{post.date}</td>
+                      <td className="px-4 py-3 font-medium text-stone-900">{post.platform}</td>
+                      <td className="px-4 py-3 text-stone-700">{post.contentType}</td>
+                      <td className="px-4 py-3 tabular-nums text-stone-700">{post.reach.toLocaleString()}</td>
+                      <td className="px-4 py-3 tabular-nums text-stone-700">{post.likes.toLocaleString()}</td>
+                      <td className="px-4 py-3 tabular-nums text-stone-700">{post.shares.toLocaleString()}</td>
+                      <td className="px-4 py-3 tabular-nums font-medium text-emerald-600">
+                        {formatPHP(post.donationsAttributed)}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ================================================================== */}
+      {/* RESIDENT INFORMATION                                               */}
+      {/* ================================================================== */}
+      {tab === 'residents' && (
         <div>
           {/* Outcome KPI cards */}
+          {/* TODO: Replace with GET /api/residents (aggregated) + GET /api/safehousemonthlymetrics */}
           <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
             {programOutcomes.map(o => (
               <div key={o.category} className="bg-white rounded-xl border border-stone-200 shadow-sm p-5">
@@ -255,57 +411,8 @@ export default function ReportsPage() {
             ))}
           </div>
 
-          {/* Education & health progress per safehouse */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {/* Education */}
-            <div className="bg-white rounded-xl border border-stone-200 shadow-sm p-6">
-              <h3 className="text-base font-semibold text-stone-900 mb-5">Education Progress by Safehouse</h3>
-              <div className="space-y-5">
-                {safehouseOutcomes.map(s => (
-                  <div key={s.name}>
-                    <div className="flex items-center justify-between mb-1.5">
-                      <span className="text-sm font-medium text-stone-700">{s.name}</span>
-                      <span className="text-xs font-semibold text-stone-500">{s.avgEducationProgress}%</span>
-                    </div>
-                    <svg className="w-full h-2" viewBox="0 0 100 8" preserveAspectRatio="none"
-                      aria-label={`${s.avgEducationProgress}%`}>
-                      <rect x="0" y="0" width="100" height="8" rx="4" className="fill-stone-100" />
-                      <rect x="0" y="0" width={s.avgEducationProgress} height="8" rx="4" className="fill-sky-500" />
-                    </svg>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Health */}
-            <div className="bg-white rounded-xl border border-stone-200 shadow-sm p-6">
-              <h3 className="text-base font-semibold text-stone-900 mb-5">Health Score by Safehouse</h3>
-              <div className="space-y-5">
-                {safehouseOutcomes.map(s => (
-                  <div key={s.name}>
-                    <div className="flex items-center justify-between mb-1.5">
-                      <span className="text-sm font-medium text-stone-700">{s.name}</span>
-                      <span className="text-xs font-semibold text-stone-500">{s.avgHealthScore}%</span>
-                    </div>
-                    <svg className="w-full h-2" viewBox="0 0 100 8" preserveAspectRatio="none"
-                      aria-label={`${s.avgHealthScore}%`}>
-                      <rect x="0" y="0" width="100" height="8" rx="4" className="fill-stone-100" />
-                      <rect x="0" y="0" width={s.avgHealthScore} height="8" rx="4" className="fill-emerald-500" />
-                    </svg>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* ================================================================== */}
-      {/* SAFEHOUSE PERFORMANCE                                               */}
-      {/* ================================================================== */}
-      {tab === 'safehouses' && (
-        <div>
-          {/* Cards grid */}
+          {/* Safehouse cards grid */}
+          {/* TODO: Replace with GET /api/safehouses + GET /api/safehousemonthlymetrics */}
           <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 mb-8">
             {safehouseOutcomes.map(s => (
               <div key={s.name} className="bg-white rounded-xl border border-stone-200 shadow-sm p-6
@@ -316,10 +423,10 @@ export default function ReportsPage() {
                 </div>
                 <div className="space-y-3">
                   {[
-                    { label: 'Active Residents',    value: String(s.activeResidents) },
-                    { label: 'Total Reintegrated',  value: String(s.reintegrated) },
-                    { label: 'Reintegration Rate',  value: `${s.reintegrationRate}%` },
-                    { label: 'Avg Counseling Sessions', value: String(s.avgCounselingSessions) },
+                    { label: 'Active Residents',       value: String(s.activeResidents) },
+                    { label: 'Total Reintegrated',     value: String(s.reintegrated) },
+                    { label: 'Reintegration Rate',     value: `${s.reintegrationRate}%` },
+                    { label: 'Avg Counseling Sessions',value: String(s.avgCounselingSessions) },
                   ].map(row => (
                     <div key={row.label} className="flex justify-between items-center">
                       <span className="text-xs text-stone-400">{row.label}</span>
@@ -327,8 +434,6 @@ export default function ReportsPage() {
                     </div>
                   ))}
                 </div>
-
-                {/* Reintegration rate visual */}
                 <div className="mt-4">
                   <svg className="w-full h-2" viewBox="0 0 100 8" preserveAspectRatio="none"
                     aria-label={`Reintegration rate ${s.reintegrationRate}%`}>
