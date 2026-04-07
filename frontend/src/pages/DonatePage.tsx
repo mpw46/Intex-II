@@ -3,21 +3,15 @@ import { Link } from 'react-router-dom';
 import {
   getSafehouses,
   createDonation,
-  createDonationAllocation,
 } from '../api/donationApi';
 import type { SafehouseOption } from '../api/donationApi';
-
-const DONATION_TYPES = ['Monetary', 'InKind', 'Time', 'Skills'] as const;
-const PROGRAM_AREAS = ['Direct Services', 'Counseling', 'Education', 'Operations'] as const;
 
 function DonatePage() {
   const [safehouses, setSafehouses] = useState<SafehouseOption[]>([]);
 
-  const [donationType, setDonationType] = useState<string>('Monetary');
   const [amount, setAmount] = useState('');
   const [isRecurring, setIsRecurring] = useState(false);
   const [safehouseId, setSafehouseId] = useState<string>('');
-  const [programArea, setProgramArea] = useState<string>('');
   const [campaignName, setCampaignName] = useState('');
   const [notes, setNotes] = useState('');
   const [donorName, setDonorName] = useState('');
@@ -39,30 +33,21 @@ function DonatePage() {
     setSubmitting(true);
 
     try {
-      const donation = await createDonation({
-        donationType,
+      await createDonation({
+        donationType: 'Monetary',
         donationDate: new Date().toISOString().split('T')[0],
         isRecurring: isRecurring ? 'True' : 'False',
         campaignName: campaignName || undefined,
         channelSource: 'Website',
         currencyCode: 'PHP',
-        amount: donationType === 'Monetary' ? amount : undefined,
+        amount,
         notes: [
           donorName ? `Donor: ${donorName}` : '',
           donorEmail ? `Email: ${donorEmail}` : '',
+          safehouseId ? `Safehouse: ${safehouseId}` : '',
           notes,
         ].filter(Boolean).join(' | ') || undefined,
       });
-
-      if (programArea && donation.donationId) {
-        await createDonationAllocation({
-          donationId: donation.donationId,
-          safehouseId: safehouseId ? parseInt(safehouseId) : undefined,
-          programArea,
-          amountAllocated: donationType === 'Monetary' && amount ? parseFloat(amount) : undefined,
-          allocationDate: new Date().toISOString().split('T')[0],
-        });
-      }
 
       setSubmitted(true);
     } catch {
@@ -83,7 +68,7 @@ function DonatePage() {
           </div>
           <h1 className="text-3xl font-bold text-stone-900 mb-3">Thank you!</h1>
           <p className="text-base text-stone-600 leading-relaxed mb-8">
-            Your {donationType.toLowerCase()} donation has been recorded. Every contribution
+            Your donation has been recorded. Every contribution
             brings us closer to providing safety, healing, and hope to girls in need.
           </p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
@@ -138,72 +123,47 @@ function DonatePage() {
         <div className="max-w-2xl mx-auto px-6 md:px-12">
           <form onSubmit={handleSubmit} className="space-y-8">
 
-            {/* Donation type */}
+            {/* Amount */}
             <div>
-              <label className="block text-sm font-semibold text-stone-700 mb-3">
-                Donation Type
+              <label htmlFor="amount" className="block text-sm font-semibold text-stone-700 mb-2">
+                Amount (PHP)
               </label>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
-                {DONATION_TYPES.map((type) => (
+              <div className="relative">
+                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-stone-400 font-medium">
+                  ₱
+                </span>
+                <input
+                  id="amount"
+                  type="number"
+                  min="1"
+                  step="0.01"
+                  required
+                  value={amount}
+                  onChange={(e) => setAmount(e.target.value)}
+                  placeholder="0.00"
+                  className="w-full pl-9 pr-4 py-3 rounded-lg border border-stone-300 text-stone-900
+                             focus:outline-none focus:ring-2 focus:ring-haven-teal-500 focus:border-haven-teal-500"
+                />
+              </div>
+
+              {/* Quick amounts */}
+              <div className="flex gap-2 mt-3">
+                {['500', '1000', '2500', '5000'].map((preset) => (
                   <button
-                    key={type}
+                    key={preset}
                     type="button"
-                    onClick={() => setDonationType(type)}
-                    className={`px-4 py-3 rounded-lg text-sm font-medium border transition-colors
-                      ${donationType === type
-                        ? 'bg-haven-teal-600 text-white border-haven-teal-600'
-                        : 'bg-white text-stone-700 border-stone-300 hover:border-haven-teal-400'
+                    onClick={() => setAmount(preset)}
+                    className={`px-3 py-1.5 rounded-md text-xs font-medium border transition-colors
+                      ${amount === preset
+                        ? 'bg-haven-teal-50 text-haven-teal-700 border-haven-teal-300'
+                        : 'bg-white text-stone-600 border-stone-200 hover:border-stone-300'
                       }`}
                   >
-                    {type === 'InKind' ? 'In-Kind' : type}
+                    ₱{parseInt(preset).toLocaleString()}
                   </button>
                 ))}
               </div>
             </div>
-
-            {/* Amount (monetary only) */}
-            {donationType === 'Monetary' && (
-              <div>
-                <label htmlFor="amount" className="block text-sm font-semibold text-stone-700 mb-2">
-                  Amount (PHP)
-                </label>
-                <div className="relative">
-                  <span className="absolute left-4 top-1/2 -translate-y-1/2 text-stone-400 font-medium">
-                    ₱
-                  </span>
-                  <input
-                    id="amount"
-                    type="number"
-                    min="1"
-                    step="0.01"
-                    required
-                    value={amount}
-                    onChange={(e) => setAmount(e.target.value)}
-                    placeholder="0.00"
-                    className="w-full pl-9 pr-4 py-3 rounded-lg border border-stone-300 text-stone-900
-                               focus:outline-none focus:ring-2 focus:ring-haven-teal-500 focus:border-haven-teal-500"
-                  />
-                </div>
-
-                {/* Quick amounts */}
-                <div className="flex gap-2 mt-3">
-                  {['500', '1000', '2500', '5000'].map((preset) => (
-                    <button
-                      key={preset}
-                      type="button"
-                      onClick={() => setAmount(preset)}
-                      className={`px-3 py-1.5 rounded-md text-xs font-medium border transition-colors
-                        ${amount === preset
-                          ? 'bg-haven-teal-50 text-haven-teal-700 border-haven-teal-300'
-                          : 'bg-white text-stone-600 border-stone-200 hover:border-stone-300'
-                        }`}
-                    >
-                      ₱{parseInt(preset).toLocaleString()}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            )}
 
             {/* Recurring toggle */}
             <div className="flex items-center gap-3">
@@ -225,45 +185,25 @@ function DonatePage() {
               </span>
             </div>
 
-            {/* Safehouse + Program area */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label htmlFor="safehouse" className="block text-sm font-semibold text-stone-700 mb-2">
-                  Support a Safehouse <span className="text-stone-400 font-normal">(optional)</span>
-                </label>
-                <select
-                  id="safehouse"
-                  value={safehouseId}
-                  onChange={(e) => setSafehouseId(e.target.value)}
-                  className="w-full px-4 py-3 rounded-lg border border-stone-300 text-stone-900 bg-white
-                             focus:outline-none focus:ring-2 focus:ring-haven-teal-500 focus:border-haven-teal-500"
-                >
-                  <option value="">Any safehouse</option>
-                  {safehouses.map((sh) => (
-                    <option key={sh.safehouseId} value={sh.safehouseId}>
-                      {sh.name} — {sh.region}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              <div>
-                <label htmlFor="programArea" className="block text-sm font-semibold text-stone-700 mb-2">
-                  Program Area <span className="text-stone-400 font-normal">(optional)</span>
-                </label>
-                <select
-                  id="programArea"
-                  value={programArea}
-                  onChange={(e) => setProgramArea(e.target.value)}
-                  className="w-full px-4 py-3 rounded-lg border border-stone-300 text-stone-900 bg-white
-                             focus:outline-none focus:ring-2 focus:ring-haven-teal-500 focus:border-haven-teal-500"
-                >
-                  <option value="">Where needed most</option>
-                  {PROGRAM_AREAS.map((area) => (
-                    <option key={area} value={area}>{area}</option>
-                  ))}
-                </select>
-              </div>
+            {/* Safehouse */}
+            <div>
+              <label htmlFor="safehouse" className="block text-sm font-semibold text-stone-700 mb-2">
+                Support a Safehouse <span className="text-stone-400 font-normal">(optional)</span>
+              </label>
+              <select
+                id="safehouse"
+                value={safehouseId}
+                onChange={(e) => setSafehouseId(e.target.value)}
+                className="w-full px-4 py-3 rounded-lg border border-stone-300 text-stone-900 bg-white
+                           focus:outline-none focus:ring-2 focus:ring-haven-teal-500 focus:border-haven-teal-500"
+              >
+                <option value="">Any safehouse</option>
+                {safehouses.map((sh) => (
+                  <option key={sh.safehouseId} value={sh.safehouseId}>
+                    {sh.name} — {sh.region}
+                  </option>
+                ))}
+              </select>
             </div>
 
             {/* Campaign */}
@@ -343,7 +283,7 @@ function DonatePage() {
             {/* Submit */}
             <button
               type="submit"
-              disabled={submitting || (donationType === 'Monetary' && !amount)}
+              disabled={submitting || !amount}
               className="w-full py-4 bg-haven-teal-600 text-white text-base font-semibold rounded-lg
                          hover:bg-haven-teal-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed
                          focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-haven-teal-500 focus-visible:ring-offset-2"
