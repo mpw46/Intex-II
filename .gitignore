@@ -97,3 +97,8 @@ pnpm-debug.log*
 
 
 appsettings.Development.json
+
+# SQLite databases (Identity store — never commit user data)
+*.sqlite
+*.sqlite-shm
+*.sqlite-wal

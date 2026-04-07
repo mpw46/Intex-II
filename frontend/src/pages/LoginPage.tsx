@@ -1,5 +1,14 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
+import {
+  buildExternalLoginUrl,
+  getAuthSession,
+  getExternalProviders,
+  loginUser,
+  registerUser,
+  type ExternalAuthProvider,
+} from '../api/authAPI';
+import { useAuth } from '../context/AuthContext';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -76,11 +85,17 @@ function AlertIcon() {
 
 export default function LoginPage() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const { refreshAuthState } = useAuth();
   const [mode, setMode] = useState<AuthMode>('signin');
 
   // Sign-in state
   const [signIn, setSignIn] = useState<SignInForm>({ email: '', password: '' });
   const [showSignInPw, setShowSignInPw] = useState(false);
+  const [twoFactorCode, setTwoFactorCode] = useState('');
+  const [recoveryCode, setRecoveryCode] = useState('');
+  const [rememberMe, setRememberMe] = useState(true);
+  const [externalProviders, setExternalProviders] = useState<ExternalAuthProvider[]>([]);
 
   // Register state
   const [register, setRegister] = useState<RegisterForm>({
@@ -94,7 +109,20 @@ export default function LoginPage() {
 
   // Shared state
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(searchParams.get('externalError'));
+
+  useEffect(() => {
+    void loadExternalProviders();
+  }, []);
+
+  async function loadExternalProviders() {
+    try {
+      const providers = await getExternalProviders();
+      setExternalProviders(providers);
+    } catch {
+      setExternalProviders([]);
+    }
+  }
 
   // -------------------------------------------------------------------------
   // Handlers
@@ -111,24 +139,24 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
-      // TODO: Replace with POST /api/auth/login
-      // const res = await fetch('/api/auth/login', {
-      //   method: 'POST',
-      //   headers: { 'Content-Type': 'application/json' },
-      //   body: JSON.stringify({ email: signIn.email, password: signIn.password }),
-      // });
-      // if (!res.ok) throw new Error('Invalid email or password.');
-      // const { role } = await res.json();
-      // navigate(role === 'Admin' ? '/admin' : '/impact');
-
-      // Filler — remove when API is connected
-      await new Promise(r => setTimeout(r, 800));
-      void navigate('/admin');
+      await loginUser(
+        signIn.email,
+        signIn.password,
+        rememberMe,
+        twoFactorCode || undefined,
+        recoveryCode || undefined,
+      );
+      const [session] = await Promise.all([getAuthSession(), refreshAuthState()]);
+      void navigate(session.roles.includes('Admin') ? '/admin' : '/impact');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Sign-in failed. Please try again.');
     } finally {
       setLoading(false);
     }
+  }
+
+  function handleExternalLogin(providerName: string) {
+    window.location.assign(buildExternalLoginUrl(providerName, '/impact'));
   }
 
   async function handleRegister(e: { preventDefault(): void }) {
@@ -146,21 +174,7 @@ export default function LoginPage() {
 
     setLoading(true);
     try {
-      // TODO: Replace with POST /api/auth/register
-      // const res = await fetch('/api/auth/register', {
-      //   method: 'POST',
-      //   headers: { 'Content-Type': 'application/json' },
-      //   body: JSON.stringify({
-      //     displayName: register.displayName,
-      //     email: register.email,
-      //     password: register.password,
-      //   }),
-      // });
-      // if (!res.ok) throw new Error('Registration failed. Email may already be in use.');
-      // navigate('/impact');
-
-      // Filler — remove when API is connected
-      await new Promise(r => setTimeout(r, 800));
+      await registerUser(register.email, register.password);
       void navigate('/impact');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Registration failed. Please try again.');
@@ -308,6 +322,61 @@ export default function LoginPage() {
                 </div>
               </div>
 
+              {/* Authenticator code */}
+              <div>
+                <label htmlFor="signin-totp"
+                  className="block text-xs font-semibold text-stone-700 uppercase tracking-wide mb-1.5">
+                  Authenticator Code
+                  <span className="ml-1 font-normal normal-case text-stone-400">(if MFA enabled)</span>
+                </label>
+                <input
+                  id="signin-totp"
+                  type="text"
+                  inputMode="numeric"
+                  autoComplete="one-time-code"
+                  value={twoFactorCode}
+                  onChange={e => setTwoFactorCode(e.target.value)}
+                  className="w-full px-4 py-2.5 bg-white border border-stone-300 rounded-lg
+                    text-sm text-stone-900 placeholder:text-stone-400
+                    hover:border-stone-400
+                    focus:outline-none focus:ring-2 focus:ring-haven-teal-500 focus:border-transparent"
+                  placeholder="123456"
+                />
+              </div>
+
+              {/* Recovery code */}
+              <div>
+                <label htmlFor="signin-recovery"
+                  className="block text-xs font-semibold text-stone-700 uppercase tracking-wide mb-1.5">
+                  Recovery Code
+                  <span className="ml-1 font-normal normal-case text-stone-400">(instead of authenticator)</span>
+                </label>
+                <input
+                  id="signin-recovery"
+                  type="text"
+                  autoComplete="off"
+                  value={recoveryCode}
+                  onChange={e => setRecoveryCode(e.target.value)}
+                  className="w-full px-4 py-2.5 bg-white border border-stone-300 rounded-lg
+                    text-sm text-stone-900 placeholder:text-stone-400
+                    hover:border-stone-400
+                    focus:outline-none focus:ring-2 focus:ring-haven-teal-500 focus:border-transparent"
+                  placeholder="xxxxxxxx-xxxxxxxx"
+                />
+              </div>
+
+              {/* Remember me */}
+              <label className="flex items-center gap-3 cursor-pointer select-none">
+                <input
+                  type="checkbox"
+                  checked={rememberMe}
+                  onChange={e => setRememberMe(e.target.checked)}
+                  className="h-4 w-4 rounded border-stone-300 text-haven-teal-600
+                    focus:ring-haven-teal-500 focus:ring-offset-0"
+                />
+                <span className="text-sm text-stone-600">Keep me signed in across browser restarts</span>
+              </label>
+
               {/* Submit */}
               <button
                 type="submit"
@@ -321,6 +390,33 @@ export default function LoginPage() {
               >
                 {loading ? 'Signing in…' : 'Sign In'}
               </button>
+
+              {/* External providers */}
+              {externalProviders.length > 0 && (
+                <>
+                  <div className="flex items-center gap-3">
+                    <div className="flex-1 h-px bg-stone-200" />
+                    <span className="text-xs text-stone-400">or</span>
+                    <div className="flex-1 h-px bg-stone-200" />
+                  </div>
+                  <div className="space-y-2">
+                    {externalProviders.map(provider => (
+                      <button
+                        key={provider.name}
+                        type="button"
+                        onClick={() => handleExternalLogin(provider.name)}
+                        className="w-full inline-flex items-center justify-center px-5 py-2.5
+                          border border-stone-300 rounded-lg text-sm font-medium text-stone-700
+                          hover:bg-stone-50 transition-colors duration-150
+                          focus-visible:outline-none focus-visible:ring-2
+                          focus-visible:ring-haven-teal-500 focus-visible:ring-offset-2"
+                      >
+                        Continue with {provider.displayName}
+                      </button>
+                    ))}
+                  </div>
+                </>
+              )}
             </form>
           )}
 

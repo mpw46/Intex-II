@@ -1,0 +1,79 @@
+export interface SafehouseMonthlyMetricDto {
+  metricId: number | null;
+  safehouseId: number | null;
+  monthStart: string | null;
+  monthEnd: string | null;
+  activeResidents: number | null;
+  avgEducationProgress: string | null;
+  avgHealthScore: string | null;
+  processRecordingCount: number | null;
+  homeVisitationCount: number | null;
+  incidentCount: number | null;
+  notes: string | null;
+}
+
+export interface PublicImpactSnapshotDto {
+  snapshotId: number | null;
+  snapshotDate: string | null;
+  headline: string | null;
+  summaryText: string | null;
+  metricPayloadJson: string | null;
+  isPublished: string | null;
+  publishedAt: string | null;
+}
+
+export interface SocialMediaPostDto {
+  postId: number | null;
+  platform: string | null;
+  platformPostId: string | null;
+  postUrl: string | null;
+  createdAt: string | null;
+  dayOfWeek: string | null;
+  postHour: number | null;
+  postType: string | null;
+  mediaType: string | null;
+  caption: string | null;
+  hashtags: string | null;
+  numHashtags: number | null;
+  mentionsCount: number | null;
+  hasCallToAction: string | null;
+  callToActionType: string | null;
+  contentTopic: string | null;
+  sentimentTone: string | null;
+  captionLength: number | null;
+  featuresResidentStory: string | null;
+  campaignName: string | null;
+  isBoosted: string | null;
+  boostBudgetPhp: string | null;
+  impressions: number | null;
+  reach: number | null;
+  likes: number | null;
+  comments: number | null;
+  shares: number | null;
+  saves: number | null;
+  clickThroughs: number | null;
+  videoViews: string | null;
+  engagementRate: number | null;
+  profileVisits: number | null;
+  donationReferrals: number | null;
+  estimatedDonationValuePhp: number | null;
+  followerCountAtPost: number | null;
+  watchTimeSeconds: string | null;
+  avgViewDurationSeconds: string | null;
+  subscriberCountAtPost: string | null;
+  forwards: string | null;
+}
+
+export interface InterventionPlanDto {
+  planId: number | null;
+  residentId: number | null;
+  planCategory: string | null;
+  planDescription: string | null;
+  servicesProvided: string | null;
+  targetValue: number | null;
+  targetDate: string | null;
+  status: string | null;
+  caseConferenceDate: string | null;
+  createdAt: string | null;
+  updatedAt: string | null;
+}

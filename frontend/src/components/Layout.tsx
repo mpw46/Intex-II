@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { NavLink, Outlet, useLocation } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 
 // ---------------------------------------------------------------------------
 // Cookie consent banner
@@ -87,6 +88,12 @@ function Layout() {
 
   const navSolid = !isHome || scrolled;
 
+  const { authSession, isAuthenticated } = useAuth();
+  const { isAdmin } = authSession.roles.includes('Admin')
+    ? { isAdmin: true }
+    : { isAdmin: false };
+
+
   return (
     <div className="flex flex-col min-h-screen">
       {/* Skip navigation */}
@@ -131,24 +138,36 @@ function Layout() {
             Impact
           </NavLink>
 
-          <NavLink
-            to="/admin"
-            className={`text-sm font-medium transition-colors duration-150
-                        ${navSolid ? 'text-stone-600 hover:text-stone-900' : 'text-white/80 hover:text-white'}`}
-          >
-            Staff Portal
-          </NavLink>
+          {isAdmin && (
+            <NavLink
+              to="/admin"
+              className={`text-sm font-medium transition-colors duration-150
+                          ${navSolid ? 'text-stone-600 hover:text-stone-900' : 'text-white/80 hover:text-white'}`}
+            >
+              Staff Portal
+            </NavLink>
+          )}
+
+          {isAuthenticated ? (
+            <NavLink
+              to="/logout"
+              className={`text-sm font-medium transition-colors duration-150
+                          ${navSolid ? 'text-stone-600 hover:text-stone-900' : 'text-white/80 hover:text-white'}`}
+            >
+              Sign Out
+            </NavLink>
+          ) : (
+            <NavLink
+              to="/login"
+              className={`text-sm font-medium transition-colors duration-150
+                          ${navSolid ? 'text-stone-600 hover:text-stone-900' : 'text-white/80 hover:text-white'}`}
+            >
+              Login
+            </NavLink>
+          )}
 
           <NavLink
             to="/login"
-            className={`text-sm font-medium transition-colors duration-150
-                        ${navSolid ? 'text-stone-600 hover:text-stone-900' : 'text-white/80 hover:text-white'}`}
-          >
-            Login
-          </NavLink>
-
-          <NavLink
-            to="/impact"
             className="inline-flex items-center justify-center px-4 py-2
                        bg-haven-teal-600 text-white text-sm font-semibold rounded-lg
                        transition-colors duration-150 hover:bg-haven-teal-700
