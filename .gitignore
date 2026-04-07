@@ -92,3 +92,6 @@ pnpm-debug.log*
 *.cache
 *.tmp
 *.temp
+
+
+appsettings.Development.json
