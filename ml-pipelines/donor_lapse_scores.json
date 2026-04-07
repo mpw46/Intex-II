@@ -1,0 +1,2893 @@
+[
+  {
+    "supporter_id": 22,
+    "cutoff": "2025-06-01",
+    "lapse_probability": 0.9991992115974426,
+    "risk_tier": "High",
+    "display_name": "Nico Vasquez"
+  },
+  {
+    "supporter_id": 22,
+    "cutoff": "2025-07-01",
+    "lapse_probability": 0.9991938471794128,
+    "risk_tier": "High",
+    "display_name": "Nico Vasquez"
+  },
+  {
+    "supporter_id": 40,
+    "cutoff": "2025-09-01",
+    "lapse_probability": 0.998229444026947,
+    "risk_tier": "High",
+    "display_name": "Lena Nash"
+  },
+  {
+    "supporter_id": 53,
+    "cutoff": "2025-07-01",
+    "lapse_probability": 0.9967143535614014,
+    "risk_tier": "High",
+    "display_name": "Dina DelosReyes"
+  },
+  {
+    "supporter_id": 40,
+    "cutoff": "2025-10-01",
+    "lapse_probability": 0.9966359734535217,
+    "risk_tier": "High",
+    "display_name": "Lena Nash"
+  },
+  {
+    "supporter_id": 53,
+    "cutoff": "2025-06-01",
+    "lapse_probability": 0.9963143467903137,
+    "risk_tier": "High",
+    "display_name": "Dina DelosReyes"
+  },
+  {
+    "supporter_id": 22,
+    "cutoff": "2025-08-01",
+    "lapse_probability": 0.9958987832069397,
+    "risk_tier": "High",
+    "display_name": "Nico Vasquez"
+  },
+  {
+    "supporter_id": 37,
+    "cutoff": "2025-06-01",
+    "lapse_probability": 0.9952338337898254,
+    "risk_tier": "High",
+    "display_name": "Rae Klein"
+  },
+  {
+    "supporter_id": 12,
+    "cutoff": "2025-11-01",
+    "lapse_probability": 0.9950863718986511,
+    "risk_tier": "High",
+    "display_name": "Ella Lopez"
+  },
+  {
+    "supporter_id": 53,
+    "cutoff": "2025-08-01",
+    "lapse_probability": 0.9950106143951416,
+    "risk_tier": "High",
+    "display_name": "Dina DelosReyes"
+  },
+  {
+    "supporter_id": 12,
+    "cutoff": "2025-12-01",
+    "lapse_probability": 0.9932352900505066,
+    "risk_tier": "High",
+    "display_name": "Ella Lopez"
+  },
+  {
+    "supporter_id": 17,
+    "cutoff": "2025-06-01",
+    "lapse_probability": 0.9930511713027954,
+    "risk_tier": "High",
+    "display_name": "Hana Quinn"
+  },
+  {
+    "supporter_id": 43,
+    "cutoff": "2025-06-01",
+    "lapse_probability": 0.9920365214347839,
+    "risk_tier": "High",
+    "display_name": "Hugo Ross"
+  },
+  {
+    "supporter_id": 56,
+    "cutoff": "2025-12-01",
+    "lapse_probability": 0.9916110634803772,
+    "risk_tier": "High",
+    "display_name": "Lyle Gomez"
+  },
+  {
+    "supporter_id": 53,
+    "cutoff": "2025-09-01",
+    "lapse_probability": 0.991416871547699,
+    "risk_tier": "High",
+    "display_name": "Dina DelosReyes"
+  },
+  {
+    "supporter_id": 23,
+    "cutoff": "2025-06-01",
+    "lapse_probability": 0.9910577535629272,
+    "risk_tier": "High",
+    "display_name": "Ria White"
+  },
+  {
+    "supporter_id": 43,
+    "cutoff": "2025-07-01",
+    "lapse_probability": 0.9910358190536499,
+    "risk_tier": "High",
+    "display_name": "Hugo Ross"
+  },
+  {
+    "supporter_id": 23,
+    "cutoff": "2025-07-01",
+    "lapse_probability": 0.9907116293907166,
+    "risk_tier": "High",
+    "display_name": "Ria White"
+  },
+  {
+    "supporter_id": 43,
+    "cutoff": "2025-08-01",
+    "lapse_probability": 0.9900388121604919,
+    "risk_tier": "High",
+    "display_name": "Hugo Ross"
+  },
+  {
+    "supporter_id": 40,
+    "cutoff": "2025-12-01",
+    "lapse_probability": 0.9896352887153625,
+    "risk_tier": "High",
+    "display_name": "Lena Nash"
+  },
+  {
+    "supporter_id": 53,
+    "cutoff": "2025-12-01",
+    "lapse_probability": 0.9895346760749817,
+    "risk_tier": "High",
+    "display_name": "Dina DelosReyes"
+  },
+  {
+    "supporter_id": 12,
+    "cutoff": "2025-10-01",
+    "lapse_probability": 0.9890102744102478,
+    "risk_tier": "High",
+    "display_name": "Ella Lopez"
+  },
+  {
+    "supporter_id": 21,
+    "cutoff": "2025-06-01",
+    "lapse_probability": 0.9884578585624695,
+    "risk_tier": "High",
+    "display_name": "June Usman"
+  },
+  {
+    "supporter_id": 38,
+    "cutoff": "2025-06-01",
+    "lapse_probability": 0.9883372187614441,
+    "risk_tier": "High",
+    "display_name": "Faith Partners"
+  },
+  {
+    "supporter_id": 40,
+    "cutoff": "2025-11-01",
+    "lapse_probability": 0.9881840944290161,
+    "risk_tier": "High",
+    "display_name": "Lena Nash"
+  },
+  {
+    "supporter_id": 21,
+    "cutoff": "2025-07-01",
+    "lapse_probability": 0.9878876209259033,
+    "risk_tier": "High",
+    "display_name": "June Usman"
+  },
+  {
+    "supporter_id": 11,
+    "cutoff": "2025-06-01",
+    "lapse_probability": 0.9871587753295898,
+    "risk_tier": "High",
+    "display_name": "Maya Kim"
+  },
+  {
+    "supporter_id": 59,
+    "cutoff": "2025-06-01",
+    "lapse_probability": 0.9870518445968628,
+    "risk_tier": "High",
+    "display_name": "Lea Jain"
+  },
+  {
+    "supporter_id": 12,
+    "cutoff": "2025-09-01",
+    "lapse_probability": 0.9869645237922668,
+    "risk_tier": "High",
+    "display_name": "Ella Lopez"
+  },
+  {
+    "supporter_id": 59,
+    "cutoff": "2025-08-01",
+    "lapse_probability": 0.9852865934371948,
+    "risk_tier": "High",
+    "display_name": "Lea Jain"
+  },
+  {
+    "supporter_id": 35,
+    "cutoff": "2025-07-01",
+    "lapse_probability": 0.9844984412193298,
+    "risk_tier": "High",
+    "display_name": "Jose Inoue"
+  },
+  {
+    "supporter_id": 35,
+    "cutoff": "2025-08-01",
+    "lapse_probability": 0.9844886064529419,
+    "risk_tier": "High",
+    "display_name": "Jose Inoue"
+  },
+  {
+    "supporter_id": 17,
+    "cutoff": "2025-07-01",
+    "lapse_probability": 0.9843926429748535,
+    "risk_tier": "High",
+    "display_name": "Hana Quinn"
+  },
+  {
+    "supporter_id": 10,
+    "cutoff": "2025-06-01",
+    "lapse_probability": 0.9839370846748352,
+    "risk_tier": "High",
+    "display_name": "Lucas Jones"
+  },
+  {
+    "supporter_id": 42,
+    "cutoff": "2025-06-01",
+    "lapse_probability": 0.9831362366676331,
+    "risk_tier": "High",
+    "display_name": "Finn Price"
+  },
+  {
+    "supporter_id": 59,
+    "cutoff": "2025-07-01",
+    "lapse_probability": 0.9825549125671387,
+    "risk_tier": "High",
+    "display_name": "Lea Jain"
+  },
+  {
+    "supporter_id": 35,
+    "cutoff": "2025-06-01",
+    "lapse_probability": 0.9823355078697205,
+    "risk_tier": "High",
+    "display_name": "Jose Inoue"
+  },
+  {
+    "supporter_id": 10,
+    "cutoff": "2025-07-01",
+    "lapse_probability": 0.9806395173072815,
+    "risk_tier": "High",
+    "display_name": "Lucas Jones"
+  },
+  {
+    "supporter_id": 47,
+    "cutoff": "2025-07-01",
+    "lapse_probability": 0.9802866578102112,
+    "risk_tier": "High",
+    "display_name": "Kaya Ward"
+  },
+  {
+    "supporter_id": 23,
+    "cutoff": "2025-08-01",
+    "lapse_probability": 0.9794754981994629,
+    "risk_tier": "High",
+    "display_name": "Ria White"
+  },
+  {
+    "supporter_id": 17,
+    "cutoff": "2025-08-01",
+    "lapse_probability": 0.9783080220222473,
+    "risk_tier": "High",
+    "display_name": "Hana Quinn"
+  },
+  {
+    "supporter_id": 36,
+    "cutoff": "2025-06-01",
+    "lapse_probability": 0.9782998561859131,
+    "risk_tier": "High",
+    "display_name": "Lara Johnson"
+  },
+  {
+    "supporter_id": 19,
+    "cutoff": "2025-08-01",
+    "lapse_probability": 0.9778172373771667,
+    "risk_tier": "High",
+    "display_name": "Nora Singh"
+  },
+  {
+    "supporter_id": 37,
+    "cutoff": "2025-08-01",
+    "lapse_probability": 0.9755178689956665,
+    "risk_tier": "High",
+    "display_name": "Rae Klein"
+  },
+  {
+    "supporter_id": 37,
+    "cutoff": "2025-07-01",
+    "lapse_probability": 0.9746968746185303,
+    "risk_tier": "High",
+    "display_name": "Rae Klein"
+  },
+  {
+    "supporter_id": 6,
+    "cutoff": "2025-06-01",
+    "lapse_probability": 0.9738161563873291,
+    "risk_tier": "High",
+    "display_name": "Olivia Ford"
+  },
+  {
+    "supporter_id": 51,
+    "cutoff": "2025-06-01",
+    "lapse_probability": 0.9731355905532837,
+    "risk_tier": "High",
+    "display_name": "Mira Bello"
+  },
+  {
+    "supporter_id": 53,
+    "cutoff": "2025-11-01",
+    "lapse_probability": 0.9729465246200562,
+    "risk_tier": "High",
+    "display_name": "Dina DelosReyes"
+  },
+  {
+    "supporter_id": 19,
+    "cutoff": "2025-06-01",
+    "lapse_probability": 0.9724559187889099,
+    "risk_tier": "High",
+    "display_name": "Nora Singh"
+  },
+  {
+    "supporter_id": 57,
+    "cutoff": "2025-06-01",
+    "lapse_probability": 0.9682586789131165,
+    "risk_tier": "High",
+    "display_name": "Paz Hale"
+  },
+  {
+    "supporter_id": 19,
+    "cutoff": "2025-07-01",
+    "lapse_probability": 0.9682202339172363,
+    "risk_tier": "High",
+    "display_name": "Nora Singh"
+  },
+  {
+    "supporter_id": 26,
+    "cutoff": "2025-06-01",
+    "lapse_probability": 0.9678215980529785,
+    "risk_tier": "High",
+    "display_name": "Margo Zhang"
+  },
+  {
+    "supporter_id": 6,
+    "cutoff": "2025-07-01",
+    "lapse_probability": 0.9667068123817444,
+    "risk_tier": "High",
+    "display_name": "Olivia Ford"
+  },
+  {
+    "supporter_id": 11,
+    "cutoff": "2025-07-01",
+    "lapse_probability": 0.9657787084579468,
+    "risk_tier": "High",
+    "display_name": "Maya Kim"
+  },
+  {
+    "supporter_id": 21,
+    "cutoff": "2025-08-01",
+    "lapse_probability": 0.9652839303016663,
+    "risk_tier": "High",
+    "display_name": "June Usman"
+  },
+  {
+    "supporter_id": 16,
+    "cutoff": "2025-09-01",
+    "lapse_probability": 0.9647719264030457,
+    "risk_tier": "High",
+    "display_name": "Iris Patel"
+  },
+  {
+    "supporter_id": 57,
+    "cutoff": "2025-07-01",
+    "lapse_probability": 0.963624894618988,
+    "risk_tier": "High",
+    "display_name": "Paz Hale"
+  },
+  {
+    "supporter_id": 36,
+    "cutoff": "2025-08-01",
+    "lapse_probability": 0.9589320421218872,
+    "risk_tier": "High",
+    "display_name": "Lara Johnson"
+  },
+  {
+    "supporter_id": 43,
+    "cutoff": "2025-09-01",
+    "lapse_probability": 0.9584122896194458,
+    "risk_tier": "High",
+    "display_name": "Hugo Ross"
+  },
+  {
+    "supporter_id": 36,
+    "cutoff": "2025-09-01",
+    "lapse_probability": 0.9583254456520081,
+    "risk_tier": "High",
+    "display_name": "Lara Johnson"
+  },
+  {
+    "supporter_id": 53,
+    "cutoff": "2025-10-01",
+    "lapse_probability": 0.9571141600608826,
+    "risk_tier": "High",
+    "display_name": "Dina DelosReyes"
+  },
+  {
+    "supporter_id": 39,
+    "cutoff": "2025-08-01",
+    "lapse_probability": 0.9564716219902039,
+    "risk_tier": "High",
+    "display_name": "Ben Morris"
+  },
+  {
+    "supporter_id": 56,
+    "cutoff": "2025-06-01",
+    "lapse_probability": 0.9523152709007263,
+    "risk_tier": "High",
+    "display_name": "Lyle Gomez"
+  },
+  {
+    "supporter_id": 57,
+    "cutoff": "2025-08-01",
+    "lapse_probability": 0.9483239054679871,
+    "risk_tier": "High",
+    "display_name": "Paz Hale"
+  },
+  {
+    "supporter_id": 16,
+    "cutoff": "2025-10-01",
+    "lapse_probability": 0.9451305270195007,
+    "risk_tier": "High",
+    "display_name": "Iris Patel"
+  },
+  {
+    "supporter_id": 42,
+    "cutoff": "2025-07-01",
+    "lapse_probability": 0.9449425935745239,
+    "risk_tier": "High",
+    "display_name": "Finn Price"
+  },
+  {
+    "supporter_id": 51,
+    "cutoff": "2025-08-01",
+    "lapse_probability": 0.9435681700706482,
+    "risk_tier": "High",
+    "display_name": "Mira Bello"
+  },
+  {
+    "supporter_id": 39,
+    "cutoff": "2025-07-01",
+    "lapse_probability": 0.941030740737915,
+    "risk_tier": "High",
+    "display_name": "Ben Morris"
+  },
+  {
+    "supporter_id": 58,
+    "cutoff": "2025-06-01",
+    "lapse_probability": 0.9400641322135925,
+    "risk_tier": "High",
+    "display_name": "Rico Iglesias"
+  },
+  {
+    "supporter_id": 30,
+    "cutoff": "2025-12-01",
+    "lapse_probability": 0.9379045367240906,
+    "risk_tier": "High",
+    "display_name": "Rina Davis"
+  },
+  {
+    "supporter_id": 5,
+    "cutoff": "2025-12-01",
+    "lapse_probability": 0.9357144236564636,
+    "risk_tier": "High",
+    "display_name": "Emma Evans"
+  },
+  {
+    "supporter_id": 46,
+    "cutoff": "2025-08-01",
+    "lapse_probability": 0.935660719871521,
+    "risk_tier": "High",
+    "display_name": "Faith Alliance"
+  },
+  {
+    "supporter_id": 47,
+    "cutoff": "2025-06-01",
+    "lapse_probability": 0.9349424839019775,
+    "risk_tier": "High",
+    "display_name": "Kaya Ward"
+  },
+  {
+    "supporter_id": 51,
+    "cutoff": "2025-07-01",
+    "lapse_probability": 0.934783399105072,
+    "risk_tier": "High",
+    "display_name": "Mira Bello"
+  },
+  {
+    "supporter_id": 32,
+    "cutoff": "2025-09-01",
+    "lapse_probability": 0.9337376952171326,
+    "risk_tier": "High",
+    "display_name": "Luz Fisher"
+  },
+  {
+    "supporter_id": 39,
+    "cutoff": "2025-09-01",
+    "lapse_probability": 0.9311258792877197,
+    "risk_tier": "High",
+    "display_name": "Ben Morris"
+  },
+  {
+    "supporter_id": 10,
+    "cutoff": "2025-08-01",
+    "lapse_probability": 0.9307377338409424,
+    "risk_tier": "High",
+    "display_name": "Lucas Jones"
+  },
+  {
+    "supporter_id": 51,
+    "cutoff": "2025-09-01",
+    "lapse_probability": 0.9305334091186523,
+    "risk_tier": "High",
+    "display_name": "Mira Bello"
+  },
+  {
+    "supporter_id": 5,
+    "cutoff": "2025-06-01",
+    "lapse_probability": 0.9296930432319641,
+    "risk_tier": "High",
+    "display_name": "Emma Evans"
+  },
+  {
+    "supporter_id": 36,
+    "cutoff": "2025-07-01",
+    "lapse_probability": 0.9292427897453308,
+    "risk_tier": "High",
+    "display_name": "Lara Johnson"
+  },
+  {
+    "supporter_id": 6,
+    "cutoff": "2025-08-01",
+    "lapse_probability": 0.9274454712867737,
+    "risk_tier": "High",
+    "display_name": "Olivia Ford"
+  },
+  {
+    "supporter_id": 23,
+    "cutoff": "2025-09-01",
+    "lapse_probability": 0.9264206886291504,
+    "risk_tier": "High",
+    "display_name": "Ria White"
+  },
+  {
+    "supporter_id": 46,
+    "cutoff": "2025-10-01",
+    "lapse_probability": 0.9255715012550354,
+    "risk_tier": "High",
+    "display_name": "Faith Alliance"
+  },
+  {
+    "supporter_id": 46,
+    "cutoff": "2025-11-01",
+    "lapse_probability": 0.9248889684677124,
+    "risk_tier": "High",
+    "display_name": "Faith Alliance"
+  },
+  {
+    "supporter_id": 5,
+    "cutoff": "2025-11-01",
+    "lapse_probability": 0.9222642779350281,
+    "risk_tier": "High",
+    "display_name": "Emma Evans"
+  },
+  {
+    "supporter_id": 44,
+    "cutoff": "2025-06-01",
+    "lapse_probability": 0.9216487407684326,
+    "risk_tier": "High",
+    "display_name": "Vera Stone"
+  },
+  {
+    "supporter_id": 38,
+    "cutoff": "2025-07-01",
+    "lapse_probability": 0.9200494885444641,
+    "risk_tier": "High",
+    "display_name": "Faith Partners"
+  },
+  {
+    "supporter_id": 59,
+    "cutoff": "2025-09-01",
+    "lapse_probability": 0.9171437621116638,
+    "risk_tier": "High",
+    "display_name": "Lea Jain"
+  },
+  {
+    "supporter_id": 43,
+    "cutoff": "2025-10-01",
+    "lapse_probability": 0.916531503200531,
+    "risk_tier": "High",
+    "display_name": "Hugo Ross"
+  },
+  {
+    "supporter_id": 36,
+    "cutoff": "2025-10-01",
+    "lapse_probability": 0.9151501059532166,
+    "risk_tier": "High",
+    "display_name": "Lara Johnson"
+  },
+  {
+    "supporter_id": 59,
+    "cutoff": "2025-12-01",
+    "lapse_probability": 0.9143924713134766,
+    "risk_tier": "High",
+    "display_name": "Lea Jain"
+  },
+  {
+    "supporter_id": 49,
+    "cutoff": "2025-08-01",
+    "lapse_probability": 0.9141032099723816,
+    "risk_tier": "High",
+    "display_name": "Faye Yu"
+  },
+  {
+    "supporter_id": 1,
+    "cutoff": "2025-06-01",
+    "lapse_probability": 0.9114736914634705,
+    "risk_tier": "High",
+    "display_name": "Mila Alvarez"
+  },
+  {
+    "supporter_id": 4,
+    "cutoff": "2025-06-01",
+    "lapse_probability": 0.9113225936889648,
+    "risk_tier": "High",
+    "display_name": "Liam Diaz"
+  },
+  {
+    "supporter_id": 22,
+    "cutoff": "2025-12-01",
+    "lapse_probability": 0.9087746739387512,
+    "risk_tier": "High",
+    "display_name": "Nico Vasquez"
+  },
+  {
+    "supporter_id": 44,
+    "cutoff": "2025-12-01",
+    "lapse_probability": 0.9078575968742371,
+    "risk_tier": "High",
+    "display_name": "Vera Stone"
+  },
+  {
+    "supporter_id": 17,
+    "cutoff": "2025-09-01",
+    "lapse_probability": 0.9018113613128662,
+    "risk_tier": "High",
+    "display_name": "Hana Quinn"
+  },
+  {
+    "supporter_id": 52,
+    "cutoff": "2025-11-01",
+    "lapse_probability": 0.9009866118431091,
+    "risk_tier": "High",
+    "display_name": "Cole Cruz"
+  },
+  {
+    "supporter_id": 39,
+    "cutoff": "2025-11-01",
+    "lapse_probability": 0.8999385237693787,
+    "risk_tier": "High",
+    "display_name": "Ben Morris"
+  },
+  {
+    "supporter_id": 15,
+    "cutoff": "2025-06-01",
+    "lapse_probability": 0.8992842435836792,
+    "risk_tier": "High",
+    "display_name": "Zoe Ortiz"
+  },
+  {
+    "supporter_id": 27,
+    "cutoff": "2025-09-01",
+    "lapse_probability": 0.8972196578979492,
+    "risk_tier": "High",
+    "display_name": "Jules Abe"
+  },
+  {
+    "supporter_id": 40,
+    "cutoff": "2025-08-01",
+    "lapse_probability": 0.8937163949012756,
+    "risk_tier": "High",
+    "display_name": "Lena Nash"
+  },
+  {
+    "supporter_id": 50,
+    "cutoff": "2025-08-01",
+    "lapse_probability": 0.8935333490371704,
+    "risk_tier": "High",
+    "display_name": "Bright Foundation"
+  },
+  {
+    "supporter_id": 52,
+    "cutoff": "2025-12-01",
+    "lapse_probability": 0.892504870891571,
+    "risk_tier": "High",
+    "display_name": "Cole Cruz"
+  },
+  {
+    "supporter_id": 14,
+    "cutoff": "2025-12-01",
+    "lapse_probability": 0.8902705311775208,
+    "risk_tier": "High",
+    "display_name": "Owen Nguyen"
+  },
+  {
+    "supporter_id": 59,
+    "cutoff": "2025-11-01",
+    "lapse_probability": 0.8897021412849426,
+    "risk_tier": "High",
+    "display_name": "Lea Jain"
+  },
+  {
+    "supporter_id": 1,
+    "cutoff": "2025-07-01",
+    "lapse_probability": 0.8882684111595154,
+    "risk_tier": "High",
+    "display_name": "Mila Alvarez"
+  },
+  {
+    "supporter_id": 34,
+    "cutoff": "2025-06-01",
+    "lapse_probability": 0.886968731880188,
+    "risk_tier": "High",
+    "display_name": "Mia Hill"
+  },
+  {
+    "supporter_id": 51,
+    "cutoff": "2025-10-01",
+    "lapse_probability": 0.8847759962081909,
+    "risk_tier": "High",
+    "display_name": "Mira Bello"
+  },
+  {
+    "supporter_id": 57,
+    "cutoff": "2025-09-01",
+    "lapse_probability": 0.8821818232536316,
+    "risk_tier": "High",
+    "display_name": "Paz Hale"
+  },
+  {
+    "supporter_id": 59,
+    "cutoff": "2025-10-01",
+    "lapse_probability": 0.8818856477737427,
+    "risk_tier": "High",
+    "display_name": "Lea Jain"
+  },
+  {
+    "supporter_id": 14,
+    "cutoff": "2025-11-01",
+    "lapse_probability": 0.8802103400230408,
+    "risk_tier": "High",
+    "display_name": "Owen Nguyen"
+  },
+  {
+    "supporter_id": 14,
+    "cutoff": "2025-10-01",
+    "lapse_probability": 0.8786259293556213,
+    "risk_tier": "High",
+    "display_name": "Owen Nguyen"
+  },
+  {
+    "supporter_id": 5,
+    "cutoff": "2025-07-01",
+    "lapse_probability": 0.8780892491340637,
+    "risk_tier": "High",
+    "display_name": "Emma Evans"
+  },
+  {
+    "supporter_id": 47,
+    "cutoff": "2025-12-01",
+    "lapse_probability": 0.8769662380218506,
+    "risk_tier": "High",
+    "display_name": "Kaya Ward"
+  },
+  {
+    "supporter_id": 39,
+    "cutoff": "2025-12-01",
+    "lapse_probability": 0.87428879737854,
+    "risk_tier": "High",
+    "display_name": "Ben Morris"
+  },
+  {
+    "supporter_id": 2,
+    "cutoff": "2025-06-01",
+    "lapse_probability": 0.8583429455757141,
+    "risk_tier": "High",
+    "display_name": "Aria Brown"
+  },
+  {
+    "supporter_id": 12,
+    "cutoff": "2025-06-01",
+    "lapse_probability": 0.8577832579612732,
+    "risk_tier": "High",
+    "display_name": "Ella Lopez"
+  },
+  {
+    "supporter_id": 49,
+    "cutoff": "2025-09-01",
+    "lapse_probability": 0.8576195240020752,
+    "risk_tier": "High",
+    "display_name": "Faye Yu"
+  },
+  {
+    "supporter_id": 37,
+    "cutoff": "2025-09-01",
+    "lapse_probability": 0.8575156331062317,
+    "risk_tier": "High",
+    "display_name": "Rae Klein"
+  },
+  {
+    "supporter_id": 19,
+    "cutoff": "2025-09-01",
+    "lapse_probability": 0.8554797768592834,
+    "risk_tier": "High",
+    "display_name": "Nora Singh"
+  },
+  {
+    "supporter_id": 30,
+    "cutoff": "2025-11-01",
+    "lapse_probability": 0.8547221422195435,
+    "risk_tier": "High",
+    "display_name": "Rina Davis"
+  },
+  {
+    "supporter_id": 26,
+    "cutoff": "2025-07-01",
+    "lapse_probability": 0.8532776236534119,
+    "risk_tier": "High",
+    "display_name": "Margo Zhang"
+  },
+  {
+    "supporter_id": 10,
+    "cutoff": "2025-12-01",
+    "lapse_probability": 0.8478785753250122,
+    "risk_tier": "High",
+    "display_name": "Lucas Jones"
+  },
+  {
+    "supporter_id": 37,
+    "cutoff": "2025-10-01",
+    "lapse_probability": 0.847833514213562,
+    "risk_tier": "High",
+    "display_name": "Rae Klein"
+  },
+  {
+    "supporter_id": 41,
+    "cutoff": "2025-06-01",
+    "lapse_probability": 0.8446811437606812,
+    "risk_tier": "High",
+    "display_name": "Cleo Owens"
+  },
+  {
+    "supporter_id": 11,
+    "cutoff": "2025-08-01",
+    "lapse_probability": 0.8445059657096863,
+    "risk_tier": "High",
+    "display_name": "Maya Kim"
+  },
+  {
+    "supporter_id": 41,
+    "cutoff": "2025-07-01",
+    "lapse_probability": 0.8438699245452881,
+    "risk_tier": "High",
+    "display_name": "Cleo Owens"
+  },
+  {
+    "supporter_id": 14,
+    "cutoff": "2025-09-01",
+    "lapse_probability": 0.843533992767334,
+    "risk_tier": "High",
+    "display_name": "Owen Nguyen"
+  },
+  {
+    "supporter_id": 33,
+    "cutoff": "2025-08-01",
+    "lapse_probability": 0.8428505063056946,
+    "risk_tier": "High",
+    "display_name": "Tara Green"
+  },
+  {
+    "supporter_id": 56,
+    "cutoff": "2025-07-01",
+    "lapse_probability": 0.8418618440628052,
+    "risk_tier": "High",
+    "display_name": "Lyle Gomez"
+  },
+  {
+    "supporter_id": 21,
+    "cutoff": "2025-09-01",
+    "lapse_probability": 0.8410160541534424,
+    "risk_tier": "High",
+    "display_name": "June Usman"
+  },
+  {
+    "supporter_id": 33,
+    "cutoff": "2025-06-01",
+    "lapse_probability": 0.838691234588623,
+    "risk_tier": "High",
+    "display_name": "Tara Green"
+  },
+  {
+    "supporter_id": 35,
+    "cutoff": "2025-11-01",
+    "lapse_probability": 0.8340258002281189,
+    "risk_tier": "High",
+    "display_name": "Jose Inoue"
+  },
+  {
+    "supporter_id": 58,
+    "cutoff": "2025-12-01",
+    "lapse_probability": 0.8334552645683289,
+    "risk_tier": "High",
+    "display_name": "Rico Iglesias"
+  },
+  {
+    "supporter_id": 18,
+    "cutoff": "2025-10-01",
+    "lapse_probability": 0.8324960470199585,
+    "risk_tier": "High",
+    "display_name": "Theo Reed"
+  },
+  {
+    "supporter_id": 15,
+    "cutoff": "2025-12-01",
+    "lapse_probability": 0.8323239088058472,
+    "risk_tier": "High",
+    "display_name": "Zoe Ortiz"
+  },
+  {
+    "supporter_id": 18,
+    "cutoff": "2025-12-01",
+    "lapse_probability": 0.8322865962982178,
+    "risk_tier": "High",
+    "display_name": "Theo Reed"
+  },
+  {
+    "supporter_id": 18,
+    "cutoff": "2025-09-01",
+    "lapse_probability": 0.8322581052780151,
+    "risk_tier": "Medium",
+    "display_name": "Theo Reed"
+  },
+  {
+    "supporter_id": 12,
+    "cutoff": "2025-07-01",
+    "lapse_probability": 0.8319185376167297,
+    "risk_tier": "Medium",
+    "display_name": "Ella Lopez"
+  },
+  {
+    "supporter_id": 30,
+    "cutoff": "2025-09-01",
+    "lapse_probability": 0.830482006072998,
+    "risk_tier": "Medium",
+    "display_name": "Rina Davis"
+  },
+  {
+    "supporter_id": 30,
+    "cutoff": "2025-10-01",
+    "lapse_probability": 0.8275651931762695,
+    "risk_tier": "Medium",
+    "display_name": "Rina Davis"
+  },
+  {
+    "supporter_id": 4,
+    "cutoff": "2025-07-01",
+    "lapse_probability": 0.823638379573822,
+    "risk_tier": "Medium",
+    "display_name": "Liam Diaz"
+  },
+  {
+    "supporter_id": 46,
+    "cutoff": "2025-09-01",
+    "lapse_probability": 0.8200047612190247,
+    "risk_tier": "Medium",
+    "display_name": "Faith Alliance"
+  },
+  {
+    "supporter_id": 49,
+    "cutoff": "2025-06-01",
+    "lapse_probability": 0.8147298097610474,
+    "risk_tier": "Medium",
+    "display_name": "Faye Yu"
+  },
+  {
+    "supporter_id": 44,
+    "cutoff": "2025-07-01",
+    "lapse_probability": 0.8145747184753418,
+    "risk_tier": "Medium",
+    "display_name": "Vera Stone"
+  },
+  {
+    "supporter_id": 49,
+    "cutoff": "2025-10-01",
+    "lapse_probability": 0.8145484328269958,
+    "risk_tier": "Medium",
+    "display_name": "Faye Yu"
+  },
+  {
+    "supporter_id": 17,
+    "cutoff": "2025-10-01",
+    "lapse_probability": 0.8135620355606079,
+    "risk_tier": "Medium",
+    "display_name": "Hana Quinn"
+  },
+  {
+    "supporter_id": 18,
+    "cutoff": "2025-08-01",
+    "lapse_probability": 0.8118839859962463,
+    "risk_tier": "Medium",
+    "display_name": "Theo Reed"
+  },
+  {
+    "supporter_id": 5,
+    "cutoff": "2025-08-01",
+    "lapse_probability": 0.8028351664543152,
+    "risk_tier": "Medium",
+    "display_name": "Emma Evans"
+  },
+  {
+    "supporter_id": 58,
+    "cutoff": "2025-11-01",
+    "lapse_probability": 0.8021014332771301,
+    "risk_tier": "Medium",
+    "display_name": "Rico Iglesias"
+  },
+  {
+    "supporter_id": 23,
+    "cutoff": "2025-12-01",
+    "lapse_probability": 0.8015635013580322,
+    "risk_tier": "Medium",
+    "display_name": "Ria White"
+  },
+  {
+    "supporter_id": 58,
+    "cutoff": "2025-07-01",
+    "lapse_probability": 0.8006815910339355,
+    "risk_tier": "Medium",
+    "display_name": "Rico Iglesias"
+  },
+  {
+    "supporter_id": 58,
+    "cutoff": "2025-08-01",
+    "lapse_probability": 0.7994828224182129,
+    "risk_tier": "Medium",
+    "display_name": "Rico Iglesias"
+  },
+  {
+    "supporter_id": 58,
+    "cutoff": "2025-09-01",
+    "lapse_probability": 0.7976366877555847,
+    "risk_tier": "Medium",
+    "display_name": "Rico Iglesias"
+  },
+  {
+    "supporter_id": 14,
+    "cutoff": "2025-07-01",
+    "lapse_probability": 0.797139048576355,
+    "risk_tier": "Medium",
+    "display_name": "Owen Nguyen"
+  },
+  {
+    "supporter_id": 6,
+    "cutoff": "2025-09-01",
+    "lapse_probability": 0.7957821488380432,
+    "risk_tier": "Medium",
+    "display_name": "Olivia Ford"
+  },
+  {
+    "supporter_id": 47,
+    "cutoff": "2025-11-01",
+    "lapse_probability": 0.7955011129379272,
+    "risk_tier": "Medium",
+    "display_name": "Kaya Ward"
+  },
+  {
+    "supporter_id": 39,
+    "cutoff": "2025-10-01",
+    "lapse_probability": 0.7945107221603394,
+    "risk_tier": "Medium",
+    "display_name": "Ben Morris"
+  },
+  {
+    "supporter_id": 52,
+    "cutoff": "2025-10-01",
+    "lapse_probability": 0.7932215929031372,
+    "risk_tier": "Medium",
+    "display_name": "Cole Cruz"
+  },
+  {
+    "supporter_id": 35,
+    "cutoff": "2025-12-01",
+    "lapse_probability": 0.7928309440612793,
+    "risk_tier": "Medium",
+    "display_name": "Jose Inoue"
+  },
+  {
+    "supporter_id": 58,
+    "cutoff": "2025-10-01",
+    "lapse_probability": 0.7915152907371521,
+    "risk_tier": "Medium",
+    "display_name": "Rico Iglesias"
+  },
+  {
+    "supporter_id": 16,
+    "cutoff": "2025-08-01",
+    "lapse_probability": 0.7899496555328369,
+    "risk_tier": "Medium",
+    "display_name": "Iris Patel"
+  },
+  {
+    "supporter_id": 46,
+    "cutoff": "2025-12-01",
+    "lapse_probability": 0.7873628735542297,
+    "risk_tier": "Medium",
+    "display_name": "Faith Alliance"
+  },
+  {
+    "supporter_id": 14,
+    "cutoff": "2025-08-01",
+    "lapse_probability": 0.787043571472168,
+    "risk_tier": "Medium",
+    "display_name": "Owen Nguyen"
+  },
+  {
+    "supporter_id": 2,
+    "cutoff": "2025-08-01",
+    "lapse_probability": 0.7850282192230225,
+    "risk_tier": "Medium",
+    "display_name": "Aria Brown"
+  },
+  {
+    "supporter_id": 49,
+    "cutoff": "2025-07-01",
+    "lapse_probability": 0.7816517949104309,
+    "risk_tier": "Medium",
+    "display_name": "Faye Yu"
+  },
+  {
+    "supporter_id": 32,
+    "cutoff": "2025-08-01",
+    "lapse_probability": 0.7806777954101562,
+    "risk_tier": "Medium",
+    "display_name": "Luz Fisher"
+  },
+  {
+    "supporter_id": 2,
+    "cutoff": "2025-07-01",
+    "lapse_probability": 0.7797201871871948,
+    "risk_tier": "Medium",
+    "display_name": "Aria Brown"
+  },
+  {
+    "supporter_id": 13,
+    "cutoff": "2025-06-01",
+    "lapse_probability": 0.7790423631668091,
+    "risk_tier": "Medium",
+    "display_name": "Hope Group"
+  },
+  {
+    "supporter_id": 52,
+    "cutoff": "2025-06-01",
+    "lapse_probability": 0.7760097980499268,
+    "risk_tier": "Medium",
+    "display_name": "Cole Cruz"
+  },
+  {
+    "supporter_id": 35,
+    "cutoff": "2025-10-01",
+    "lapse_probability": 0.7649710178375244,
+    "risk_tier": "Medium",
+    "display_name": "Jose Inoue"
+  },
+  {
+    "supporter_id": 17,
+    "cutoff": "2025-11-01",
+    "lapse_probability": 0.7637909054756165,
+    "risk_tier": "Medium",
+    "display_name": "Hana Quinn"
+  },
+  {
+    "supporter_id": 34,
+    "cutoff": "2025-07-01",
+    "lapse_probability": 0.7634377479553223,
+    "risk_tier": "Medium",
+    "display_name": "Mia Hill"
+  },
+  {
+    "supporter_id": 37,
+    "cutoff": "2025-11-01",
+    "lapse_probability": 0.7613645195960999,
+    "risk_tier": "Medium",
+    "display_name": "Rae Klein"
+  },
+  {
+    "supporter_id": 2,
+    "cutoff": "2025-10-01",
+    "lapse_probability": 0.7608527541160583,
+    "risk_tier": "Medium",
+    "display_name": "Aria Brown"
+  },
+  {
+    "supporter_id": 35,
+    "cutoff": "2025-09-01",
+    "lapse_probability": 0.756312906742096,
+    "risk_tier": "Medium",
+    "display_name": "Jose Inoue"
+  },
+  {
+    "supporter_id": 19,
+    "cutoff": "2025-12-01",
+    "lapse_probability": 0.7533717751502991,
+    "risk_tier": "Medium",
+    "display_name": "Nora Singh"
+  },
+  {
+    "supporter_id": 4,
+    "cutoff": "2025-12-01",
+    "lapse_probability": 0.7504228353500366,
+    "risk_tier": "Medium",
+    "display_name": "Liam Diaz"
+  },
+  {
+    "supporter_id": 43,
+    "cutoff": "2025-12-01",
+    "lapse_probability": 0.7499759793281555,
+    "risk_tier": "Medium",
+    "display_name": "Hugo Ross"
+  },
+  {
+    "supporter_id": 2,
+    "cutoff": "2025-12-01",
+    "lapse_probability": 0.7455092072486877,
+    "risk_tier": "Medium",
+    "display_name": "Aria Brown"
+  },
+  {
+    "supporter_id": 60,
+    "cutoff": "2025-06-01",
+    "lapse_probability": 0.7395869493484497,
+    "risk_tier": "Medium",
+    "display_name": "Tess Khan"
+  },
+  {
+    "supporter_id": 4,
+    "cutoff": "2025-09-01",
+    "lapse_probability": 0.7307845950126648,
+    "risk_tier": "Medium",
+    "display_name": "Liam Diaz"
+  },
+  {
+    "supporter_id": 8,
+    "cutoff": "2025-07-01",
+    "lapse_probability": 0.7294795513153076,
+    "risk_tier": "Medium",
+    "display_name": "Isla Hernandez"
+  },
+  {
+    "supporter_id": 43,
+    "cutoff": "2025-11-01",
+    "lapse_probability": 0.7273982763290405,
+    "risk_tier": "Medium",
+    "display_name": "Hugo Ross"
+  },
+  {
+    "supporter_id": 8,
+    "cutoff": "2025-10-01",
+    "lapse_probability": 0.7236178517341614,
+    "risk_tier": "Medium",
+    "display_name": "Isla Hernandez"
+  },
+  {
+    "supporter_id": 14,
+    "cutoff": "2025-06-01",
+    "lapse_probability": 0.7232946753501892,
+    "risk_tier": "Medium",
+    "display_name": "Owen Nguyen"
+  },
+  {
+    "supporter_id": 60,
+    "cutoff": "2025-07-01",
+    "lapse_probability": 0.7206357717514038,
+    "risk_tier": "Medium",
+    "display_name": "Tess Khan"
+  },
+  {
+    "supporter_id": 18,
+    "cutoff": "2025-11-01",
+    "lapse_probability": 0.718724250793457,
+    "risk_tier": "Medium",
+    "display_name": "Theo Reed"
+  },
+  {
+    "supporter_id": 36,
+    "cutoff": "2025-12-01",
+    "lapse_probability": 0.7144735455513,
+    "risk_tier": "Medium",
+    "display_name": "Lara Johnson"
+  },
+  {
+    "supporter_id": 27,
+    "cutoff": "2025-06-01",
+    "lapse_probability": 0.7115530967712402,
+    "risk_tier": "Medium",
+    "display_name": "Jules Abe"
+  },
+  {
+    "supporter_id": 2,
+    "cutoff": "2025-09-01",
+    "lapse_probability": 0.7090762257575989,
+    "risk_tier": "Medium",
+    "display_name": "Aria Brown"
+  },
+  {
+    "supporter_id": 33,
+    "cutoff": "2025-07-01",
+    "lapse_probability": 0.7075924873352051,
+    "risk_tier": "Medium",
+    "display_name": "Tara Green"
+  },
+  {
+    "supporter_id": 8,
+    "cutoff": "2025-06-01",
+    "lapse_probability": 0.7053106427192688,
+    "risk_tier": "Medium",
+    "display_name": "Isla Hernandez"
+  },
+  {
+    "supporter_id": 2,
+    "cutoff": "2025-11-01",
+    "lapse_probability": 0.7046559453010559,
+    "risk_tier": "Medium",
+    "display_name": "Aria Brown"
+  },
+  {
+    "supporter_id": 19,
+    "cutoff": "2025-10-01",
+    "lapse_probability": 0.7013143301010132,
+    "risk_tier": "Medium",
+    "display_name": "Nora Singh"
+  },
+  {
+    "supporter_id": 36,
+    "cutoff": "2025-11-01",
+    "lapse_probability": 0.6974762678146362,
+    "risk_tier": "Medium",
+    "display_name": "Lara Johnson"
+  },
+  {
+    "supporter_id": 27,
+    "cutoff": "2025-10-01",
+    "lapse_probability": 0.6911530494689941,
+    "risk_tier": "Medium",
+    "display_name": "Jules Abe"
+  },
+  {
+    "supporter_id": 41,
+    "cutoff": "2025-12-01",
+    "lapse_probability": 0.6835154891014099,
+    "risk_tier": "Medium",
+    "display_name": "Cleo Owens"
+  },
+  {
+    "supporter_id": 27,
+    "cutoff": "2025-11-01",
+    "lapse_probability": 0.6714004874229431,
+    "risk_tier": "Medium",
+    "display_name": "Jules Abe"
+  },
+  {
+    "supporter_id": 21,
+    "cutoff": "2025-11-01",
+    "lapse_probability": 0.6652724742889404,
+    "risk_tier": "Medium",
+    "display_name": "June Usman"
+  },
+  {
+    "supporter_id": 27,
+    "cutoff": "2025-12-01",
+    "lapse_probability": 0.6386895179748535,
+    "risk_tier": "Medium",
+    "display_name": "Jules Abe"
+  },
+  {
+    "supporter_id": 21,
+    "cutoff": "2025-10-01",
+    "lapse_probability": 0.6379271745681763,
+    "risk_tier": "Medium",
+    "display_name": "June Usman"
+  },
+  {
+    "supporter_id": 4,
+    "cutoff": "2025-10-01",
+    "lapse_probability": 0.6331475973129272,
+    "risk_tier": "Medium",
+    "display_name": "Liam Diaz"
+  },
+  {
+    "supporter_id": 9,
+    "cutoff": "2025-08-01",
+    "lapse_probability": 0.6189696192741394,
+    "risk_tier": "Medium",
+    "display_name": "Sophia Ibrahim"
+  },
+  {
+    "supporter_id": 29,
+    "cutoff": "2025-12-01",
+    "lapse_probability": 0.6158869862556458,
+    "risk_tier": "Medium",
+    "display_name": "Seth Clark"
+  },
+  {
+    "supporter_id": 41,
+    "cutoff": "2025-11-01",
+    "lapse_probability": 0.615228533744812,
+    "risk_tier": "Medium",
+    "display_name": "Cleo Owens"
+  },
+  {
+    "supporter_id": 4,
+    "cutoff": "2025-08-01",
+    "lapse_probability": 0.607796847820282,
+    "risk_tier": "Medium",
+    "display_name": "Liam Diaz"
+  },
+  {
+    "supporter_id": 23,
+    "cutoff": "2025-10-01",
+    "lapse_probability": 0.5928606986999512,
+    "risk_tier": "Medium",
+    "display_name": "Ria White"
+  },
+  {
+    "supporter_id": 32,
+    "cutoff": "2025-12-01",
+    "lapse_probability": 0.5879916548728943,
+    "risk_tier": "Medium",
+    "display_name": "Luz Fisher"
+  },
+  {
+    "supporter_id": 17,
+    "cutoff": "2025-12-01",
+    "lapse_probability": 0.5816793441772461,
+    "risk_tier": "Medium",
+    "display_name": "Hana Quinn"
+  },
+  {
+    "supporter_id": 6,
+    "cutoff": "2025-10-01",
+    "lapse_probability": 0.5776374340057373,
+    "risk_tier": "Medium",
+    "display_name": "Olivia Ford"
+  },
+  {
+    "supporter_id": 41,
+    "cutoff": "2025-10-01",
+    "lapse_probability": 0.574315071105957,
+    "risk_tier": "Medium",
+    "display_name": "Cleo Owens"
+  },
+  {
+    "supporter_id": 60,
+    "cutoff": "2025-10-01",
+    "lapse_probability": 0.5729756951332092,
+    "risk_tier": "Medium",
+    "display_name": "Tess Khan"
+  },
+  {
+    "supporter_id": 26,
+    "cutoff": "2025-08-01",
+    "lapse_probability": 0.5726194381713867,
+    "risk_tier": "Medium",
+    "display_name": "Margo Zhang"
+  },
+  {
+    "supporter_id": 5,
+    "cutoff": "2025-09-01",
+    "lapse_probability": 0.5650917291641235,
+    "risk_tier": "Medium",
+    "display_name": "Emma Evans"
+  },
+  {
+    "supporter_id": 27,
+    "cutoff": "2025-08-01",
+    "lapse_probability": 0.5641307234764099,
+    "risk_tier": "Medium",
+    "display_name": "Jules Abe"
+  },
+  {
+    "supporter_id": 41,
+    "cutoff": "2025-08-01",
+    "lapse_probability": 0.5520358681678772,
+    "risk_tier": "Medium",
+    "display_name": "Cleo Owens"
+  },
+  {
+    "supporter_id": 7,
+    "cutoff": "2025-06-01",
+    "lapse_probability": 0.5429776906967163,
+    "risk_tier": "Medium",
+    "display_name": "Ethan Garcia"
+  },
+  {
+    "supporter_id": 32,
+    "cutoff": "2025-10-01",
+    "lapse_probability": 0.5308071970939636,
+    "risk_tier": "Medium",
+    "display_name": "Luz Fisher"
+  },
+  {
+    "supporter_id": 42,
+    "cutoff": "2025-08-01",
+    "lapse_probability": 0.525566816329956,
+    "risk_tier": "Medium",
+    "display_name": "Finn Price"
+  },
+  {
+    "supporter_id": 10,
+    "cutoff": "2025-09-01",
+    "lapse_probability": 0.5218425393104553,
+    "risk_tier": "Medium",
+    "display_name": "Lucas Jones"
+  },
+  {
+    "supporter_id": 60,
+    "cutoff": "2025-09-01",
+    "lapse_probability": 0.5137379765510559,
+    "risk_tier": "Medium",
+    "display_name": "Tess Khan"
+  },
+  {
+    "supporter_id": 12,
+    "cutoff": "2025-08-01",
+    "lapse_probability": 0.5105782747268677,
+    "risk_tier": "Medium",
+    "display_name": "Ella Lopez"
+  },
+  {
+    "supporter_id": 1,
+    "cutoff": "2025-08-01",
+    "lapse_probability": 0.5102939605712891,
+    "risk_tier": "Medium",
+    "display_name": "Mila Alvarez"
+  },
+  {
+    "supporter_id": 29,
+    "cutoff": "2025-11-01",
+    "lapse_probability": 0.49027779698371887,
+    "risk_tier": "Medium",
+    "display_name": "Seth Clark"
+  },
+  {
+    "supporter_id": 16,
+    "cutoff": "2025-11-01",
+    "lapse_probability": 0.4878205955028534,
+    "risk_tier": "Medium",
+    "display_name": "Iris Patel"
+  },
+  {
+    "supporter_id": 26,
+    "cutoff": "2025-09-01",
+    "lapse_probability": 0.4846497178077698,
+    "risk_tier": "Medium",
+    "display_name": "Margo Zhang"
+  },
+  {
+    "supporter_id": 33,
+    "cutoff": "2025-09-01",
+    "lapse_probability": 0.48380619287490845,
+    "risk_tier": "Medium",
+    "display_name": "Tara Green"
+  },
+  {
+    "supporter_id": 7,
+    "cutoff": "2025-12-01",
+    "lapse_probability": 0.4816693961620331,
+    "risk_tier": "Medium",
+    "display_name": "Ethan Garcia"
+  },
+  {
+    "supporter_id": 27,
+    "cutoff": "2025-07-01",
+    "lapse_probability": 0.4807337522506714,
+    "risk_tier": "Medium",
+    "display_name": "Jules Abe"
+  },
+  {
+    "supporter_id": 60,
+    "cutoff": "2025-12-01",
+    "lapse_probability": 0.47522953152656555,
+    "risk_tier": "Medium",
+    "display_name": "Tess Khan"
+  },
+  {
+    "supporter_id": 16,
+    "cutoff": "2025-12-01",
+    "lapse_probability": 0.4748639166355133,
+    "risk_tier": "Medium",
+    "display_name": "Iris Patel"
+  },
+  {
+    "supporter_id": 7,
+    "cutoff": "2025-10-01",
+    "lapse_probability": 0.46869638562202454,
+    "risk_tier": "Medium",
+    "display_name": "Ethan Garcia"
+  },
+  {
+    "supporter_id": 48,
+    "cutoff": "2025-06-01",
+    "lapse_probability": 0.4682314991950989,
+    "risk_tier": "Medium",
+    "display_name": "Ian Xu"
+  },
+  {
+    "supporter_id": 6,
+    "cutoff": "2025-11-01",
+    "lapse_probability": 0.4619492292404175,
+    "risk_tier": "Medium",
+    "display_name": "Olivia Ford"
+  },
+  {
+    "supporter_id": 50,
+    "cutoff": "2025-11-01",
+    "lapse_probability": 0.44991636276245117,
+    "risk_tier": "Medium",
+    "display_name": "Bright Foundation"
+  },
+  {
+    "supporter_id": 50,
+    "cutoff": "2025-12-01",
+    "lapse_probability": 0.4473040997982025,
+    "risk_tier": "Medium",
+    "display_name": "Bright Foundation"
+  },
+  {
+    "supporter_id": 34,
+    "cutoff": "2025-08-01",
+    "lapse_probability": 0.4458845555782318,
+    "risk_tier": "Medium",
+    "display_name": "Mia Hill"
+  },
+  {
+    "supporter_id": 50,
+    "cutoff": "2025-07-01",
+    "lapse_probability": 0.4433543384075165,
+    "risk_tier": "Medium",
+    "display_name": "Bright Foundation"
+  },
+  {
+    "supporter_id": 26,
+    "cutoff": "2025-10-01",
+    "lapse_probability": 0.4390762448310852,
+    "risk_tier": "Medium",
+    "display_name": "Margo Zhang"
+  },
+  {
+    "supporter_id": 7,
+    "cutoff": "2025-07-01",
+    "lapse_probability": 0.43598246574401855,
+    "risk_tier": "Medium",
+    "display_name": "Ethan Garcia"
+  },
+  {
+    "supporter_id": 60,
+    "cutoff": "2025-08-01",
+    "lapse_probability": 0.43401703238487244,
+    "risk_tier": "Medium",
+    "display_name": "Tess Khan"
+  },
+  {
+    "supporter_id": 8,
+    "cutoff": "2025-08-01",
+    "lapse_probability": 0.4284304678440094,
+    "risk_tier": "Medium",
+    "display_name": "Isla Hernandez"
+  },
+  {
+    "supporter_id": 56,
+    "cutoff": "2025-11-01",
+    "lapse_probability": 0.425350159406662,
+    "risk_tier": "Medium",
+    "display_name": "Lyle Gomez"
+  },
+  {
+    "supporter_id": 52,
+    "cutoff": "2025-07-01",
+    "lapse_probability": 0.4247875511646271,
+    "risk_tier": "Medium",
+    "display_name": "Cole Cruz"
+  },
+  {
+    "supporter_id": 1,
+    "cutoff": "2025-09-01",
+    "lapse_probability": 0.419990211725235,
+    "risk_tier": "Medium",
+    "display_name": "Mila Alvarez"
+  },
+  {
+    "supporter_id": 60,
+    "cutoff": "2025-11-01",
+    "lapse_probability": 0.4126684069633484,
+    "risk_tier": "Medium",
+    "display_name": "Tess Khan"
+  },
+  {
+    "supporter_id": 41,
+    "cutoff": "2025-09-01",
+    "lapse_probability": 0.4052127003669739,
+    "risk_tier": "Medium",
+    "display_name": "Cleo Owens"
+  },
+  {
+    "supporter_id": 11,
+    "cutoff": "2025-09-01",
+    "lapse_probability": 0.388256698846817,
+    "risk_tier": "Medium",
+    "display_name": "Maya Kim"
+  },
+  {
+    "supporter_id": 6,
+    "cutoff": "2025-12-01",
+    "lapse_probability": 0.3874579071998596,
+    "risk_tier": "Medium",
+    "display_name": "Olivia Ford"
+  },
+  {
+    "supporter_id": 44,
+    "cutoff": "2025-11-01",
+    "lapse_probability": 0.367652952671051,
+    "risk_tier": "Medium",
+    "display_name": "Vera Stone"
+  },
+  {
+    "supporter_id": 56,
+    "cutoff": "2025-10-01",
+    "lapse_probability": 0.3445099890232086,
+    "risk_tier": "Medium",
+    "display_name": "Lyle Gomez"
+  },
+  {
+    "supporter_id": 32,
+    "cutoff": "2025-11-01",
+    "lapse_probability": 0.3402820825576782,
+    "risk_tier": "Medium",
+    "display_name": "Luz Fisher"
+  },
+  {
+    "supporter_id": 46,
+    "cutoff": "2025-07-01",
+    "lapse_probability": 0.34026989340782166,
+    "risk_tier": "Medium",
+    "display_name": "Faith Alliance"
+  },
+  {
+    "supporter_id": 50,
+    "cutoff": "2025-06-01",
+    "lapse_probability": 0.3379523754119873,
+    "risk_tier": "Medium",
+    "display_name": "Bright Foundation"
+  },
+  {
+    "supporter_id": 54,
+    "cutoff": "2025-07-01",
+    "lapse_probability": 0.3351837396621704,
+    "risk_tier": "Medium",
+    "display_name": "Sara Escobar"
+  },
+  {
+    "supporter_id": 9,
+    "cutoff": "2025-09-01",
+    "lapse_probability": 0.33215540647506714,
+    "risk_tier": "Medium",
+    "display_name": "Sophia Ibrahim"
+  },
+  {
+    "supporter_id": 32,
+    "cutoff": "2025-07-01",
+    "lapse_probability": 0.32214611768722534,
+    "risk_tier": "Medium",
+    "display_name": "Luz Fisher"
+  },
+  {
+    "supporter_id": 48,
+    "cutoff": "2025-07-01",
+    "lapse_probability": 0.30319052934646606,
+    "risk_tier": "Medium",
+    "display_name": "Ian Xu"
+  },
+  {
+    "supporter_id": 56,
+    "cutoff": "2025-08-01",
+    "lapse_probability": 0.30091866850852966,
+    "risk_tier": "Medium",
+    "display_name": "Lyle Gomez"
+  },
+  {
+    "supporter_id": 19,
+    "cutoff": "2025-11-01",
+    "lapse_probability": 0.29758358001708984,
+    "risk_tier": "Medium",
+    "display_name": "Nora Singh"
+  },
+  {
+    "supporter_id": 45,
+    "cutoff": "2025-06-01",
+    "lapse_probability": 0.2957424819469452,
+    "risk_tier": "Medium",
+    "display_name": "Noel Turner"
+  },
+  {
+    "supporter_id": 52,
+    "cutoff": "2025-08-01",
+    "lapse_probability": 0.29311102628707886,
+    "risk_tier": "Medium",
+    "display_name": "Cole Cruz"
+  },
+  {
+    "supporter_id": 46,
+    "cutoff": "2025-06-01",
+    "lapse_probability": 0.2908102571964264,
+    "risk_tier": "Medium",
+    "display_name": "Faith Alliance"
+  },
+  {
+    "supporter_id": 23,
+    "cutoff": "2025-11-01",
+    "lapse_probability": 0.2900187075138092,
+    "risk_tier": "Medium",
+    "display_name": "Ria White"
+  },
+  {
+    "supporter_id": 7,
+    "cutoff": "2025-11-01",
+    "lapse_probability": 0.28807491064071655,
+    "risk_tier": "Medium",
+    "display_name": "Ethan Garcia"
+  },
+  {
+    "supporter_id": 33,
+    "cutoff": "2025-10-01",
+    "lapse_probability": 0.28716954588890076,
+    "risk_tier": "Medium",
+    "display_name": "Tara Green"
+  },
+  {
+    "supporter_id": 29,
+    "cutoff": "2025-06-01",
+    "lapse_probability": 0.28260907530784607,
+    "risk_tier": "Medium",
+    "display_name": "Seth Clark"
+  },
+  {
+    "supporter_id": 32,
+    "cutoff": "2025-06-01",
+    "lapse_probability": 0.2773109972476959,
+    "risk_tier": "Medium",
+    "display_name": "Luz Fisher"
+  },
+  {
+    "supporter_id": 7,
+    "cutoff": "2025-08-01",
+    "lapse_probability": 0.26873117685317993,
+    "risk_tier": "Medium",
+    "display_name": "Ethan Garcia"
+  },
+  {
+    "supporter_id": 56,
+    "cutoff": "2025-09-01",
+    "lapse_probability": 0.2607881724834442,
+    "risk_tier": "Medium",
+    "display_name": "Lyle Gomez"
+  },
+  {
+    "supporter_id": 45,
+    "cutoff": "2025-07-01",
+    "lapse_probability": 0.2585112452507019,
+    "risk_tier": "Medium",
+    "display_name": "Noel Turner"
+  },
+  {
+    "supporter_id": 5,
+    "cutoff": "2025-10-01",
+    "lapse_probability": 0.2545143961906433,
+    "risk_tier": "Medium",
+    "display_name": "Emma Evans"
+  },
+  {
+    "supporter_id": 18,
+    "cutoff": "2025-07-01",
+    "lapse_probability": 0.25371167063713074,
+    "risk_tier": "Medium",
+    "display_name": "Theo Reed"
+  },
+  {
+    "supporter_id": 45,
+    "cutoff": "2025-09-01",
+    "lapse_probability": 0.23650656640529633,
+    "risk_tier": "Low",
+    "display_name": "Noel Turner"
+  },
+  {
+    "supporter_id": 15,
+    "cutoff": "2025-11-01",
+    "lapse_probability": 0.23640571534633636,
+    "risk_tier": "Low",
+    "display_name": "Zoe Ortiz"
+  },
+  {
+    "supporter_id": 38,
+    "cutoff": "2025-12-01",
+    "lapse_probability": 0.23372606933116913,
+    "risk_tier": "Low",
+    "display_name": "Faith Partners"
+  },
+  {
+    "supporter_id": 9,
+    "cutoff": "2025-06-01",
+    "lapse_probability": 0.22545507550239563,
+    "risk_tier": "Low",
+    "display_name": "Sophia Ibrahim"
+  },
+  {
+    "supporter_id": 34,
+    "cutoff": "2025-09-01",
+    "lapse_probability": 0.22189116477966309,
+    "risk_tier": "Low",
+    "display_name": "Mia Hill"
+  },
+  {
+    "supporter_id": 39,
+    "cutoff": "2025-06-01",
+    "lapse_probability": 0.21952277421951294,
+    "risk_tier": "Low",
+    "display_name": "Ben Morris"
+  },
+  {
+    "supporter_id": 7,
+    "cutoff": "2025-09-01",
+    "lapse_probability": 0.21362803876399994,
+    "risk_tier": "Low",
+    "display_name": "Ethan Garcia"
+  },
+  {
+    "supporter_id": 13,
+    "cutoff": "2025-07-01",
+    "lapse_probability": 0.21248918771743774,
+    "risk_tier": "Low",
+    "display_name": "Hope Group"
+  },
+  {
+    "supporter_id": 33,
+    "cutoff": "2025-12-01",
+    "lapse_probability": 0.21104171872138977,
+    "risk_tier": "Low",
+    "display_name": "Tara Green"
+  },
+  {
+    "supporter_id": 44,
+    "cutoff": "2025-10-01",
+    "lapse_probability": 0.20158512890338898,
+    "risk_tier": "Low",
+    "display_name": "Vera Stone"
+  },
+  {
+    "supporter_id": 37,
+    "cutoff": "2025-12-01",
+    "lapse_probability": 0.20146334171295166,
+    "risk_tier": "Low",
+    "display_name": "Rae Klein"
+  },
+  {
+    "supporter_id": 25,
+    "cutoff": "2025-08-01",
+    "lapse_probability": 0.2011389583349228,
+    "risk_tier": "Low",
+    "display_name": "Tina Young"
+  },
+  {
+    "supporter_id": 1,
+    "cutoff": "2025-10-01",
+    "lapse_probability": 0.19892215728759766,
+    "risk_tier": "Low",
+    "display_name": "Mila Alvarez"
+  },
+  {
+    "supporter_id": 20,
+    "cutoff": "2025-06-01",
+    "lapse_probability": 0.1956843137741089,
+    "risk_tier": "Low",
+    "display_name": "Ezra Taylor"
+  },
+  {
+    "supporter_id": 26,
+    "cutoff": "2025-11-01",
+    "lapse_probability": 0.1940629482269287,
+    "risk_tier": "Low",
+    "display_name": "Margo Zhang"
+  },
+  {
+    "supporter_id": 45,
+    "cutoff": "2025-12-01",
+    "lapse_probability": 0.1878131926059723,
+    "risk_tier": "Low",
+    "display_name": "Noel Turner"
+  },
+  {
+    "supporter_id": 18,
+    "cutoff": "2025-06-01",
+    "lapse_probability": 0.18760137259960175,
+    "risk_tier": "Low",
+    "display_name": "Theo Reed"
+  },
+  {
+    "supporter_id": 8,
+    "cutoff": "2025-09-01",
+    "lapse_probability": 0.1830635517835617,
+    "risk_tier": "Low",
+    "display_name": "Isla Hernandez"
+  },
+  {
+    "supporter_id": 33,
+    "cutoff": "2025-11-01",
+    "lapse_probability": 0.17461179196834564,
+    "risk_tier": "Low",
+    "display_name": "Tara Green"
+  },
+  {
+    "supporter_id": 44,
+    "cutoff": "2025-09-01",
+    "lapse_probability": 0.17068496346473694,
+    "risk_tier": "Low",
+    "display_name": "Vera Stone"
+  },
+  {
+    "supporter_id": 45,
+    "cutoff": "2025-08-01",
+    "lapse_probability": 0.16671866178512573,
+    "risk_tier": "Low",
+    "display_name": "Noel Turner"
+  },
+  {
+    "supporter_id": 9,
+    "cutoff": "2025-10-01",
+    "lapse_probability": 0.16529247164726257,
+    "risk_tier": "Low",
+    "display_name": "Sophia Ibrahim"
+  },
+  {
+    "supporter_id": 45,
+    "cutoff": "2025-11-01",
+    "lapse_probability": 0.16120323538780212,
+    "risk_tier": "Low",
+    "display_name": "Noel Turner"
+  },
+  {
+    "supporter_id": 10,
+    "cutoff": "2025-10-01",
+    "lapse_probability": 0.16023476421833038,
+    "risk_tier": "Low",
+    "display_name": "Lucas Jones"
+  },
+  {
+    "supporter_id": 42,
+    "cutoff": "2025-09-01",
+    "lapse_probability": 0.15933763980865479,
+    "risk_tier": "Low",
+    "display_name": "Finn Price"
+  },
+  {
+    "supporter_id": 1,
+    "cutoff": "2025-12-01",
+    "lapse_probability": 0.155576691031456,
+    "risk_tier": "Low",
+    "display_name": "Mila Alvarez"
+  },
+  {
+    "supporter_id": 8,
+    "cutoff": "2025-12-01",
+    "lapse_probability": 0.14989708364009857,
+    "risk_tier": "Low",
+    "display_name": "Isla Hernandez"
+  },
+  {
+    "supporter_id": 11,
+    "cutoff": "2025-10-01",
+    "lapse_probability": 0.1483161896467209,
+    "risk_tier": "Low",
+    "display_name": "Maya Kim"
+  },
+  {
+    "supporter_id": 1,
+    "cutoff": "2025-11-01",
+    "lapse_probability": 0.14543519914150238,
+    "risk_tier": "Low",
+    "display_name": "Mila Alvarez"
+  },
+  {
+    "supporter_id": 31,
+    "cutoff": "2025-10-01",
+    "lapse_probability": 0.1448000967502594,
+    "risk_tier": "Low",
+    "display_name": "Jon Edwards"
+  },
+  {
+    "supporter_id": 30,
+    "cutoff": "2025-08-01",
+    "lapse_probability": 0.13782617449760437,
+    "risk_tier": "Low",
+    "display_name": "Rina Davis"
+  },
+  {
+    "supporter_id": 8,
+    "cutoff": "2025-11-01",
+    "lapse_probability": 0.13574543595314026,
+    "risk_tier": "Low",
+    "display_name": "Isla Hernandez"
+  },
+  {
+    "supporter_id": 31,
+    "cutoff": "2025-09-01",
+    "lapse_probability": 0.1326647251844406,
+    "risk_tier": "Low",
+    "display_name": "Jon Edwards"
+  },
+  {
+    "supporter_id": 15,
+    "cutoff": "2025-10-01",
+    "lapse_probability": 0.1291942000389099,
+    "risk_tier": "Low",
+    "display_name": "Zoe Ortiz"
+  },
+  {
+    "supporter_id": 25,
+    "cutoff": "2025-09-01",
+    "lapse_probability": 0.12666815519332886,
+    "risk_tier": "Low",
+    "display_name": "Tina Young"
+  },
+  {
+    "supporter_id": 50,
+    "cutoff": "2025-09-01",
+    "lapse_probability": 0.12223715335130692,
+    "risk_tier": "Low",
+    "display_name": "Bright Foundation"
+  },
+  {
+    "supporter_id": 11,
+    "cutoff": "2025-11-01",
+    "lapse_probability": 0.12187480926513672,
+    "risk_tier": "Low",
+    "display_name": "Maya Kim"
+  },
+  {
+    "supporter_id": 31,
+    "cutoff": "2025-11-01",
+    "lapse_probability": 0.11629005521535873,
+    "risk_tier": "Low",
+    "display_name": "Jon Edwards"
+  },
+  {
+    "supporter_id": 52,
+    "cutoff": "2025-09-01",
+    "lapse_probability": 0.11489341408014297,
+    "risk_tier": "Low",
+    "display_name": "Cole Cruz"
+  },
+  {
+    "supporter_id": 13,
+    "cutoff": "2025-12-01",
+    "lapse_probability": 0.10886159539222717,
+    "risk_tier": "Low",
+    "display_name": "Hope Group"
+  },
+  {
+    "supporter_id": 11,
+    "cutoff": "2025-12-01",
+    "lapse_probability": 0.10735371708869934,
+    "risk_tier": "Low",
+    "display_name": "Maya Kim"
+  },
+  {
+    "supporter_id": 13,
+    "cutoff": "2025-08-01",
+    "lapse_probability": 0.10666201263666153,
+    "risk_tier": "Low",
+    "display_name": "Hope Group"
+  },
+  {
+    "supporter_id": 3,
+    "cutoff": "2025-10-01",
+    "lapse_probability": 0.10535117238759995,
+    "risk_tier": "Low",
+    "display_name": "Noah Chen"
+  },
+  {
+    "supporter_id": 3,
+    "cutoff": "2025-07-01",
+    "lapse_probability": 0.1039089560508728,
+    "risk_tier": "Low",
+    "display_name": "Noah Chen"
+  },
+  {
+    "supporter_id": 54,
+    "cutoff": "2025-06-01",
+    "lapse_probability": 0.10181128233671188,
+    "risk_tier": "Low",
+    "display_name": "Sara Escobar"
+  },
+  {
+    "supporter_id": 21,
+    "cutoff": "2025-12-01",
+    "lapse_probability": 0.10034862160682678,
+    "risk_tier": "Low",
+    "display_name": "June Usman"
+  },
+  {
+    "supporter_id": 9,
+    "cutoff": "2025-07-01",
+    "lapse_probability": 0.09902377426624298,
+    "risk_tier": "Low",
+    "display_name": "Sophia Ibrahim"
+  },
+  {
+    "supporter_id": 9,
+    "cutoff": "2025-11-01",
+    "lapse_probability": 0.09544122219085693,
+    "risk_tier": "Low",
+    "display_name": "Sophia Ibrahim"
+  },
+  {
+    "supporter_id": 50,
+    "cutoff": "2025-10-01",
+    "lapse_probability": 0.0953216403722763,
+    "risk_tier": "Low",
+    "display_name": "Bright Foundation"
+  },
+  {
+    "supporter_id": 31,
+    "cutoff": "2025-12-01",
+    "lapse_probability": 0.09320671111345291,
+    "risk_tier": "Low",
+    "display_name": "Jon Edwards"
+  },
+  {
+    "supporter_id": 54,
+    "cutoff": "2025-08-01",
+    "lapse_probability": 0.0860530212521553,
+    "risk_tier": "Low",
+    "display_name": "Sara Escobar"
+  },
+  {
+    "supporter_id": 44,
+    "cutoff": "2025-08-01",
+    "lapse_probability": 0.08239825814962387,
+    "risk_tier": "Low",
+    "display_name": "Vera Stone"
+  },
+  {
+    "supporter_id": 31,
+    "cutoff": "2025-06-01",
+    "lapse_probability": 0.08103100210428238,
+    "risk_tier": "Low",
+    "display_name": "Jon Edwards"
+  },
+  {
+    "supporter_id": 13,
+    "cutoff": "2025-09-01",
+    "lapse_probability": 0.07837757468223572,
+    "risk_tier": "Low",
+    "display_name": "Hope Group"
+  },
+  {
+    "supporter_id": 4,
+    "cutoff": "2025-11-01",
+    "lapse_probability": 0.07531721889972687,
+    "risk_tier": "Low",
+    "display_name": "Liam Diaz"
+  },
+  {
+    "supporter_id": 54,
+    "cutoff": "2025-11-01",
+    "lapse_probability": 0.07382731139659882,
+    "risk_tier": "Low",
+    "display_name": "Sara Escobar"
+  },
+  {
+    "supporter_id": 20,
+    "cutoff": "2025-07-01",
+    "lapse_probability": 0.07050430774688721,
+    "risk_tier": "Low",
+    "display_name": "Ezra Taylor"
+  },
+  {
+    "supporter_id": 26,
+    "cutoff": "2025-12-01",
+    "lapse_probability": 0.07047948986291885,
+    "risk_tier": "Low",
+    "display_name": "Margo Zhang"
+  },
+  {
+    "supporter_id": 54,
+    "cutoff": "2025-10-01",
+    "lapse_probability": 0.0699102059006691,
+    "risk_tier": "Low",
+    "display_name": "Sara Escobar"
+  },
+  {
+    "supporter_id": 25,
+    "cutoff": "2025-12-01",
+    "lapse_probability": 0.0691165179014206,
+    "risk_tier": "Low",
+    "display_name": "Tina Young"
+  },
+  {
+    "supporter_id": 10,
+    "cutoff": "2025-11-01",
+    "lapse_probability": 0.06521589308977127,
+    "risk_tier": "Low",
+    "display_name": "Lucas Jones"
+  },
+  {
+    "supporter_id": 48,
+    "cutoff": "2025-08-01",
+    "lapse_probability": 0.06421764940023422,
+    "risk_tier": "Low",
+    "display_name": "Ian Xu"
+  },
+  {
+    "supporter_id": 3,
+    "cutoff": "2025-11-01",
+    "lapse_probability": 0.06370159983634949,
+    "risk_tier": "Low",
+    "display_name": "Noah Chen"
+  },
+  {
+    "supporter_id": 24,
+    "cutoff": "2025-10-01",
+    "lapse_probability": 0.06329671293497086,
+    "risk_tier": "Low",
+    "display_name": "Sean Xu"
+  },
+  {
+    "supporter_id": 13,
+    "cutoff": "2025-11-01",
+    "lapse_probability": 0.06241346895694733,
+    "risk_tier": "Low",
+    "display_name": "Hope Group"
+  },
+  {
+    "supporter_id": 31,
+    "cutoff": "2025-08-01",
+    "lapse_probability": 0.059214912354946136,
+    "risk_tier": "Low",
+    "display_name": "Jon Edwards"
+  },
+  {
+    "supporter_id": 25,
+    "cutoff": "2025-07-01",
+    "lapse_probability": 0.05638554319739342,
+    "risk_tier": "Low",
+    "display_name": "Tina Young"
+  },
+  {
+    "supporter_id": 9,
+    "cutoff": "2025-12-01",
+    "lapse_probability": 0.055700622498989105,
+    "risk_tier": "Low",
+    "display_name": "Sophia Ibrahim"
+  },
+  {
+    "supporter_id": 22,
+    "cutoff": "2025-11-01",
+    "lapse_probability": 0.054439619183540344,
+    "risk_tier": "Low",
+    "display_name": "Nico Vasquez"
+  },
+  {
+    "supporter_id": 24,
+    "cutoff": "2025-11-01",
+    "lapse_probability": 0.05402714014053345,
+    "risk_tier": "Low",
+    "display_name": "Sean Xu"
+  },
+  {
+    "supporter_id": 55,
+    "cutoff": "2025-07-01",
+    "lapse_probability": 0.05379260331392288,
+    "risk_tier": "Low",
+    "display_name": "Kian Farah"
+  },
+  {
+    "supporter_id": 25,
+    "cutoff": "2025-06-01",
+    "lapse_probability": 0.050846029072999954,
+    "risk_tier": "Low",
+    "display_name": "Tina Young"
+  },
+  {
+    "supporter_id": 48,
+    "cutoff": "2025-12-01",
+    "lapse_probability": 0.049996357411146164,
+    "risk_tier": "Low",
+    "display_name": "Ian Xu"
+  },
+  {
+    "supporter_id": 3,
+    "cutoff": "2025-06-01",
+    "lapse_probability": 0.047882329672575,
+    "risk_tier": "Low",
+    "display_name": "Noah Chen"
+  },
+  {
+    "supporter_id": 54,
+    "cutoff": "2025-09-01",
+    "lapse_probability": 0.04688578099012375,
+    "risk_tier": "Low",
+    "display_name": "Sara Escobar"
+  },
+  {
+    "supporter_id": 3,
+    "cutoff": "2025-12-01",
+    "lapse_probability": 0.046663276851177216,
+    "risk_tier": "Low",
+    "display_name": "Noah Chen"
+  },
+  {
+    "supporter_id": 42,
+    "cutoff": "2025-10-01",
+    "lapse_probability": 0.045878034085035324,
+    "risk_tier": "Low",
+    "display_name": "Finn Price"
+  },
+  {
+    "supporter_id": 15,
+    "cutoff": "2025-07-01",
+    "lapse_probability": 0.04405321553349495,
+    "risk_tier": "Low",
+    "display_name": "Zoe Ortiz"
+  },
+  {
+    "supporter_id": 13,
+    "cutoff": "2025-10-01",
+    "lapse_probability": 0.04221121594309807,
+    "risk_tier": "Low",
+    "display_name": "Hope Group"
+  },
+  {
+    "supporter_id": 45,
+    "cutoff": "2025-10-01",
+    "lapse_probability": 0.0393216498196125,
+    "risk_tier": "Low",
+    "display_name": "Noel Turner"
+  },
+  {
+    "supporter_id": 3,
+    "cutoff": "2025-08-01",
+    "lapse_probability": 0.03909799084067345,
+    "risk_tier": "Low",
+    "display_name": "Noah Chen"
+  },
+  {
+    "supporter_id": 55,
+    "cutoff": "2025-08-01",
+    "lapse_probability": 0.03760572150349617,
+    "risk_tier": "Low",
+    "display_name": "Kian Farah"
+  },
+  {
+    "supporter_id": 31,
+    "cutoff": "2025-07-01",
+    "lapse_probability": 0.0373711958527565,
+    "risk_tier": "Low",
+    "display_name": "Jon Edwards"
+  },
+  {
+    "supporter_id": 24,
+    "cutoff": "2025-06-01",
+    "lapse_probability": 0.03648556023836136,
+    "risk_tier": "Low",
+    "display_name": "Sean Xu"
+  },
+  {
+    "supporter_id": 38,
+    "cutoff": "2025-11-01",
+    "lapse_probability": 0.034225430339574814,
+    "risk_tier": "Low",
+    "display_name": "Faith Partners"
+  },
+  {
+    "supporter_id": 54,
+    "cutoff": "2025-12-01",
+    "lapse_probability": 0.034026723355054855,
+    "risk_tier": "Low",
+    "display_name": "Sara Escobar"
+  },
+  {
+    "supporter_id": 24,
+    "cutoff": "2025-09-01",
+    "lapse_probability": 0.0339171439409256,
+    "risk_tier": "Low",
+    "display_name": "Sean Xu"
+  },
+  {
+    "supporter_id": 34,
+    "cutoff": "2025-12-01",
+    "lapse_probability": 0.03326874226331711,
+    "risk_tier": "Low",
+    "display_name": "Mia Hill"
+  },
+  {
+    "supporter_id": 38,
+    "cutoff": "2025-08-01",
+    "lapse_probability": 0.032859399914741516,
+    "risk_tier": "Low",
+    "display_name": "Faith Partners"
+  },
+  {
+    "supporter_id": 24,
+    "cutoff": "2025-07-01",
+    "lapse_probability": 0.03272740915417671,
+    "risk_tier": "Low",
+    "display_name": "Sean Xu"
+  },
+  {
+    "supporter_id": 25,
+    "cutoff": "2025-11-01",
+    "lapse_probability": 0.031293075531721115,
+    "risk_tier": "Low",
+    "display_name": "Tina Young"
+  },
+  {
+    "supporter_id": 51,
+    "cutoff": "2025-12-01",
+    "lapse_probability": 0.030443472787737846,
+    "risk_tier": "Low",
+    "display_name": "Mira Bello"
+  },
+  {
+    "supporter_id": 24,
+    "cutoff": "2025-08-01",
+    "lapse_probability": 0.030241888016462326,
+    "risk_tier": "Low",
+    "display_name": "Sean Xu"
+  },
+  {
+    "supporter_id": 34,
+    "cutoff": "2025-10-01",
+    "lapse_probability": 0.029928114265203476,
+    "risk_tier": "Low",
+    "display_name": "Mia Hill"
+  },
+  {
+    "supporter_id": 55,
+    "cutoff": "2025-09-01",
+    "lapse_probability": 0.026932023465633392,
+    "risk_tier": "Low",
+    "display_name": "Kian Farah"
+  },
+  {
+    "supporter_id": 3,
+    "cutoff": "2025-09-01",
+    "lapse_probability": 0.025737112388014793,
+    "risk_tier": "Low",
+    "display_name": "Noah Chen"
+  },
+  {
+    "supporter_id": 51,
+    "cutoff": "2025-11-01",
+    "lapse_probability": 0.023243889212608337,
+    "risk_tier": "Low",
+    "display_name": "Mira Bello"
+  },
+  {
+    "supporter_id": 55,
+    "cutoff": "2025-06-01",
+    "lapse_probability": 0.022975748404860497,
+    "risk_tier": "Low",
+    "display_name": "Kian Farah"
+  },
+  {
+    "supporter_id": 20,
+    "cutoff": "2025-12-01",
+    "lapse_probability": 0.02074025571346283,
+    "risk_tier": "Low",
+    "display_name": "Ezra Taylor"
+  },
+  {
+    "supporter_id": 40,
+    "cutoff": "2025-06-01",
+    "lapse_probability": 0.01982506923377514,
+    "risk_tier": "Low",
+    "display_name": "Lena Nash"
+  },
+  {
+    "supporter_id": 20,
+    "cutoff": "2025-09-01",
+    "lapse_probability": 0.01959201693534851,
+    "risk_tier": "Low",
+    "display_name": "Ezra Taylor"
+  },
+  {
+    "supporter_id": 30,
+    "cutoff": "2025-06-01",
+    "lapse_probability": 0.019244978204369545,
+    "risk_tier": "Low",
+    "display_name": "Rina Davis"
+  },
+  {
+    "supporter_id": 15,
+    "cutoff": "2025-08-01",
+    "lapse_probability": 0.018912002444267273,
+    "risk_tier": "Low",
+    "display_name": "Zoe Ortiz"
+  },
+  {
+    "supporter_id": 25,
+    "cutoff": "2025-10-01",
+    "lapse_probability": 0.017681289464235306,
+    "risk_tier": "Low",
+    "display_name": "Tina Young"
+  },
+  {
+    "supporter_id": 20,
+    "cutoff": "2025-10-01",
+    "lapse_probability": 0.01755412295460701,
+    "risk_tier": "Low",
+    "display_name": "Ezra Taylor"
+  },
+  {
+    "supporter_id": 20,
+    "cutoff": "2025-08-01",
+    "lapse_probability": 0.017542151734232903,
+    "risk_tier": "Low",
+    "display_name": "Ezra Taylor"
+  },
+  {
+    "supporter_id": 55,
+    "cutoff": "2025-12-01",
+    "lapse_probability": 0.017465438693761826,
+    "risk_tier": "Low",
+    "display_name": "Kian Farah"
+  },
+  {
+    "supporter_id": 55,
+    "cutoff": "2025-10-01",
+    "lapse_probability": 0.01617100089788437,
+    "risk_tier": "Low",
+    "display_name": "Kian Farah"
+  },
+  {
+    "supporter_id": 40,
+    "cutoff": "2025-07-01",
+    "lapse_probability": 0.015301834791898727,
+    "risk_tier": "Low",
+    "display_name": "Lena Nash"
+  },
+  {
+    "supporter_id": 24,
+    "cutoff": "2025-12-01",
+    "lapse_probability": 0.015128809958696365,
+    "risk_tier": "Low",
+    "display_name": "Sean Xu"
+  },
+  {
+    "supporter_id": 38,
+    "cutoff": "2025-09-01",
+    "lapse_probability": 0.01496187224984169,
+    "risk_tier": "Low",
+    "display_name": "Faith Partners"
+  },
+  {
+    "supporter_id": 48,
+    "cutoff": "2025-11-01",
+    "lapse_probability": 0.014430460520088673,
+    "risk_tier": "Low",
+    "display_name": "Ian Xu"
+  },
+  {
+    "supporter_id": 57,
+    "cutoff": "2025-11-01",
+    "lapse_probability": 0.014261280186474323,
+    "risk_tier": "Low",
+    "display_name": "Paz Hale"
+  },
+  {
+    "supporter_id": 29,
+    "cutoff": "2025-09-01",
+    "lapse_probability": 0.014105507172644138,
+    "risk_tier": "Low",
+    "display_name": "Seth Clark"
+  },
+  {
+    "supporter_id": 57,
+    "cutoff": "2025-12-01",
+    "lapse_probability": 0.013619170524179935,
+    "risk_tier": "Low",
+    "display_name": "Paz Hale"
+  },
+  {
+    "supporter_id": 15,
+    "cutoff": "2025-09-01",
+    "lapse_probability": 0.013159510679543018,
+    "risk_tier": "Low",
+    "display_name": "Zoe Ortiz"
+  },
+  {
+    "supporter_id": 49,
+    "cutoff": "2025-12-01",
+    "lapse_probability": 0.012559790164232254,
+    "risk_tier": "Low",
+    "display_name": "Faye Yu"
+  },
+  {
+    "supporter_id": 55,
+    "cutoff": "2025-11-01",
+    "lapse_probability": 0.012457440607249737,
+    "risk_tier": "Low",
+    "display_name": "Kian Farah"
+  },
+  {
+    "supporter_id": 30,
+    "cutoff": "2025-07-01",
+    "lapse_probability": 0.012239580042660236,
+    "risk_tier": "Low",
+    "display_name": "Rina Davis"
+  },
+  {
+    "supporter_id": 57,
+    "cutoff": "2025-10-01",
+    "lapse_probability": 0.011920260265469551,
+    "risk_tier": "Low",
+    "display_name": "Paz Hale"
+  },
+  {
+    "supporter_id": 29,
+    "cutoff": "2025-10-01",
+    "lapse_probability": 0.011919574812054634,
+    "risk_tier": "Low",
+    "display_name": "Seth Clark"
+  },
+  {
+    "supporter_id": 48,
+    "cutoff": "2025-09-01",
+    "lapse_probability": 0.011412262916564941,
+    "risk_tier": "Low",
+    "display_name": "Ian Xu"
+  },
+  {
+    "supporter_id": 34,
+    "cutoff": "2025-11-01",
+    "lapse_probability": 0.011320759542286396,
+    "risk_tier": "Low",
+    "display_name": "Mia Hill"
+  },
+  {
+    "supporter_id": 22,
+    "cutoff": "2025-09-01",
+    "lapse_probability": 0.010927774012088776,
+    "risk_tier": "Low",
+    "display_name": "Nico Vasquez"
+  },
+  {
+    "supporter_id": 20,
+    "cutoff": "2025-11-01",
+    "lapse_probability": 0.010718747973442078,
+    "risk_tier": "Low",
+    "display_name": "Ezra Taylor"
+  },
+  {
+    "supporter_id": 49,
+    "cutoff": "2025-11-01",
+    "lapse_probability": 0.0077064149081707,
+    "risk_tier": "Low",
+    "display_name": "Faye Yu"
+  },
+  {
+    "supporter_id": 22,
+    "cutoff": "2025-10-01",
+    "lapse_probability": 0.006851794198155403,
+    "risk_tier": "Low",
+    "display_name": "Nico Vasquez"
+  },
+  {
+    "supporter_id": 29,
+    "cutoff": "2025-08-01",
+    "lapse_probability": 0.006319333333522081,
+    "risk_tier": "Low",
+    "display_name": "Seth Clark"
+  },
+  {
+    "supporter_id": 42,
+    "cutoff": "2025-12-01",
+    "lapse_probability": 0.005786261986941099,
+    "risk_tier": "Low",
+    "display_name": "Finn Price"
+  },
+  {
+    "supporter_id": 38,
+    "cutoff": "2025-10-01",
+    "lapse_probability": 0.005469173192977905,
+    "risk_tier": "Low",
+    "display_name": "Faith Partners"
+  },
+  {
+    "supporter_id": 16,
+    "cutoff": "2025-06-01",
+    "lapse_probability": 0.005285225808620453,
+    "risk_tier": "Low",
+    "display_name": "Iris Patel"
+  },
+  {
+    "supporter_id": 47,
+    "cutoff": "2025-08-01",
+    "lapse_probability": 0.00506575545296073,
+    "risk_tier": "Low",
+    "display_name": "Kaya Ward"
+  },
+  {
+    "supporter_id": 47,
+    "cutoff": "2025-09-01",
+    "lapse_probability": 0.004678650293499231,
+    "risk_tier": "Low",
+    "display_name": "Kaya Ward"
+  },
+  {
+    "supporter_id": 48,
+    "cutoff": "2025-10-01",
+    "lapse_probability": 0.0030992182437330484,
+    "risk_tier": "Low",
+    "display_name": "Ian Xu"
+  },
+  {
+    "supporter_id": 47,
+    "cutoff": "2025-10-01",
+    "lapse_probability": 0.0017176101682707667,
+    "risk_tier": "Low",
+    "display_name": "Kaya Ward"
+  },
+  {
+    "supporter_id": 16,
+    "cutoff": "2025-07-01",
+    "lapse_probability": 0.0016975176986306906,
+    "risk_tier": "Low",
+    "display_name": "Iris Patel"
+  },
+  {
+    "supporter_id": 29,
+    "cutoff": "2025-07-01",
+    "lapse_probability": 0.0005443100235424936,
+    "risk_tier": "Low",
+    "display_name": "Seth Clark"
+  },
+  {
+    "supporter_id": 42,
+    "cutoff": "2025-11-01",
+    "lapse_probability": 0.00013012770796194673,
+    "risk_tier": "Low",
+    "display_name": "Finn Price"
+  }
+]

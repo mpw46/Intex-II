@@ -1,0 +1,218 @@
+{
+  "pipeline": "social-media-effectiveness",
+  "target": "engagement_rate",
+  "n_posts": 812,
+  "ols_r_squared_in_sample": 0.44812356123292596,
+  "boxcox_lambda_y": 0.36840333293490357,
+  "ols_adjusted_r_squared_in_sample": 0.5008954890023269,
+  "greedy_backward": {
+    "n_features_selected": 24,
+    "best_validation_rmse": 0.04295297429085138
+  },
+  "decision_tree": {
+    "max_depth_selected": 8
+  },
+  "test_metrics": {
+    "linear_greedy_features": {
+      "mae": 0.03533392912706641,
+      "rmse": 0.04316221214053733,
+      "r2": 0.36213334199673297
+    },
+    "decision_tree_tuned": {
+      "mae": 0.029333256807360028,
+      "rmse": 0.03642753487115555,
+      "r2": 0.5456588457700464
+    }
+  },
+  "top_ols_terms": [
+    {
+      "term": "sentiment_tone_Informative",
+      "coefficient": -0.06772984556791296,
+      "robust_se": 0.006066222092579611,
+      "pvalue": 6.043782052050607e-29,
+      "note": "OLS association; not causal."
+    },
+    {
+      "term": "sentiment_tone_Grateful",
+      "coefficient": -0.045638553135044904,
+      "robust_se": 0.006414195116433388,
+      "pvalue": 1.1171630688805996e-12,
+      "note": "OLS association; not causal."
+    },
+    {
+      "term": "sentiment_tone_Hopeful",
+      "coefficient": -0.030490824268255,
+      "robust_se": 0.006477850882834478,
+      "pvalue": 2.514688131923731e-06,
+      "note": "OLS association; not causal."
+    },
+    {
+      "term": "call_to_action_type_ShareStory",
+      "coefficient": 0.02925012749553998,
+      "robust_se": 0.005980158770913226,
+      "pvalue": 1.002251977413212e-06,
+      "note": "OLS association; not causal."
+    },
+    {
+      "term": "z_post_hour",
+      "coefficient": 0.02477634825371865,
+      "robust_se": 0.0016126017401618667,
+      "pvalue": 2.8449480816453825e-53,
+      "note": "OLS association; not causal."
+    },
+    {
+      "term": "call_to_action_type_SignUp",
+      "coefficient": 0.020112365181071186,
+      "robust_se": 0.005457550508150285,
+      "pvalue": 0.00022849022997523875,
+      "note": "OLS association; not causal."
+    },
+    {
+      "term": "sentiment_tone_Urgent",
+      "coefficient": -0.018620018394193395,
+      "robust_se": 0.007254989931002838,
+      "pvalue": 0.01027270839507233,
+      "note": "OLS association; not causal."
+    },
+    {
+      "term": "call_to_action_type_LearnMore",
+      "coefficient": 0.0174741739067011,
+      "robust_se": 0.005207600038171053,
+      "pvalue": 0.0007921769780850748,
+      "note": "OLS association; not causal."
+    },
+    {
+      "term": "call_to_action_type_DonateNow",
+      "coefficient": 0.014531366115612385,
+      "robust_se": 0.005508224284951336,
+      "pvalue": 0.008336665308335843,
+      "note": "OLS association; not causal."
+    },
+    {
+      "term": "is_boosted",
+      "coefficient": -0.01282180583207011,
+      "robust_se": 0.007405600167842094,
+      "pvalue": 0.08338647081604848,
+      "note": "OLS association; not causal."
+    },
+    {
+      "term": "content_topic_Gratitude",
+      "coefficient": -0.01027214445681491,
+      "robust_se": 0.007324944596754516,
+      "pvalue": 0.16081041403551044,
+      "note": "OLS association; not causal."
+    },
+    {
+      "term": "platform_Instagram",
+      "coefficient": 0.009673145883740627,
+      "robust_se": 0.010009798015162517,
+      "pvalue": 0.3338602007461364,
+      "note": "OLS association; not causal."
+    },
+    {
+      "term": "content_topic_Education",
+      "coefficient": -0.0063228391393863395,
+      "robust_se": 0.006607385256248368,
+      "pvalue": 0.3385999930091341,
+      "note": "OLS association; not causal."
+    },
+    {
+      "term": "day_of_week_Tuesday",
+      "coefficient": -0.006031366238242262,
+      "robust_se": 0.005514696051507907,
+      "pvalue": 0.27409109572671986,
+      "note": "OLS association; not causal."
+    },
+    {
+      "term": "campaign_name_Other_campaign",
+      "coefficient": -0.005780268712148533,
+      "robust_se": 0.011675846320044673,
+      "pvalue": 0.6205563030741232,
+      "note": "OLS association; not causal."
+    }
+  ],
+  "top_tree_importances": [
+    {
+      "feature": "num__post_hour",
+      "importance": 0.631063653395317
+    },
+    {
+      "feature": "cat__sentiment_tone_Informative",
+      "importance": 0.16378121043249888
+    },
+    {
+      "feature": "cat__call_to_action_type_(no CTA)",
+      "importance": 0.05519960262734062
+    },
+    {
+      "feature": "cat__sentiment_tone_Grateful",
+      "importance": 0.040335097891425704
+    },
+    {
+      "feature": "cat__sentiment_tone_Hopeful",
+      "importance": 0.03900027283547518
+    },
+    {
+      "feature": "cat__sentiment_tone_Celebratory",
+      "importance": 0.018512448216629958
+    },
+    {
+      "feature": "cat__sentiment_tone_Emotional",
+      "importance": 0.017010503889752518
+    },
+    {
+      "feature": "cat__call_to_action_type_ShareStory",
+      "importance": 0.014407640207330097
+    },
+    {
+      "feature": "num__follower_count_at_post",
+      "importance": 0.013722241907930003
+    },
+    {
+      "feature": "num__mentions_count",
+      "importance": 0.0049520111058706864
+    },
+    {
+      "feature": "cat__media_type_Photo",
+      "importance": 0.001955036435070867
+    },
+    {
+      "feature": "num__caption_length",
+      "importance": 6.028105535850762e-05
+    },
+    {
+      "feature": "cat__content_topic_Health",
+      "importance": 0.0
+    },
+    {
+      "feature": "cat__call_to_action_type_SignUp",
+      "importance": 0.0
+    },
+    {
+      "feature": "cat__content_topic_AwarenessRaising",
+      "importance": 0.0
+    }
+  ],
+  "leakage_excluded_columns": [
+    "post_id",
+    "platform_post_id",
+    "post_url",
+    "caption",
+    "hashtags",
+    "impressions",
+    "reach",
+    "likes",
+    "comments",
+    "shares",
+    "saves",
+    "click_throughs",
+    "video_views",
+    "profile_visits",
+    "donation_referrals",
+    "estimated_donation_value_php",
+    "watch_time_seconds",
+    "avg_view_duration_seconds",
+    "subscriber_count_at_post",
+    "forwards"
+  ]
+}

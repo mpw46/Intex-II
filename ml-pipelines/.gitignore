@@ -1,0 +1,2 @@
+# Local tooling (PDF text extraction dependency installed into repo during dev)
+.vendor_pypdf/

@@ -1,0 +1,66 @@
+{
+  "model_name": "donor_lapse_90d",
+  "primary_estimator": "xgboost",
+  "target": "target_lapse: no donation any type in (cutoff, cutoff+90d]",
+  "temporal_test_start": "2025-06-01",
+  "numeric_features": [
+    "recency_days",
+    "tenure_don_days",
+    "tenure_sup_days",
+    "sum_gift_365d",
+    "avg_gift_365d",
+    "recurring_rate_365d",
+    "n_distinct_safehouses_365d",
+    "cutoff_month",
+    "cutoff_year"
+  ],
+  "categorical_features": [
+    "supporter_type",
+    "relationship_type",
+    "region",
+    "acquisition_channel"
+  ],
+  "dropped_correlated_numeric": [],
+  "recency_clip_train_p99": 503.90000000000055,
+  "test_roc_auc": 0.7120221685377291,
+  "test_avg_precision": 0.7290596183312605,
+  "best_params_logistic": {
+    "clf__C": 0.01,
+    "clf__solver": "saga"
+  },
+  "best_params_rf": {
+    "clf__max_depth": null,
+    "clf__min_samples_leaf": 1,
+    "clf__n_estimators": 400
+  },
+  "best_params_hist_gradient_boosting": {
+    "clf__learning_rate": 0.1,
+    "clf__max_depth": null,
+    "clf__max_iter": 300
+  },
+  "best_params_gradient_boosting": {
+    "clf__learning_rate": 0.1,
+    "clf__max_depth": 3,
+    "clf__n_estimators": 100
+  },
+  "trained_at": "2026-04-07T02:07:32.127808Z",
+  "best_params_xgboost": {
+    "clf__learning_rate": 0.1,
+    "clf__max_depth": 8,
+    "clf__n_estimators": 300,
+    "clf__subsample": 0.8
+  },
+  "perm_pruning_dropped_numeric": [
+    "count_90d",
+    "count_180d",
+    "count_365d",
+    "std_gift_365d",
+    "median_gap_days_365d",
+    "n_types_365d",
+    "n_channels_365d",
+    "n_campaigns_365d"
+  ],
+  "perm_pruning_dropped_categorical": [
+    "country"
+  ]
+}
