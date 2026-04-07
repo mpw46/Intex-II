@@ -132,6 +132,14 @@ function Layout() {
           </NavLink>
 
           <NavLink
+            to="/admin"
+            className={`text-sm font-medium transition-colors duration-150
+                        ${navSolid ? 'text-stone-600 hover:text-stone-900' : 'text-white/80 hover:text-white'}`}
+          >
+            Staff Portal
+          </NavLink>
+
+          <NavLink
             to="/login"
             className={`text-sm font-medium transition-colors duration-150
                         ${navSolid ? 'text-stone-600 hover:text-stone-900' : 'text-white/80 hover:text-white'}`}
