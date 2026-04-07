@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace Intex2.API.Data;
 
 public partial class HomeVisitation
 {
-    public int? VisitationId { get; set; }
+    [Key]
+    public int VisitationId { get; set; }
 
     public int? ResidentId { get; set; }
 
