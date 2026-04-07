@@ -1,164 +1,40 @@
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import {
+  getImpactSnapshot,
+  getImpactSafehouses,
+  getYearlyOutcomes,
+  getAllocations,
+  getProgramOutcomes,
+} from '../api/impactApi';
+import type {
+  ImpactSnapshot,
+  SafehouseCard,
+  YearlyOutcome,
+  DonationAllocationSummary,
+  ProgramOutcomeMetric,
+} from '../api/impactApi';
 
-// ─── Types ────────────────────────────────────────────────────────────────────
-// These interfaces match the real database schema described in CLAUDE.md.
-// Swap the filler constants below for API responses of the same shape.
+// ─── Fallback filler (used while loading or on error) ────────────────────────
 
-/** Derived from `public_impact_snapshots` + cross-table aggregations */
-interface ImpactSnapshot {
-  totalGirlsServed: number;
-  activeResidents: number;
-  reintegrationSuccessRate: number; // percentage 0–100
-  yearsOfOperation: number;
-  activeSafehouses: number;
-  philippineRegionsCovered: number;
-  reportingPeriod: string;           // e.g. "2024"
-}
+const FALLBACK_SNAPSHOT: ImpactSnapshot = {
+  totalGirlsServed: 0,
+  activeResidents: 0,
+  reintegrationSuccessRate: 0,
+  yearsOfOperation: 0,
+  activeSafehouses: 0,
+  philippineRegionsCovered: 0,
+  reportingPeriod: new Date().getFullYear().toString(),
+};
 
-/** Derived from `safehouses` joined with `safehouse_monthly_metrics` */
-interface SafehouseCard {
-  id: string;                        // safehouse_id
-  name: string;
-  region: string;                    // Luzon | Visayas | Mindanao
-  city: string;
-  province: string;
-  status: 'Active' | 'At Capacity' | 'Accepting Referrals';
-  capacityGirls: number;             // capacity_girls
-  currentOccupancy: number;          // current_occupancy
-  reintegrationRatePercent: number;  // from safehouse_monthly_metrics
-  avgProgressPercent: number;        // avg of progress_percent in education_records
-}
-
-/** Derived from `donation_allocations` aggregated by program_area */
-interface DonationAllocation {
-  programArea: string;
-  percentOfFunds: number;
-  description: string;
-}
-
-/** Derived from `safehouse_monthly_metrics` aggregated annually */
-interface YearlyOutcome {
-  year: number;
-  girlsAdmitted: number;
-  girlsReintegrated: number;
-}
-
-/** Derived from `public_impact_snapshots` outcome_highlights — fully anonymized */
+// Stories of Hope are always static — pre-anonymized by staff
 interface OutcomeHighlight {
   id: string;
-  pseudonym: string;   // Never a real name — use initials like "Maria A."
+  pseudonym: string;
   region: string;
   story: string;
   outcome: string;
 }
-
-/** Derived from `education_records`, `health_wellbeing_records`, `process_recordings` */
-interface ProgramOutcomeMetric {
-  label: string;
-  completionRate: number; // 0–100
-  description: string;
-}
-
-// ─── Filler Data ──────────────────────────────────────────────────────────────
-// TODO: Replace each constant with a fetch from the API:
-//   impactSnapshot  → GET /api/public/impact/snapshot
-//   safehouses      → GET /api/public/safehouses
-//   yearlyOutcomes  → GET /api/public/impact/yearly
-//   allocations     → GET /api/public/impact/allocations
-//   highlights      → GET /api/public/impact/highlights
-//   programOutcomes → GET /api/public/impact/outcomes
-
-const impactSnapshot: ImpactSnapshot = {
-  totalGirlsServed: 1247,
-  activeResidents: 89,
-  reintegrationSuccessRate: 95,
-  yearsOfOperation: 12,
-  activeSafehouses: 4,
-  philippineRegionsCovered: 3,
-  reportingPeriod: '2024',
-};
-
-const safehouses: SafehouseCard[] = [
-  {
-    id: 'sh-001',
-    name: 'Haven House Manila',
-    region: 'Luzon',
-    city: 'Manila',
-    province: 'Metro Manila',
-    status: 'Active',
-    capacityGirls: 30,
-    currentOccupancy: 24,
-    reintegrationRatePercent: 97,
-    avgProgressPercent: 78,
-  },
-  {
-    id: 'sh-002',
-    name: 'Light of Hope Cebu',
-    region: 'Visayas',
-    city: 'Cebu City',
-    province: 'Cebu',
-    status: 'At Capacity',
-    capacityGirls: 25,
-    currentOccupancy: 25,
-    reintegrationRatePercent: 93,
-    avgProgressPercent: 82,
-  },
-  {
-    id: 'sh-003',
-    name: 'New Dawn Davao',
-    region: 'Mindanao',
-    city: 'Davao City',
-    province: 'Davao del Sur',
-    status: 'Accepting Referrals',
-    capacityGirls: 20,
-    currentOccupancy: 14,
-    reintegrationRatePercent: 96,
-    avgProgressPercent: 74,
-  },
-  {
-    id: 'sh-004',
-    name: 'Safe Harbor Iloilo',
-    region: 'Visayas',
-    city: 'Iloilo City',
-    province: 'Iloilo',
-    status: 'Active',
-    capacityGirls: 20,
-    currentOccupancy: 18,
-    reintegrationRatePercent: 91,
-    avgProgressPercent: 71,
-  },
-];
-
-const yearlyOutcomes: YearlyOutcome[] = [
-  { year: 2020, girlsAdmitted: 187, girlsReintegrated: 164 },
-  { year: 2021, girlsAdmitted: 203, girlsReintegrated: 189 },
-  { year: 2022, girlsAdmitted: 218, girlsReintegrated: 201 },
-  { year: 2023, girlsAdmitted: 231, girlsReintegrated: 219 },
-  { year: 2024, girlsAdmitted: 247, girlsReintegrated: 235 },
-];
-
-const allocations: DonationAllocation[] = [
-  {
-    programArea: 'Direct Services',
-    percentOfFunds: 52,
-    description: 'Shelter, food, clothing, hygiene supplies, and medical care for residents.',
-  },
-  {
-    programArea: 'Counseling & Therapy',
-    percentOfFunds: 22,
-    description: 'Licensed social workers, psychologists, and trauma-informed therapy sessions.',
-  },
-  {
-    programArea: 'Education & Vocational',
-    percentOfFunds: 16,
-    description: 'School enrollment, tutoring, skills training, and livelihood programs.',
-  },
-  {
-    programArea: 'Operations & Administration',
-    percentOfFunds: 10,
-    description: 'Safehouse maintenance, staff coordination, reporting, and compliance.',
-  },
-];
 
 const highlights: OutcomeHighlight[] = [
   {
@@ -187,29 +63,6 @@ const highlights: OutcomeHighlight[] = [
   },
 ];
 
-const programOutcomes: ProgramOutcomeMetric[] = [
-  {
-    label: 'Education Completion',
-    completionRate: 88,
-    description: 'Residents who completed their enrolled academic program or school year',
-  },
-  {
-    label: 'Counseling Engagement',
-    completionRate: 96,
-    description: 'Residents who completed their full counseling intervention plan',
-  },
-  {
-    label: 'Health Improvement',
-    completionRate: 91,
-    description: 'Residents showing sustained improvement in nutrition and wellbeing scores',
-  },
-  {
-    label: 'Successful Reintegration',
-    completionRate: 95,
-    description: 'Closed cases where the resident was safely reintegrated with family or placement',
-  },
-];
-
 // ─── Sub-components ───────────────────────────────────────────────────────────
 
 function GlassKpiCard({ value, label }: { value: string; label: string }) {
@@ -221,14 +74,16 @@ function GlassKpiCard({ value, label }: { value: string; label: string }) {
   );
 }
 
-const statusConfig: Record<SafehouseCard['status'], { label: string; classes: string }> = {
+type SafehouseStatus = 'Active' | 'At Capacity' | 'Accepting Referrals';
+
+const statusConfig: Record<SafehouseStatus, { label: string; classes: string }> = {
   'Active':              { label: 'Active',              classes: 'bg-emerald-100 text-emerald-800 border-emerald-200' },
   'At Capacity':         { label: 'At Capacity',         classes: 'bg-amber-100 text-amber-800 border-amber-200' },
   'Accepting Referrals': { label: 'Accepting Referrals', classes: 'bg-sky-100 text-sky-800 border-sky-200' },
 };
 
-function StatusBadge({ status }: { status: SafehouseCard['status'] }) {
-  const config = statusConfig[status];
+function StatusBadge({ status }: { status: string }) {
+  const config = statusConfig[status as SafehouseStatus] ?? statusConfig['Active'];
   return (
     <span
       className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full
@@ -243,7 +98,7 @@ function StatusBadge({ status }: { status: SafehouseCard['status'] }) {
 }
 
 function OccupancyBar({ current, capacity }: { current: number; capacity: number }) {
-  const pct = Math.min(100, Math.round((current / capacity) * 100));
+  const pct = capacity > 0 ? Math.min(100, Math.round((current / capacity) * 100)) : 0;
   const fillClass = pct >= 100 ? 'fill-amber-500' : 'fill-haven-teal-600';
   return (
     <div>
@@ -285,7 +140,7 @@ function OutcomeBar({ metric }: { metric: ProgramOutcomeMetric }) {
   );
 }
 
-function AllocationBar({ allocation }: { allocation: DonationAllocation }) {
+function AllocationBar({ allocation }: { allocation: DonationAllocationSummary }) {
   return (
     <div className="flex items-start gap-4">
       <div className="w-12 shrink-0 text-right">
@@ -311,10 +166,56 @@ function AllocationBar({ allocation }: { allocation: DonationAllocation }) {
   );
 }
 
+function LoadingSkeleton() {
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-stone-50">
+      <div className="text-center">
+        <div className="h-8 w-8 border-4 border-haven-teal-600 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+        <p className="text-stone-500 text-sm">Loading impact data...</p>
+      </div>
+    </div>
+  );
+}
+
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
 function DonorDashboardPage() {
-  const maxAdmitted = Math.max(...yearlyOutcomes.map((o) => o.girlsAdmitted));
+  const [snapshot, setSnapshot] = useState<ImpactSnapshot>(FALLBACK_SNAPSHOT);
+  const [safehouses, setSafehouses] = useState<SafehouseCard[]>([]);
+  const [yearlyOutcomes, setYearlyOutcomes] = useState<YearlyOutcome[]>([]);
+  const [allocations, setAllocations] = useState<DonationAllocationSummary[]>([]);
+  const [programOutcomes, setProgramOutcomes] = useState<ProgramOutcomeMetric[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchAll() {
+      try {
+        const [snap, houses, yearly, allocs, outcomes] = await Promise.all([
+          getImpactSnapshot(),
+          getImpactSafehouses(),
+          getYearlyOutcomes(),
+          getAllocations(),
+          getProgramOutcomes(),
+        ]);
+        setSnapshot(snap);
+        setSafehouses(houses);
+        setYearlyOutcomes(yearly);
+        setAllocations(allocs);
+        setProgramOutcomes(outcomes);
+      } catch (err) {
+        console.error('Failed to load impact data:', err);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchAll();
+  }, []);
+
+  if (loading) return <LoadingSkeleton />;
+
+  const maxAdmitted = yearlyOutcomes.length > 0
+    ? Math.max(...yearlyOutcomes.map((o) => o.girlsAdmitted))
+    : 1;
 
   return (
     <div>
@@ -324,7 +225,7 @@ function DonorDashboardPage() {
         <div className="max-w-7xl mx-auto px-6 md:px-12">
           <div className="max-w-2xl mb-12">
             <p className="text-[11px] font-semibold uppercase tracking-widest text-haven-teal-300 mb-3">
-              Impact Report · {impactSnapshot.reportingPeriod}
+              Impact Report · {snapshot.reportingPeriod}
             </p>
             <h1 className="text-4xl font-bold text-white leading-snug tracking-tight mb-4">
               Real change, transparently shared
@@ -338,27 +239,27 @@ function DonorDashboardPage() {
           {/* KPI cards */}
           <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4">
             <GlassKpiCard
-              value={impactSnapshot.totalGirlsServed.toLocaleString()}
-              label="Girls Served Since 2012"
+              value={snapshot.totalGirlsServed.toLocaleString()}
+              label="Girls Served Since Founding"
             />
             <GlassKpiCard
-              value={`${impactSnapshot.reintegrationSuccessRate}%`}
+              value={`${snapshot.reintegrationSuccessRate}%`}
               label="Reintegration Success Rate"
             />
             <GlassKpiCard
-              value={impactSnapshot.activeResidents.toString()}
+              value={snapshot.activeResidents.toString()}
               label="Residents Currently in Care"
             />
             <GlassKpiCard
-              value={impactSnapshot.activeSafehouses.toString()}
+              value={snapshot.activeSafehouses.toString()}
               label="Active Safehouses"
             />
             <GlassKpiCard
-              value={impactSnapshot.philippineRegionsCovered.toString()}
+              value={snapshot.philippineRegionsCovered.toString()}
               label="Philippine Regions"
             />
             <GlassKpiCard
-              value={`${impactSnapshot.yearsOfOperation} yrs`}
+              value={`${snapshot.yearsOfOperation} yrs`}
               label="Years of Operation"
             />
           </div>
@@ -366,191 +267,193 @@ function DonorDashboardPage() {
       </section>
 
       {/* ── Safehouses ──────────────────────────────────────────────── */}
-      <section className="bg-stone-50 py-20 lg:py-24">
-        <div className="max-w-7xl mx-auto px-6 md:px-12">
-          <div className="max-w-xl mb-12">
-            <p className="text-[11px] font-semibold uppercase tracking-widest text-haven-teal-600 mb-3">
-              Our Safehouses
-            </p>
-            <h2 className="text-3xl font-bold text-stone-900 leading-snug mb-3">
-              Four homes across the Philippines
-            </h2>
-            <p className="text-base text-stone-600 leading-relaxed">
-              Each safehouse operates with a dedicated team of licensed social workers,
-              counselors, and care staff, serving girls across Luzon, Visayas, and Mindanao.
-            </p>
-          </div>
+      {safehouses.length > 0 && (
+        <section className="bg-stone-50 py-20 lg:py-24">
+          <div className="max-w-7xl mx-auto px-6 md:px-12">
+            <div className="max-w-xl mb-12">
+              <p className="text-[11px] font-semibold uppercase tracking-widest text-haven-teal-600 mb-3">
+                Our Safehouses
+              </p>
+              <h2 className="text-3xl font-bold text-stone-900 leading-snug mb-3">
+                {safehouses.length} home{safehouses.length !== 1 ? 's' : ''} across the Philippines
+              </h2>
+              <p className="text-base text-stone-600 leading-relaxed">
+                Each safehouse operates with a dedicated team of licensed social workers,
+                counselors, and care staff, serving girls across Luzon, Visayas, and Mindanao.
+              </p>
+            </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-            {safehouses.map((house) => (
-              <div
-                key={house.id}
-                className="bg-white rounded-xl border border-stone-200 shadow-sm p-6
-                           hover:shadow-md transition-shadow duration-200"
-              >
-                <div className="flex items-start justify-between gap-3 mb-4">
-                  <div>
-                    <h3 className="text-lg font-semibold text-stone-900">{house.name}</h3>
-                    <p className="text-sm text-stone-500 mt-0.5">
-                      {house.city}, {house.province} · {house.region}
-                    </p>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+              {safehouses.map((house) => (
+                <div
+                  key={house.id}
+                  className="bg-white rounded-xl border border-stone-200 shadow-sm p-6
+                             hover:shadow-md transition-shadow duration-200"
+                >
+                  <div className="flex items-start justify-between gap-3 mb-4">
+                    <div>
+                      <h3 className="text-lg font-semibold text-stone-900">{house.name}</h3>
+                      <p className="text-sm text-stone-500 mt-0.5">
+                        {house.city}, {house.province} · {house.region}
+                      </p>
+                    </div>
+                    <StatusBadge status={house.status} />
                   </div>
-                  <StatusBadge status={house.status} />
+
+                  <OccupancyBar current={house.currentOccupancy} capacity={house.capacityGirls} />
+
+                  <div className="grid grid-cols-2 gap-4 mt-5 pt-4 border-t border-stone-100">
+                    <div>
+                      <p className="text-[11px] font-semibold uppercase tracking-widest text-stone-400 mb-0.5">
+                        Reintegration Rate
+                      </p>
+                      <p className="text-2xl font-bold tabular-nums text-haven-teal-700">
+                        {house.reintegrationRatePercent}%
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-[11px] font-semibold uppercase tracking-widest text-stone-400 mb-0.5">
+                        Avg. Progress
+                      </p>
+                      <p className="text-2xl font-bold tabular-nums text-stone-900">
+                        {house.avgProgressPercent}%
+                      </p>
+                    </div>
+                  </div>
                 </div>
-
-                <OccupancyBar current={house.currentOccupancy} capacity={house.capacityGirls} />
-
-                <div className="grid grid-cols-2 gap-4 mt-5 pt-4 border-t border-stone-100">
-                  <div>
-                    <p className="text-[11px] font-semibold uppercase tracking-widest text-stone-400 mb-0.5">
-                      Reintegration Rate
-                    </p>
-                    <p className="text-2xl font-bold tabular-nums text-haven-teal-700">
-                      {house.reintegrationRatePercent}%
-                    </p>
-                  </div>
-                  <div>
-                    <p className="text-[11px] font-semibold uppercase tracking-widest text-stone-400 mb-0.5">
-                      Avg. Progress
-                    </p>
-                    <p className="text-2xl font-bold tabular-nums text-stone-900">
-                      {house.avgProgressPercent}%
-                    </p>
-                  </div>
-                </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       {/* ── Program Outcomes ────────────────────────────────────────── */}
-      <section className="bg-white py-20 lg:py-24">
-        <div className="max-w-7xl mx-auto px-6 md:px-12">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-start">
-            <div>
-              <p className="text-[11px] font-semibold uppercase tracking-widest text-haven-teal-600 mb-3">
-                Program Outcomes
-              </p>
-              <h2 className="text-3xl font-bold text-stone-900 leading-snug mb-4">
-                Measuring what matters
-              </h2>
-              <p className="text-base text-stone-600 leading-relaxed mb-6">
-                Each resident's progress is tracked across four core program areas. These
-                completion rates represent the percentage of residents who met or exceeded
-                their individualized benchmarks during the {impactSnapshot.reportingPeriod} reporting period.
-              </p>
-              <p className="text-sm text-stone-400 italic">
-                Rates based on {impactSnapshot.activeResidents} active and recently closed cases.
-                Data sourced from case management records and monthly outcome assessments.
-              </p>
-            </div>
+      {programOutcomes.length > 0 && (
+        <section className="bg-white py-20 lg:py-24">
+          <div className="max-w-7xl mx-auto px-6 md:px-12">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-start">
+              <div>
+                <p className="text-[11px] font-semibold uppercase tracking-widest text-haven-teal-600 mb-3">
+                  Program Outcomes
+                </p>
+                <h2 className="text-3xl font-bold text-stone-900 leading-snug mb-4">
+                  Measuring what matters
+                </h2>
+                <p className="text-base text-stone-600 leading-relaxed mb-6">
+                  Each resident's progress is tracked across four core program areas. These
+                  completion rates represent the percentage of residents who met or exceeded
+                  their individualized benchmarks during the {snapshot.reportingPeriod} reporting period.
+                </p>
+                <p className="text-sm text-stone-400 italic">
+                  Rates based on {snapshot.activeResidents} active and recently closed cases.
+                  Data sourced from case management records and monthly outcome assessments.
+                </p>
+              </div>
 
-            <div className="space-y-7">
-              {programOutcomes.map((metric) => (
-                <OutcomeBar key={metric.label} metric={metric} />
-              ))}
+              <div className="space-y-7">
+                {programOutcomes.map((metric) => (
+                  <OutcomeBar key={metric.label} metric={metric} />
+                ))}
+              </div>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       {/* ── Donation Allocation ─────────────────────────────────────── */}
-      <section className="bg-stone-50 py-20 lg:py-24">
-        <div className="max-w-7xl mx-auto px-6 md:px-12">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-start">
-            <div>
-              <p className="text-[11px] font-semibold uppercase tracking-widest text-haven-teal-600 mb-3">
-                Financial Transparency
-              </p>
-              <h2 className="text-3xl font-bold text-stone-900 leading-snug mb-4">
-                Where your donation goes
-              </h2>
-              <p className="text-base text-stone-600 leading-relaxed mb-4">
-                We are committed to directing the majority of every donation toward direct
-                resident services. Our operating model prioritizes lean administration so
-                that more reaches the girls in our care.
-              </p>
-              <div className="bg-haven-teal-50 rounded-xl border border-haven-teal-200 p-4">
-                <p className="text-sm font-semibold text-haven-teal-800 mb-1">
-                  90¢ of every peso goes directly to programs
+      {allocations.length > 0 && (
+        <section className="bg-stone-50 py-20 lg:py-24">
+          <div className="max-w-7xl mx-auto px-6 md:px-12">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-start">
+              <div>
+                <p className="text-[11px] font-semibold uppercase tracking-widest text-haven-teal-600 mb-3">
+                  Financial Transparency
                 </p>
-                <p className="text-xs text-haven-teal-700">
-                  Only 10% covers operations and administration — well below the 25% sector benchmark.
+                <h2 className="text-3xl font-bold text-stone-900 leading-snug mb-4">
+                  Where your donation goes
+                </h2>
+                <p className="text-base text-stone-600 leading-relaxed mb-4">
+                  We are committed to directing the majority of every donation toward direct
+                  resident services. Our operating model prioritizes lean administration so
+                  that more reaches the girls in our care.
                 </p>
+                <div className="bg-haven-teal-50 rounded-xl border border-haven-teal-200 p-4">
+                  <p className="text-sm font-semibold text-haven-teal-800 mb-1">
+                    Maximum impact for every peso
+                  </p>
+                  <p className="text-xs text-haven-teal-700">
+                    The majority of funds go directly to programs supporting the girls in our care.
+                  </p>
+                </div>
+              </div>
+
+              <div className="space-y-6">
+                {allocations.map((allocation) => (
+                  <AllocationBar key={allocation.programArea} allocation={allocation} />
+                ))}
               </div>
             </div>
-
-            <div className="space-y-6">
-              {allocations.map((allocation) => (
-                <AllocationBar key={allocation.programArea} allocation={allocation} />
-              ))}
-            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       {/* ── Year in Review ──────────────────────────────────────────── */}
-      <section className="bg-white py-20 lg:py-24">
-        <div className="max-w-7xl mx-auto px-6 md:px-12">
-          <div className="max-w-xl mb-12">
-            <p className="text-[11px] font-semibold uppercase tracking-widest text-haven-teal-600 mb-3">
-              Year in Review
-            </p>
-            <h2 className="text-3xl font-bold text-stone-900 leading-snug mb-3">
-              Five years of growing impact
-            </h2>
-            <p className="text-base text-stone-600 leading-relaxed">
-              Annual admissions and reintegration outcomes across all Haven safehouses.
-            </p>
-          </div>
-
-          {/* Bar chart — SVG bars avoid inline styles; each column is a flex item */}
-          <div className="bg-stone-50 rounded-xl border border-stone-200 p-6 overflow-x-auto">
-            <div className="flex items-end gap-3 md:gap-5 min-w-[360px]">
-              {yearlyOutcomes.map((outcome) => {
-                const BAR_H = 144; // px — matches h-36
-                const admittedH = Math.round((outcome.girlsAdmitted / maxAdmitted) * BAR_H);
-                const reintegratedH = Math.round((outcome.girlsReintegrated / maxAdmitted) * BAR_H);
-                return (
-                  <div key={outcome.year} className="flex-1 flex flex-col items-center gap-1.5">
-                    <span className="text-xs font-semibold text-stone-700 tabular-nums">
-                      {outcome.girlsAdmitted}
-                    </span>
-                    {/*
-                      viewBox="0 0 1 BAR_H" + preserveAspectRatio="none" stretches the single
-                      unit-wide bar to fill the flex column width. Heights are in viewBox coords.
-                    */}
-                    <svg
-                      viewBox={`0 0 1 ${BAR_H}`}
-                      preserveAspectRatio="none"
-                      className="w-full"
-                      height={BAR_H}
-                      aria-label={`${outcome.year}: ${outcome.girlsAdmitted} admitted, ${outcome.girlsReintegrated} reintegrated`}
-                    >
-                      <rect x="0" y={BAR_H - admittedH} width="1" height={admittedH} rx="0.05" className="fill-haven-teal-200" />
-                      <rect x="0" y={BAR_H - reintegratedH} width="1" height={reintegratedH} rx="0.05" className="fill-haven-teal-600" />
-                    </svg>
-                    <span className="text-xs font-medium text-stone-500">{outcome.year}</span>
-                  </div>
-                );
-              })}
+      {yearlyOutcomes.length > 0 && (
+        <section className="bg-white py-20 lg:py-24">
+          <div className="max-w-7xl mx-auto px-6 md:px-12">
+            <div className="max-w-xl mb-12">
+              <p className="text-[11px] font-semibold uppercase tracking-widest text-haven-teal-600 mb-3">
+                Year in Review
+              </p>
+              <h2 className="text-3xl font-bold text-stone-900 leading-snug mb-3">
+                {yearlyOutcomes.length} year{yearlyOutcomes.length !== 1 ? 's' : ''} of growing impact
+              </h2>
+              <p className="text-base text-stone-600 leading-relaxed">
+                Annual admissions and reintegration outcomes across all safehouses.
+              </p>
             </div>
 
-            {/* Legend */}
-            <div className="flex items-center gap-6 mt-5 pt-4 border-t border-stone-200">
-              <div className="flex items-center gap-2">
-                <div className="h-3 w-3 rounded-sm bg-haven-teal-600" aria-hidden="true" />
-                <span className="text-xs text-stone-600">Reintegrated</span>
+            <div className="bg-stone-50 rounded-xl border border-stone-200 p-6 overflow-x-auto">
+              <div className="flex items-end gap-3 md:gap-5 min-w-[360px]">
+                {yearlyOutcomes.map((outcome) => {
+                  const BAR_H = 144;
+                  const admittedH = Math.round((outcome.girlsAdmitted / maxAdmitted) * BAR_H);
+                  const reintegratedH = Math.round((outcome.girlsReintegrated / maxAdmitted) * BAR_H);
+                  return (
+                    <div key={outcome.year} className="flex-1 flex flex-col items-center gap-1.5">
+                      <span className="text-xs font-semibold text-stone-700 tabular-nums">
+                        {outcome.girlsAdmitted}
+                      </span>
+                      <svg
+                        viewBox={`0 0 1 ${BAR_H}`}
+                        preserveAspectRatio="none"
+                        className="w-full"
+                        height={BAR_H}
+                        aria-label={`${outcome.year}: ${outcome.girlsAdmitted} admitted, ${outcome.girlsReintegrated} reintegrated`}
+                      >
+                        <rect x="0" y={BAR_H - admittedH} width="1" height={admittedH} rx="0.05" className="fill-haven-teal-200" />
+                        <rect x="0" y={BAR_H - reintegratedH} width="1" height={reintegratedH} rx="0.05" className="fill-haven-teal-600" />
+                      </svg>
+                      <span className="text-xs font-medium text-stone-500">{outcome.year}</span>
+                    </div>
+                  );
+                })}
               </div>
-              <div className="flex items-center gap-2">
-                <div className="h-3 w-3 rounded-sm bg-haven-teal-200" aria-hidden="true" />
-                <span className="text-xs text-stone-600">Admitted</span>
+
+              <div className="flex items-center gap-6 mt-5 pt-4 border-t border-stone-200">
+                <div className="flex items-center gap-2">
+                  <div className="h-3 w-3 rounded-sm bg-haven-teal-600" aria-hidden="true" />
+                  <span className="text-xs text-stone-600">Reintegrated</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="h-3 w-3 rounded-sm bg-haven-teal-200" aria-hidden="true" />
+                  <span className="text-xs text-stone-600">Admitted</span>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       {/* ── Stories of Hope ─────────────────────────────────────────── */}
       <section className="bg-haven-teal-900 py-20 lg:py-24">
@@ -614,7 +517,7 @@ function DonorDashboardPage() {
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
-              to="/impact"
+              to="/donate"
               className="inline-flex items-center justify-center px-8 py-4
                          bg-haven-teal-600 text-white text-base font-semibold rounded-lg
                          transition-colors duration-150 hover:bg-haven-teal-700

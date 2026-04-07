@@ -10,6 +10,7 @@ import HomePage from './pages/HomePage'
 import DonorDashboardPage from './pages/DonorDashboardPage'
 import LoginPage from './pages/LoginPage'
 import PrivacyPage from './pages/PrivacyPage'
+import DonatePage from './pages/DonatePage'
 
 import AdminDashboardPage from './pages/admin/AdminDashboardPage'
 import DonorsContributionsPage from './pages/admin/DonorsContributionsPage'
@@ -27,6 +28,7 @@ const router = createBrowserRouter([
       { path: 'impact', element: <DonorDashboardPage /> },
       { path: 'login', element: <LoginPage /> },
       { path: 'privacy', element: <PrivacyPage /> },
+      { path: 'donate', element: <DonatePage /> },
     ],
   },
   {
