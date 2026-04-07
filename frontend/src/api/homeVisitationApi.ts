@@ -3,7 +3,7 @@ import type { HomeVisitation, HomeVisitationCreate, ResidentLookup } from '../ty
 
 export async function getVisitations(filters?: Record<string, string>): Promise<HomeVisitation[]> {
   const params = filters ? new URLSearchParams(filters) : undefined;
-  const response = await apiClient.get<HomeVisitation[]>('/homevisitation', { params });
+  const response = await apiClient.get<HomeVisitation[]>('/HomeVisitation', { params });
   return response.data;
 }
 
