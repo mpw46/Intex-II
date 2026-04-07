@@ -9,7 +9,7 @@ export interface HomeVisitation {
   purpose: string | null;
   observations: string | null;
   familyCooperationLevel: string | null;
-  safetyConcernsNoted: string | null;
+  safetyConcernsNoted: boolean | null;
   followUpNeeded: string | null;
   followUpNotes: string | null;
   visitOutcome: string | null;
@@ -25,7 +25,7 @@ export interface HomeVisitationCreate {
   purpose?: string;
   observations?: string;
   familyCooperationLevel?: string;
-  safetyConcernsNoted?: string;
+  safetyConcernsNoted?: boolean;
   followUpNeeded?: string;
   followUpNotes?: string;
   visitOutcome?: string;
