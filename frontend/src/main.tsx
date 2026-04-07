@@ -2,6 +2,7 @@ import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import './index.css'
+import { AuthProvider } from './context/AuthContext'
 
 import Layout from './components/Layout'
 import AdminLayout from './components/AdminLayout'
@@ -10,6 +11,8 @@ import HomePage from './pages/HomePage'
 import DonorDashboardPage from './pages/DonorDashboardPage'
 import LoginPage from './pages/LoginPage'
 import PrivacyPage from './pages/PrivacyPage'
+import RegisterPage from './pages/RegisterPage'
+import LogoutPage from './pages/LogoutPage'
 import DonatePage from './pages/DonatePage'
 
 import AdminDashboardPage from './pages/admin/AdminDashboardPage'
@@ -28,6 +31,8 @@ const router = createBrowserRouter([
       { path: 'impact', element: <DonorDashboardPage /> },
       { path: 'login', element: <LoginPage /> },
       { path: 'privacy', element: <PrivacyPage /> },
+      { path: 'register', element: <RegisterPage /> },
+      { path: 'logout', element: <LogoutPage /> }
       { path: 'donate', element: <DonatePage /> },
     ],
   },
@@ -41,12 +46,15 @@ const router = createBrowserRouter([
       { path: 'process-recording', element: <ProcessRecordingPage /> },
       { path: 'home-visitation', element: <HomeVisitationPage /> },
       { path: 'reports', element: <ReportsPage /> },
+      { path: 'logout', element: <LogoutPage /> }
     ],
   },
 ])
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <RouterProvider router={router} />
+    <AuthProvider>
+      <RouterProvider router={router} />
+    </AuthProvider>
   </StrictMode>,
 )
