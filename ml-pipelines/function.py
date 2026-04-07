@@ -120,6 +120,8 @@ def bin_categories(df):
     #bin categories that makes us less than 5% of the data into a new category called "other"
     for col in df.columns:
       # if the column is not numeric
+        if pd.api.types.is_datetime64_any_dtype(df[col]):
+            continue
         if not pd.api.types.is_numeric_dtype(df[col]):
           # the unique value counts are divided by total number of rows (percent of each category)
             value_counts = df[col].value_counts() / df.shape[0]

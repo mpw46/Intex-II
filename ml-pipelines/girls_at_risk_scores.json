@@ -1,0 +1,192 @@
+{
+  "as_of": "2027-01-01",
+  "model_artifact": "girls_at_risk_model.joblib",
+  "residents": [
+    {
+      "resident_id": 32,
+      "risk_probability": 0.46973498556488297,
+      "risk_level": "High",
+      "cutoff": "2027-01-01"
+    },
+    {
+      "resident_id": 53,
+      "risk_probability": 0.33077043150848234,
+      "risk_level": "High",
+      "cutoff": "2027-01-01"
+    },
+    {
+      "resident_id": 21,
+      "risk_probability": 0.32873040104549206,
+      "risk_level": "High",
+      "cutoff": "2027-01-01"
+    },
+    {
+      "resident_id": 46,
+      "risk_probability": 0.3169455444319588,
+      "risk_level": "High",
+      "cutoff": "2027-01-01"
+    },
+    {
+      "resident_id": 14,
+      "risk_probability": 0.307935508092408,
+      "risk_level": "High",
+      "cutoff": "2027-01-01"
+    },
+    {
+      "resident_id": 41,
+      "risk_probability": 0.2901559220687409,
+      "risk_level": "High",
+      "cutoff": "2027-01-01"
+    },
+    {
+      "resident_id": 3,
+      "risk_probability": 0.28029796391963147,
+      "risk_level": "High",
+      "cutoff": "2027-01-01"
+    },
+    {
+      "resident_id": 1,
+      "risk_probability": 0.26967276992181494,
+      "risk_level": "High",
+      "cutoff": "2027-01-01"
+    },
+    {
+      "resident_id": 4,
+      "risk_probability": 0.2614628450076015,
+      "risk_level": "High",
+      "cutoff": "2027-01-01"
+    },
+    {
+      "resident_id": 6,
+      "risk_probability": 0.2517387781347462,
+      "risk_level": "High",
+      "cutoff": "2027-01-01"
+    },
+    {
+      "resident_id": 8,
+      "risk_probability": 0.2502920327057925,
+      "risk_level": "High",
+      "cutoff": "2027-01-01"
+    },
+    {
+      "resident_id": 25,
+      "risk_probability": 0.22769288898338427,
+      "risk_level": "Medium",
+      "cutoff": "2027-01-01"
+    },
+    {
+      "resident_id": 19,
+      "risk_probability": 0.22320413703879918,
+      "risk_level": "Medium",
+      "cutoff": "2027-01-01"
+    },
+    {
+      "resident_id": 17,
+      "risk_probability": 0.21281704502363571,
+      "risk_level": "Medium",
+      "cutoff": "2027-01-01"
+    },
+    {
+      "resident_id": 27,
+      "risk_probability": 0.20646291727210195,
+      "risk_level": "Medium",
+      "cutoff": "2027-01-01"
+    },
+    {
+      "resident_id": 50,
+      "risk_probability": 0.1651220747954973,
+      "risk_level": "Medium",
+      "cutoff": "2027-01-01"
+    },
+    {
+      "resident_id": 42,
+      "risk_probability": 0.13847276828628885,
+      "risk_level": "Medium",
+      "cutoff": "2027-01-01"
+    },
+    {
+      "resident_id": 40,
+      "risk_probability": 0.13781609499225317,
+      "risk_level": "Medium",
+      "cutoff": "2027-01-01"
+    },
+    {
+      "resident_id": 12,
+      "risk_probability": 0.12614459556694402,
+      "risk_level": "Medium",
+      "cutoff": "2027-01-01"
+    },
+    {
+      "resident_id": 10,
+      "risk_probability": 0.11776358099217926,
+      "risk_level": "Medium",
+      "cutoff": "2027-01-01"
+    },
+    {
+      "resident_id": 55,
+      "risk_probability": 0.11530705455476566,
+      "risk_level": "Medium",
+      "cutoff": "2027-01-01"
+    },
+    {
+      "resident_id": 24,
+      "risk_probability": 0.10842557499636461,
+      "risk_level": "Low",
+      "cutoff": "2027-01-01"
+    },
+    {
+      "resident_id": 48,
+      "risk_probability": 0.10333201035911968,
+      "risk_level": "Low",
+      "cutoff": "2027-01-01"
+    },
+    {
+      "resident_id": 9,
+      "risk_probability": 0.09918405092131939,
+      "risk_level": "Low",
+      "cutoff": "2027-01-01"
+    },
+    {
+      "resident_id": 7,
+      "risk_probability": 0.08294828075139378,
+      "risk_level": "Low",
+      "cutoff": "2027-01-01"
+    },
+    {
+      "resident_id": 36,
+      "risk_probability": 0.06762791368223899,
+      "risk_level": "Low",
+      "cutoff": "2027-01-01"
+    },
+    {
+      "resident_id": 59,
+      "risk_probability": 0.056829824895416534,
+      "risk_level": "Low",
+      "cutoff": "2027-01-01"
+    },
+    {
+      "resident_id": 38,
+      "risk_probability": 0.047401100943423424,
+      "risk_level": "Low",
+      "cutoff": "2027-01-01"
+    },
+    {
+      "resident_id": 49,
+      "risk_probability": 0.023905265166204396,
+      "risk_level": "Low",
+      "cutoff": "2027-01-01"
+    },
+    {
+      "resident_id": 57,
+      "risk_probability": 0.016649607375174565,
+      "risk_level": "Low",
+      "cutoff": "2027-01-01"
+    },
+    {
+      "resident_id": 16,
+      "risk_probability": 0.0,
+      "risk_level": "Low",
+      "cutoff": "2027-01-01"
+    }
+  ]
+}
