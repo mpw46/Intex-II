@@ -1,6 +1,7 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { getVisitations } from '../../api/homeVisitationApi';
 import type { HomeVisitation, HomeVisitationCreate } from '../../types/homeVisitation';
-import { VISIT_TYPES, COOPERATION_LEVELS } from '../../types/homeVisitation';
+import { VISIT_TYPES, COOPERATION_LEVELS, VISIT_OUTCOMES } from '../../types/homeVisitation';
 
 // ---------------------------------------------------------------------------
 // Local display type — augments the DB-level ResidentLookup with UI fields
@@ -30,105 +31,6 @@ const fillerResidents: ResidentDisplay[] = [
   { residentId: 8, caseLabel: 'RES-2024-009', safehouseName: 'Haven House Manila',  assignedSocialWorker: 'Donna Lim',    caseStatus: 'Active'      },
 ];
 
-// TODO: Replace with GET /api/HomeVisitation
-const fillerVisitations: HomeVisitation[] = [
-  // — RES-2024-001 —
-  {
-    visitationId: 1, residentId: 1,
-    visitDate: '2026-04-03', socialWorker: 'Ana Reyes', visitType: 'Routine Follow-Up',
-    locationVisited: 'Family home — Quezon City',
-    familyMembersPresent: 'Mother, older brother',
-    purpose: 'Routine check-in and family readiness assessment',
-    observations: 'Home environment is stable. Mother is employed part-time and shows strong commitment to reunification. Older brother is supportive. No signs of substance abuse or domestic conflict.',
-    familyCooperationLevel: 'Cooperative',
-    safetyConcernsNoted: false,
-    followUpNeeded: 'Yes',
-    followUpNotes: 'Schedule reintegration assessment in 4 weeks. Confirm mother has completed parenting seminar.',
-    visitOutcome: 'Positive — family environment deemed suitable for transition planning',
-  },
-  {
-    visitationId: 2, residentId: 1,
-    visitDate: '2026-02-14', socialWorker: 'Ana Reyes', visitType: 'Initial Assessment',
-    locationVisited: 'Family home — Quezon City',
-    familyMembersPresent: 'Mother',
-    purpose: 'Initial family environment and safety assessment prior to reintegration planning',
-    observations: 'Mother resides in a one-room apartment. Space is small but clean. Mother was emotional during the visit and expressed regret. Income is limited but consistent.',
-    familyCooperationLevel: 'Cooperative',
-    safetyConcernsNoted: true,
-    followUpNeeded: 'Yes',
-    followUpNotes: 'Refer mother to DSWD livelihood program. Re-assess home environment in 6–8 weeks.',
-    visitOutcome: 'Assessment complete — livelihood support recommended before reintegration',
-  },
-  // — RES-2024-002 —
-  {
-    visitationId: 3, residentId: 2,
-    visitDate: '2026-03-22', socialWorker: 'Ben Cruz', visitType: 'Emergency',
-    locationVisited: 'Extended family home — Cebu City',
-    familyMembersPresent: 'Grandmother, aunt',
-    purpose: 'Emergency welfare check following report of potential contact by exploiter',
-    observations: 'Grandmother and aunt were cooperative. Home was calm. No evidence of contact or coercion. Grandmother was unaware of the concern and expressed shock.',
-    familyCooperationLevel: 'Cooperative',
-    safetyConcernsNoted: true,
-    followUpNeeded: 'Yes',
-    followUpNotes: 'Coordinate with law enforcement. Monitor social media activity. Increase check-in frequency.',
-    visitOutcome: 'No immediate danger found; precautionary monitoring escalated',
-  },
-  {
-    visitationId: 4, residentId: 2,
-    visitDate: '2026-01-10', socialWorker: 'Ben Cruz', visitType: 'Routine Follow-Up',
-    locationVisited: 'Extended family home — Cebu City',
-    familyMembersPresent: 'Grandmother',
-    purpose: 'Routine visit to assess family support network',
-    observations: 'Grandmother is the primary caregiver. She is elderly but physically capable. Home is tidy and adequately stocked. Grandmother expressed longing for the resident to return home.',
-    familyCooperationLevel: 'Cooperative',
-    safetyConcernsNoted: false,
-    followUpNeeded: 'No',
-    followUpNotes: null,
-    visitOutcome: 'Positive — grandmother remains a strong support figure',
-  },
-  // — RES-2024-003 —
-  {
-    visitationId: 5, residentId: 3,
-    visitDate: '2025-11-20', socialWorker: 'Celia Santos', visitType: 'Post-Placement Monitoring',
-    locationVisited: 'Reintegration home — Davao City',
-    familyMembersPresent: 'Mother, father, younger sibling',
-    purpose: 'Post-placement monitoring visit 60 days after reintegration',
-    observations: 'Resident is adjusting well. She is enrolled in school and attending regularly. Both parents are present and engaged. No signs of tension or abuse.',
-    familyCooperationLevel: 'Cooperative',
-    safetyConcernsNoted: false,
-    followUpNeeded: 'No',
-    followUpNotes: 'Case moving to formal closure pending 6-month follow-up.',
-    visitOutcome: 'Excellent — reintegration successful; case moving to closure',
-  },
-  // — RES-2024-004 —
-  {
-    visitationId: 6, residentId: 4,
-    visitDate: '2026-03-05', socialWorker: 'Ana Reyes', visitType: 'Reintegration Assessment',
-    locationVisited: 'Family home — Iloilo City',
-    familyMembersPresent: 'Father',
-    purpose: "Assess father's readiness and capacity to receive resident back home",
-    observations: 'Father was cooperative but appeared anxious. Home is adequately furnished. Father works as a tricycle driver. Father has attended only one of two required parenting seminars.',
-    familyCooperationLevel: 'Partially Cooperative',
-    safetyConcernsNoted: true,
-    followUpNeeded: 'Yes',
-    followUpNotes: 'Father must complete second parenting seminar before reintegration can proceed. Follow up in 3 weeks.',
-    visitOutcome: 'Conditional — reintegration on hold pending seminar completion',
-  },
-  // — RES-2024-005 —
-  {
-    visitationId: 7, residentId: 5,
-    visitDate: '2026-04-01', socialWorker: 'Donna Lim', visitType: 'Routine Follow-Up',
-    locationVisited: 'Extended family home — Manila',
-    familyMembersPresent: 'Aunt, uncle',
-    purpose: 'Check welfare of family unit identified as potential reintegration placement',
-    observations: 'Aunt and uncle were very welcoming. Home is clean and spacious. Aunt works as a teacher. Uncle is a barangay official. Both expressed strong willingness to act as guardians.',
-    familyCooperationLevel: 'Cooperative',
-    safetyConcernsNoted: false,
-    followUpNeeded: 'Yes',
-    followUpNotes: 'Begin formal kinship care application process with DSWD.',
-    visitOutcome: 'Positive — kinship placement appears highly suitable',
-  },
-];
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -145,10 +47,17 @@ const VISIT_TYPE_COLORS: Record<string, string> = {
 };
 
 const COOPERATION_COLORS: Record<string, string> = {
-  'Cooperative':           'bg-emerald-100 text-emerald-800 border-emerald-200',
-  'Partially Cooperative': 'bg-amber-100 text-amber-800 border-amber-200',
-  'Uncooperative':         'bg-orange-100 text-orange-800 border-orange-200',
-  'Hostile':               'bg-rose-100 text-rose-800 border-rose-200',
+  'Cooperative':        'bg-emerald-100 text-emerald-800 border-emerald-200',
+  'Highly Cooperative': 'bg-teal-100 text-teal-800 border-teal-200',
+  'Neutral':            'bg-stone-100 text-stone-600 border-stone-200',
+  'Uncooperative':      'bg-orange-100 text-orange-800 border-orange-200',
+};
+
+const VISIT_OUTCOME_COLORS: Record<string, string> = {
+  'Favorable':       'bg-emerald-100 text-emerald-800 border-emerald-200',
+  'Needs Improvement': 'bg-amber-100 text-amber-800 border-amber-200',
+  'Unfavorable':     'bg-rose-100 text-rose-800 border-rose-200',
+  'Inconclusive':    'bg-stone-100 text-stone-600 border-stone-200',
 };
 
 function makeEmptyForm(residentId: number, socialWorker: string): HomeVisitationCreate {
@@ -163,7 +72,7 @@ function makeEmptyForm(residentId: number, socialWorker: string): HomeVisitation
     observations: '',
     familyCooperationLevel: 'Cooperative',
     safetyConcernsNoted: false,
-    followUpNeeded: 'No',
+    followUpNeeded: false,
     followUpNotes: '',
     visitOutcome: '',
   };
@@ -204,6 +113,17 @@ function CooperationBadge({ level }: { level: string | null }) {
   );
 }
 
+function VisitOutcomeBadge({ outcome }: { outcome: string | null }) {
+  if (!outcome) return null;
+  const cls = VISIT_OUTCOME_COLORS[outcome] ?? 'bg-stone-100 text-stone-700 border-stone-200';
+  return (
+    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px]
+      font-semibold uppercase tracking-wide border ${cls}`}>
+      {outcome}
+    </span>
+  );
+}
+
 // ---------------------------------------------------------------------------
 // Detail row used in the view modal
 // ---------------------------------------------------------------------------
@@ -223,7 +143,16 @@ function DetailRow({ label, children }: { label: string; children: React.ReactNo
 
 export default function HomeVisitationPage() {
   const [residents]   = useState<ResidentDisplay[]>(fillerResidents);
-  const [visitations, setVisitations] = useState<HomeVisitation[]>(fillerVisitations);
+  const [visitations, setVisitations] = useState<HomeVisitation[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError]     = useState<string | null>(null);
+
+  useEffect(() => {
+    getVisitations()
+      .then(setVisitations)
+      .catch(() => setError('Failed to load visitations. Is the backend running?'))
+      .finally(() => setLoading(false));
+  }, []);
 
   const [residentSearch,    setResidentSearch]    = useState('');
   const [selectedResident,  setSelectedResident]  = useState<ResidentDisplay | null>(null);
@@ -282,7 +211,7 @@ export default function HomeVisitationPage() {
       familyCooperationLevel: form.familyCooperationLevel ?? null,
       safetyConcernsNoted:   form.safetyConcernsNoted ?? false,
       followUpNeeded:        form.followUpNeeded ?? null,
-      followUpNotes:         form.followUpNeeded === 'Yes' ? (form.followUpNotes ?? null) : null,
+      followUpNotes:         form.followUpNeeded ? (form.followUpNotes ?? null) : null,
       visitOutcome:          form.visitOutcome ?? null,
     };
     setVisitations(prev => [newVisit, ...prev]);
@@ -308,6 +237,18 @@ export default function HomeVisitationPage() {
   // -------------------------------------------------------------------------
   // Render
   // -------------------------------------------------------------------------
+
+  if (loading) return (
+    <div className="flex items-center justify-center h-64 text-stone-400 text-sm">
+      Loading visitations…
+    </div>
+  );
+
+  if (error) return (
+    <div className="flex items-center justify-center h-64 text-rose-600 text-sm">
+      {error}
+    </div>
+  );
 
   return (
     <div className="px-4 sm:px-6 py-6 max-w-7xl mx-auto flex flex-col lg:flex-row gap-6">
@@ -480,12 +421,14 @@ export default function HomeVisitationPage() {
                         </div>
                       )}
                       {visit.visitOutcome && (
-                        <div className="sm:col-span-2">
+                        <div>
                           <span className="text-xs font-semibold text-stone-400 uppercase tracking-wide">Outcome</span>
-                          <p className="text-stone-700 mt-0.5 line-clamp-2">{visit.visitOutcome}</p>
+                          <div className="mt-1">
+                            <VisitOutcomeBadge outcome={visit.visitOutcome} />
+                          </div>
                         </div>
                       )}
-                      {visit.followUpNeeded === 'Yes' && visit.followUpNotes && (
+                      {visit.followUpNeeded && visit.followUpNotes && (
                         <div className="sm:col-span-2 mt-1 p-3 bg-amber-50 border border-amber-200 rounded-lg">
                           <p className="text-xs font-semibold text-amber-700 uppercase tracking-wide mb-1">Follow-up Required</p>
                           <p className="text-xs text-amber-900">{visit.followUpNotes}</p>
@@ -641,26 +584,29 @@ export default function HomeVisitationPage() {
                 <label htmlFor="hv-outcome" className="block text-xs font-semibold text-stone-600 uppercase tracking-wide mb-1.5">
                   Visit Outcome
                 </label>
-                <textarea id="hv-outcome" rows={2} placeholder="Brief summary of the visit outcome…"
-                  value={form.visitOutcome ?? ''}
+                <select id="hv-outcome" value={form.visitOutcome ?? ''}
                   onChange={e => setForm(f => ({ ...f, visitOutcome: e.target.value }))}
-                  className={textareaCls} />
-              </div>
-
-              {/* Follow-up */}
-              <div>
-                <label htmlFor="hv-followUp" className="block text-xs font-semibold text-stone-600 uppercase tracking-wide mb-1.5">
-                  Follow-up Required?
-                </label>
-                <select id="hv-followUp" value={form.followUpNeeded ?? 'No'}
-                  onChange={e => setForm(f => ({ ...f, followUpNeeded: e.target.value }))}
                   className={inputCls}>
-                  <option value="No">No</option>
-                  <option value="Yes">Yes</option>
+                  <option value="">— Select outcome —</option>
+                  {VISIT_OUTCOMES.map(o => <option key={o} value={o}>{o}</option>)}
                 </select>
               </div>
 
-              {form.followUpNeeded === 'Yes' && (
+              {/* Follow-up */}
+              <div className="flex items-center gap-3">
+                <input
+                  id="hv-followUp"
+                  type="checkbox"
+                  checked={form.followUpNeeded ?? false}
+                  onChange={e => setForm(f => ({ ...f, followUpNeeded: e.target.checked }))}
+                  className="h-4 w-4 rounded border-stone-300 text-haven-teal-600 focus:ring-haven-teal-500"
+                />
+                <label htmlFor="hv-followUp" className="text-sm font-medium text-stone-700">
+                  Follow-up required
+                </label>
+              </div>
+
+              {form.followUpNeeded && (
                 <div>
                   <label htmlFor="hv-followUpNotes" className="block text-xs font-semibold text-stone-600 uppercase tracking-wide mb-1.5">
                     Follow-up Notes
@@ -733,9 +679,17 @@ export default function HomeVisitationPage() {
                   ? <span className="text-rose-700 font-medium">Yes</span>
                   : <span className="text-stone-500">No</span>}
               </DetailRow>
-              <DetailRow label="Outcome">{selectedVisit.visitOutcome ?? '—'}</DetailRow>
-              <DetailRow label="Follow-up">{selectedVisit.followUpNeeded ?? '—'}</DetailRow>
-              {selectedVisit.followUpNeeded === 'Yes' && (
+              <DetailRow label="Outcome">
+                {selectedVisit.visitOutcome
+                  ? <VisitOutcomeBadge outcome={selectedVisit.visitOutcome} />
+                  : '—'}
+              </DetailRow>
+              <DetailRow label="Follow-up">
+                {selectedVisit.followUpNeeded
+                  ? <span className="text-amber-700 font-medium">Yes</span>
+                  : <span className="text-stone-500">No</span>}
+              </DetailRow>
+              {selectedVisit.followUpNeeded && (
                 <DetailRow label="Follow-up Notes">{selectedVisit.followUpNotes ?? '—'}</DetailRow>
               )}
             </dl>

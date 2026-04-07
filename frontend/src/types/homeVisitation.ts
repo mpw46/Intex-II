@@ -10,7 +10,7 @@ export interface HomeVisitation {
   observations: string | null;
   familyCooperationLevel: string | null;
   safetyConcernsNoted: boolean | null;
-  followUpNeeded: string | null;
+  followUpNeeded: boolean | null;
   followUpNotes: string | null;
   visitOutcome: string | null;
 }
@@ -26,7 +26,7 @@ export interface HomeVisitationCreate {
   observations?: string;
   familyCooperationLevel?: string;
   safetyConcernsNoted?: boolean;
-  followUpNeeded?: string;
+  followUpNeeded?: boolean;
   followUpNotes?: string;
   visitOutcome?: string;
 }
@@ -41,9 +41,16 @@ export const VISIT_TYPES = [
 
 export const COOPERATION_LEVELS = [
   'Cooperative',
-  'Partially Cooperative',
+  'Highly Cooperative',
+  'Neutral',
   'Uncooperative',
-  'Hostile',
+] as const;
+
+export const VISIT_OUTCOMES = [
+  'Favorable',
+  'Needs Improvement',
+  'Unfavorable',
+  'Inconclusive',
 ] as const;
 
 export interface ResidentLookup {
