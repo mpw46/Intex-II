@@ -22,39 +22,46 @@ namespace Intex2.API.Controllers
             [FromQuery] int? residentId,
             [FromQuery] string? socialWorker)
         {
-            var query = _context.HomeVisitations.AsQueryable();
+            try
+            {
+                var query = _context.HomeVisitations.AsQueryable();
 
-            if (!string.IsNullOrEmpty(visitType))
-                query = query.Where(h => h.VisitType == visitType);
+                if (!string.IsNullOrEmpty(visitType))
+                    query = query.Where(h => h.VisitType == visitType);
 
-            if (residentId.HasValue)
-                query = query.Where(h => h.ResidentId == residentId.Value);
+                if (residentId.HasValue)
+                    query = query.Where(h => h.ResidentId == residentId.Value);
 
-            if (!string.IsNullOrEmpty(socialWorker))
-                query = query.Where(h => h.SocialWorker != null && h.SocialWorker.Contains(socialWorker));
+                if (!string.IsNullOrEmpty(socialWorker))
+                    query = query.Where(h => h.SocialWorker != null && h.SocialWorker.Contains(socialWorker));
 
-            var results = await query
-                .OrderByDescending(h => h.VisitDate)
-                .Select(h => new HomeVisitationDto
-                {
-                    VisitationId = h.VisitationId,
-                    ResidentId = h.ResidentId,
-                    VisitDate = h.VisitDate,
-                    SocialWorker = h.SocialWorker,
-                    VisitType = h.VisitType,
-                    LocationVisited = h.LocationVisited,
-                    FamilyMembersPresent = h.FamilyMembersPresent,
-                    Purpose = h.Purpose,
-                    Observations = h.Observations,
-                    FamilyCooperationLevel = h.FamilyCooperationLevel,
-                    SafetyConcernsNoted = h.SafetyConcernsNoted,
-                    FollowUpNeeded = h.FollowUpNeeded,
-                    FollowUpNotes = h.FollowUpNotes,
-                    VisitOutcome = h.VisitOutcome,
-                })
-                .ToListAsync();
+                var results = await query
+                    .OrderByDescending(h => h.VisitDate)
+                    .Select(h => new HomeVisitationDto
+                    {
+                        VisitationId = h.VisitationId,
+                        ResidentId = h.ResidentId,
+                        VisitDate = h.VisitDate,
+                        SocialWorker = h.SocialWorker,
+                        VisitType = h.VisitType,
+                        LocationVisited = h.LocationVisited,
+                        FamilyMembersPresent = h.FamilyMembersPresent,
+                        Purpose = h.Purpose,
+                        Observations = h.Observations,
+                        FamilyCooperationLevel = h.FamilyCooperationLevel,
+                        SafetyConcernsNoted = h.SafetyConcernsNoted,
+                        FollowUpNeeded = h.FollowUpNeeded,
+                        FollowUpNotes = h.FollowUpNotes,
+                        VisitOutcome = h.VisitOutcome,
+                    })
+                    .ToListAsync();
 
-            return Ok(results);
+                return Ok(results);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { error = ex.Message, inner = ex.InnerException?.Message });
+            }
         }
 
         [HttpGet("{id}")]
