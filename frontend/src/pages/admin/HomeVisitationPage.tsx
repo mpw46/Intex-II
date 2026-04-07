@@ -71,8 +71,8 @@ function makeEmptyForm(residentId: number, socialWorker: string): HomeVisitation
     purpose: '',
     observations: '',
     familyCooperationLevel: 'Cooperative',
-    safetyConcernsNoted: false,
-    followUpNeeded: false,
+    safetyConcernsNoted: 'False',
+    followUpNeeded: 'False',
     followUpNotes: '',
     visitOutcome: '',
   };
@@ -209,9 +209,9 @@ export default function HomeVisitationPage() {
       purpose:               form.purpose ?? null,
       observations:          form.observations ?? null,
       familyCooperationLevel: form.familyCooperationLevel ?? null,
-      safetyConcernsNoted:   form.safetyConcernsNoted ?? false,
-      followUpNeeded:        form.followUpNeeded ?? null,
-      followUpNotes:         form.followUpNeeded ? (form.followUpNotes ?? null) : null,
+      safetyConcernsNoted:   form.safetyConcernsNoted ?? 'False',
+      followUpNeeded:        form.followUpNeeded ?? 'False',
+      followUpNotes:         form.followUpNeeded === 'True' ? (form.followUpNotes ?? null) : null,
       visitOutcome:          form.visitOutcome ?? null,
     };
     setVisitations(prev => [newVisit, ...prev]);
@@ -373,7 +373,7 @@ export default function HomeVisitationPage() {
                         <span className="text-xs text-stone-400">·</span>
                         <span className="text-sm text-stone-600">{visit.socialWorker}</span>
                         <VisitTypeBadge type={visit.visitType} />
-                        {visit.safetyConcernsNoted && (
+                        {visit.safetyConcernsNoted === 'True' && (
                           <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px]
                             font-semibold uppercase tracking-wide border bg-rose-100 text-rose-800 border-rose-200">
                             <AlertIcon /> Safety Concern
@@ -428,7 +428,7 @@ export default function HomeVisitationPage() {
                           </div>
                         </div>
                       )}
-                      {visit.followUpNeeded && visit.followUpNotes && (
+                      {visit.followUpNeeded === 'True' && visit.followUpNotes && (
                         <div className="sm:col-span-2 mt-1 p-3 bg-amber-50 border border-amber-200 rounded-lg">
                           <p className="text-xs font-semibold text-amber-700 uppercase tracking-wide mb-1">Follow-up Required</p>
                           <p className="text-xs text-amber-900">{visit.followUpNotes}</p>
@@ -569,8 +569,8 @@ export default function HomeVisitationPage() {
                   <input
                     id="safetyConcern"
                     type="checkbox"
-                    checked={form.safetyConcernsNoted ?? false}
-                    onChange={e => setForm(f => ({ ...f, safetyConcernsNoted: e.target.checked }))}
+                    checked={form.safetyConcernsNoted === 'True'}
+                    onChange={e => setForm(f => ({ ...f, safetyConcernsNoted: e.target.checked ? 'True' : 'False' }))}
                     className="h-4 w-4 rounded border-stone-300 text-rose-600 focus:ring-rose-500"
                   />
                   <label htmlFor="safetyConcern" className="text-sm font-medium text-stone-700">
@@ -597,8 +597,8 @@ export default function HomeVisitationPage() {
                 <input
                   id="hv-followUp"
                   type="checkbox"
-                  checked={form.followUpNeeded ?? false}
-                  onChange={e => setForm(f => ({ ...f, followUpNeeded: e.target.checked }))}
+                  checked={form.followUpNeeded === 'True'}
+                  onChange={e => setForm(f => ({ ...f, followUpNeeded: e.target.checked ? 'True' : 'False' }))}
                   className="h-4 w-4 rounded border-stone-300 text-haven-teal-600 focus:ring-haven-teal-500"
                 />
                 <label htmlFor="hv-followUp" className="text-sm font-medium text-stone-700">
@@ -606,7 +606,7 @@ export default function HomeVisitationPage() {
                 </label>
               </div>
 
-              {form.followUpNeeded && (
+              {form.followUpNeeded === 'True' && (
                 <div>
                   <label htmlFor="hv-followUpNotes" className="block text-xs font-semibold text-stone-600 uppercase tracking-wide mb-1.5">
                     Follow-up Notes
@@ -649,7 +649,7 @@ export default function HomeVisitationPage() {
               <div className="flex flex-wrap items-center gap-2">
                 <span className="text-base font-bold text-stone-900">{selectedVisit.visitDate}</span>
                 <VisitTypeBadge type={selectedVisit.visitType} />
-                {selectedVisit.safetyConcernsNoted && (
+                {selectedVisit.safetyConcernsNoted === 'True' && (
                   <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px]
                     font-semibold uppercase tracking-wide border bg-rose-100 text-rose-800 border-rose-200">
                     <AlertIcon /> Safety Concern
@@ -675,7 +675,7 @@ export default function HomeVisitationPage() {
                   : '—'}
               </DetailRow>
               <DetailRow label="Safety Concern">
-                {selectedVisit.safetyConcernsNoted
+                {selectedVisit.safetyConcernsNoted === 'True'
                   ? <span className="text-rose-700 font-medium">Yes</span>
                   : <span className="text-stone-500">No</span>}
               </DetailRow>
@@ -685,11 +685,11 @@ export default function HomeVisitationPage() {
                   : '—'}
               </DetailRow>
               <DetailRow label="Follow-up">
-                {selectedVisit.followUpNeeded
+                {selectedVisit.followUpNeeded === 'True'
                   ? <span className="text-amber-700 font-medium">Yes</span>
                   : <span className="text-stone-500">No</span>}
               </DetailRow>
-              {selectedVisit.followUpNeeded && (
+              {selectedVisit.followUpNeeded === 'True' && (
                 <DetailRow label="Follow-up Notes">{selectedVisit.followUpNotes ?? '—'}</DetailRow>
               )}
             </dl>
