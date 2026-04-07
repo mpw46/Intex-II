@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react';
-import { getVisitations } from '../../api/homeVisitationApi';
+import { getVisitations, getResidents, createVisitation, deleteVisitation } from '../../api/homeVisitationApi';
+import { getSafehouses, buildSafehouseNameMap } from '../../api/safehousesApi';
 import type { HomeVisitation, HomeVisitationCreate } from '../../types/homeVisitation';
 import { VISIT_TYPES, COOPERATION_LEVELS, VISIT_OUTCOMES } from '../../types/homeVisitation';
 
 // ---------------------------------------------------------------------------
-// Local display type — augments the DB-level ResidentLookup with UI fields
+// Local display type — maps ResidentDto + Safehouse lookup to UI fields
 // ---------------------------------------------------------------------------
 
 interface ResidentDisplay {
@@ -14,22 +15,6 @@ interface ResidentDisplay {
   assignedSocialWorker: string;
   caseStatus: string;
 }
-
-// ---------------------------------------------------------------------------
-// Filler data
-// ---------------------------------------------------------------------------
-
-// TODO: Replace with GET /api/residents
-const fillerResidents: ResidentDisplay[] = [
-  { residentId: 1, caseLabel: 'RES-2024-001', safehouseName: 'Haven House Manila',  assignedSocialWorker: 'Ana Reyes',    caseStatus: 'Active'      },
-  { residentId: 2, caseLabel: 'RES-2024-002', safehouseName: 'Light of Hope Cebu',  assignedSocialWorker: 'Ben Cruz',     caseStatus: 'Active'      },
-  { residentId: 3, caseLabel: 'RES-2024-003', safehouseName: 'New Dawn Davao',      assignedSocialWorker: 'Celia Santos', caseStatus: 'Closed'      },
-  { residentId: 4, caseLabel: 'RES-2024-004', safehouseName: 'Safe Harbor Iloilo',  assignedSocialWorker: 'Ana Reyes',    caseStatus: 'Active'      },
-  { residentId: 5, caseLabel: 'RES-2024-005', safehouseName: 'Haven House Manila',  assignedSocialWorker: 'Donna Lim',    caseStatus: 'Active'      },
-  { residentId: 6, caseLabel: 'RES-2023-018', safehouseName: 'Light of Hope Cebu',  assignedSocialWorker: 'Ben Cruz',     caseStatus: 'Transferred' },
-  { residentId: 7, caseLabel: 'RES-2025-001', safehouseName: 'New Dawn Davao',      assignedSocialWorker: 'Celia Santos', caseStatus: 'Active'      },
-  { residentId: 8, caseLabel: 'RES-2024-009', safehouseName: 'Haven House Manila',  assignedSocialWorker: 'Donna Lim',    caseStatus: 'Active'      },
-];
 
 
 // ---------------------------------------------------------------------------
@@ -142,15 +127,28 @@ function DetailRow({ label, children }: { label: string; children: React.ReactNo
 // ---------------------------------------------------------------------------
 
 export default function HomeVisitationPage() {
-  const [residents]   = useState<ResidentDisplay[]>(fillerResidents);
+  const [residents, setResidents] = useState<ResidentDisplay[]>([]);
   const [visitations, setVisitations] = useState<HomeVisitation[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError]     = useState<string | null>(null);
 
   useEffect(() => {
-    getVisitations()
-      .then(setVisitations)
-      .catch(() => setError('Failed to load visitations. Is the backend running?'))
+    Promise.all([getVisitations(), getResidents(), getSafehouses()])
+      .then(([visits, rawResidents, safehouses]) => {
+        setVisitations(visits);
+        const shMap = buildSafehouseNameMap(safehouses);
+        const mapped: ResidentDisplay[] = rawResidents
+          .filter(r => r.residentId != null)
+          .map(r => ({
+            residentId:           r.residentId!,
+            caseLabel:            r.caseControlNo ?? `RES-${r.residentId}`,
+            safehouseName:        (r.safehouseId != null ? shMap.get(r.safehouseId) : undefined) ?? 'Unknown',
+            assignedSocialWorker: r.assignedSocialWorker ?? '',
+            caseStatus:           r.caseStatus ?? '',
+          }));
+        setResidents(mapped);
+      })
+      .catch(() => setError('Failed to load data. Is the backend running?'))
       .finally(() => setLoading(false));
   }, []);
 
@@ -198,31 +196,17 @@ export default function HomeVisitationPage() {
 
   function saveForm(e: { preventDefault(): void }) {
     e.preventDefault();
-    const newVisit: HomeVisitation = {
-      visitationId: Date.now(),
-      residentId:            form.residentId,
-      visitDate:             form.visitDate,
-      socialWorker:          form.socialWorker,
-      visitType:             form.visitType,
-      locationVisited:       form.locationVisited ?? null,
-      familyMembersPresent:  form.familyMembersPresent ?? null,
-      purpose:               form.purpose ?? null,
-      observations:          form.observations ?? null,
-      familyCooperationLevel: form.familyCooperationLevel ?? null,
-      safetyConcernsNoted:   form.safetyConcernsNoted ?? 'False',
-      followUpNeeded:        form.followUpNeeded ?? 'False',
-      followUpNotes:         form.followUpNeeded === 'True' ? (form.followUpNotes ?? null) : null,
-      visitOutcome:          form.visitOutcome ?? null,
-    };
-    setVisitations(prev => [newVisit, ...prev]);
-    // TODO: POST /api/homevisitation { body: form }
-    setModal(null);
+    createVisitation(form).then(saved => {
+      setVisitations(prev => [saved, ...prev]);
+      setModal(null);
+    });
   }
 
   function confirmDelete() {
     if (selectedVisit) {
-      setVisitations(prev => prev.filter(v => v.visitationId !== selectedVisit.visitationId));
-      // TODO: DELETE /api/homevisitation/${selectedVisit.visitationId}
+      deleteVisitation(selectedVisit.visitationId).then(() => {
+        setVisitations(prev => prev.filter(v => v.visitationId !== selectedVisit.visitationId));
+      });
     }
     setModal(null);
     setSelectedVisit(null);

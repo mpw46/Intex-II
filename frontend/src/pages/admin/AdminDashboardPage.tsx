@@ -1,4 +1,10 @@
-import { type ReactElement } from 'react';
+import { type ReactElement, useState, useEffect } from 'react';
+import { getResidents } from '../../api/residentsApi';
+import { getSafehouses } from '../../api/safehousesApi';
+import { getSupporters } from '../../api/supportersApi';
+import { getDonations } from '../../api/donationsApi';
+import { getInterventionPlans, getMonthlyMetrics } from '../../api/reportsApi';
+import { getVisitations } from '../../api/homeVisitationApi';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -11,37 +17,30 @@ interface ActivityItem {
   time: string;
 }
 
-// ---------------------------------------------------------------------------
-// Filler data — replace each block with the indicated API call
-// ---------------------------------------------------------------------------
+interface SafehouseRow {
+  name: string;
+  region: string;
+  capacity: number;
+  current: number;
+}
 
-// TODO: Replace with GET /api/admin/dashboard-stats
-const dashboardStats = {
-  activeResidents: 42,
-  activeResidentsLastMonth: 39,
-  activeDonors: 89,
-  activeDonorsLastMonth: 84,
-  donationsThisMonth: 284500,
-  donationsLastMonth: 253200,
-  upcomingConferences: 7,
-};
+interface DashboardStats {
+  activeResidents: number;
+  activeResidentsLastMonth: number;
+  activeDonors: number;
+  donationsThisMonth: number;
+  upcomingConferences: number;
+}
 
-// TODO: Replace with GET /api/safehouses
-const safehouses = [
-  { name: 'Haven House Manila',    region: 'Luzon',    capacity: 15, current: 12 },
-  { name: 'Light of Hope Cebu',    region: 'Visayas',  capacity: 12, current: 10 },
-  { name: 'New Dawn Davao',        region: 'Mindanao', capacity: 10, current: 8  },
-  { name: 'Safe Harbor Iloilo',    region: 'Visayas',  capacity: 12, current: 12 },
-];
-
-// TODO: Replace with GET /api/admin/recent-activity
-const recentActivity: ActivityItem[] = [
-  { id: '1', type: 'donation',    description: 'Global Care Corp. donated ₱250,000',                time: '2 hours ago' },
-  { id: '2', type: 'resident',    description: 'New resident admitted — Light of Hope Cebu',         time: '5 hours ago' },
-  { id: '3', type: 'conference',  description: 'Case conference scheduled for RES-2024-007',         time: 'Yesterday'   },
-  { id: '4', type: 'visit',       description: 'Home visit completed — RES-2024-012',                time: 'Yesterday'   },
-  { id: '5', type: 'donation',    description: 'Reyes Family Foundation recurring donation received', time: '2 days ago'  },
-];
+function relativeTime(dateStr: string): string {
+  const diff = Date.now() - new Date(dateStr).getTime();
+  const hours = Math.floor(diff / 3_600_000);
+  if (hours < 1) return 'Just now';
+  if (hours < 24) return `${hours} hour${hours !== 1 ? 's' : ''} ago`;
+  const days = Math.floor(hours / 24);
+  if (days === 1) return 'Yesterday';
+  return `${days} days ago`;
+}
 
 // ---------------------------------------------------------------------------
 // Lookup maps
@@ -60,11 +59,6 @@ const ACTIVITY_DOT: Record<ActivityItem['type'], string> = {
 
 function formatPHP(n: number) {
   return `₱${n.toLocaleString()}`;
-}
-
-function pctChange(current: number, previous: number) {
-  if (previous === 0) return 0;
-  return Math.round(((current - previous) / previous) * 100);
 }
 
 // ---------------------------------------------------------------------------
@@ -113,8 +107,111 @@ function CalendarIcon() { return <svg className="h-5 w-5" viewBox="0 0 24 24" fi
 // ---------------------------------------------------------------------------
 
 export default function AdminDashboardPage() {
-  const resDelta = dashboardStats.activeResidents - dashboardStats.activeResidentsLastMonth;
-  const donDelta = pctChange(dashboardStats.donationsThisMonth, dashboardStats.donationsLastMonth);
+  const [stats, setStats] = useState<DashboardStats>({
+    activeResidents: 0, activeResidentsLastMonth: 0,
+    activeDonors: 0, donationsThisMonth: 0, upcomingConferences: 0,
+  });
+  const [safehouses, setSafehouses] = useState<SafehouseRow[]>([]);
+  const [recentActivity, setRecentActivity] = useState<ActivityItem[]>([]);
+
+  useEffect(() => {
+    const now = new Date();
+    const thisMonthStart = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().substring(0, 10);
+    const lastMonthStart = new Date(now.getFullYear(), now.getMonth() - 1, 1).toISOString().substring(0, 10);
+    const lastMonthEnd   = new Date(now.getFullYear(), now.getMonth(), 0).toISOString().substring(0, 10);
+
+    Promise.all([
+      getResidents({ caseStatus: 'Active' }),
+      getSupporters({ status: 'Active' }),
+      getDonations(),
+      getInterventionPlans(),
+      getSafehouses(),
+      getMonthlyMetrics(),
+      getVisitations(),
+    ]).then(([activeRes, activeSup, allDonations, plans, shData, metrics, visits]) => {
+      // KPIs
+      const donThisMonth = allDonations
+        .filter(d => d.donationDate && d.donationDate >= thisMonthStart)
+        .reduce((sum, d) => sum + (d.estimatedValue ?? 0), 0);
+
+      const upcoming = plans.filter(p =>
+        p.caseConferenceDate && p.caseConferenceDate >= now.toISOString().substring(0, 10)
+      ).length;
+
+      // Prior-month active residents from monthly metrics
+      const lastMonthMetrics = metrics.filter(m =>
+        m.monthStart && m.monthStart >= lastMonthStart && m.monthStart <= lastMonthEnd
+      );
+      const activeResLastMonth = lastMonthMetrics.reduce((s, m) => s + (m.activeResidents ?? 0), 0);
+
+      setStats({
+        activeResidents: activeRes.length,
+        activeResidentsLastMonth: activeResLastMonth,
+        activeDonors: activeSup.length,
+        donationsThisMonth: donThisMonth,
+        upcomingConferences: upcoming,
+      });
+
+      setSafehouses(shData.map(s => ({
+        name: s.name ?? '',
+        region: s.region ?? '',
+        capacity: s.capacityGirls ?? 0,
+        current: s.currentOccupancy ?? 0,
+      })));
+
+      // Recent activity: merge latest records from 3 tables and sort
+      const donActivity: ActivityItem[] = allDonations
+        .filter(d => d.donationDate)
+        .sort((a, b) => (b.donationDate ?? '').localeCompare(a.donationDate ?? ''))
+        .slice(0, 3)
+        .map(d => ({
+          id: `don-${d.donationId}`,
+          type: 'donation' as const,
+          description: `New ${d.donationType?.toLowerCase() ?? ''} donation received`,
+          time: relativeTime(d.donationDate!),
+        }));
+
+      const resActivity: ActivityItem[] = activeRes
+        .filter(r => r.dateOfAdmission)
+        .sort((a, b) => (b.dateOfAdmission ?? '').localeCompare(a.dateOfAdmission ?? ''))
+        .slice(0, 2)
+        .map(r => ({
+          id: `res-${r.residentId}`,
+          type: 'resident' as const,
+          description: `New resident case ${r.caseControlNo ?? r.residentId} opened`,
+          time: relativeTime(r.dateOfAdmission!),
+        }));
+
+      const visitActivity: ActivityItem[] = visits
+        .filter(v => v.visitDate)
+        .sort((a, b) => (b.visitDate ?? '').localeCompare(a.visitDate ?? ''))
+        .slice(0, 2)
+        .map(v => ({
+          id: `vis-${v.visitationId}`,
+          type: 'visit' as const,
+          description: `Home visit completed — ${v.visitType ?? 'Field visit'}`,
+          time: relativeTime(v.visitDate!),
+        }));
+
+      const confActivity: ActivityItem[] = plans
+        .filter(p => p.caseConferenceDate)
+        .sort((a, b) => (b.caseConferenceDate ?? '').localeCompare(a.caseConferenceDate ?? ''))
+        .slice(0, 2)
+        .map(p => ({
+          id: `conf-${p.planId}`,
+          type: 'conference' as const,
+          description: `Case conference — ${p.planCategory ?? 'scheduled'}`,
+          time: relativeTime(p.caseConferenceDate!),
+        }));
+
+      const all = [...donActivity, ...resActivity, ...visitActivity, ...confActivity]
+        .sort((a, b) => a.time.localeCompare(b.time))
+        .slice(0, 5);
+      setRecentActivity(all);
+    });
+  }, []);
+
+  const resDelta = stats.activeResidents - stats.activeResidentsLastMonth;
 
   return (
     <div className="px-4 sm:px-6 py-6 max-w-7xl mx-auto">
@@ -123,28 +220,24 @@ export default function AdminDashboardPage() {
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
         <KpiCard
           label="Active Residents"
-          value={String(dashboardStats.activeResidents)}
-          change={`${Math.abs(resDelta)} this month`}
+          value={String(stats.activeResidents)}
+          change={resDelta !== 0 ? `${Math.abs(resDelta)} vs last month` : undefined}
           positive={resDelta >= 0}
           icon={<PersonIcon />}
         />
         <KpiCard
           label="Active Donors"
-          value={String(dashboardStats.activeDonors)}
-          change={`${Math.abs(dashboardStats.activeDonors - dashboardStats.activeDonorsLastMonth)} vs last month`}
-          positive={dashboardStats.activeDonors >= dashboardStats.activeDonorsLastMonth}
+          value={String(stats.activeDonors)}
           icon={<HeartIcon />}
         />
         <KpiCard
           label="Donations This Month"
-          value={formatPHP(dashboardStats.donationsThisMonth)}
-          change={`${Math.abs(donDelta)}%`}
-          positive={donDelta >= 0}
+          value={formatPHP(stats.donationsThisMonth)}
           icon={<PhilIcon />}
         />
         <KpiCard
           label="Upcoming Conferences"
-          value={String(dashboardStats.upcomingConferences)}
+          value={String(stats.upcomingConferences)}
           icon={<CalendarIcon />}
         />
       </div>

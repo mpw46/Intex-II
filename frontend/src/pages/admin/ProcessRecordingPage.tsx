@@ -1,4 +1,8 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { getResidents } from '../../api/residentsApi';
+import { getSafehouses, buildSafehouseNameMap } from '../../api/safehousesApi';
+import { getRecordings, createRecording, deleteRecording } from '../../api/processRecordingsApi';
+import { isTruthy } from '../../types/resident';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -37,37 +41,13 @@ interface ProcessRecordingFormDraft {
 
 // Minimal resident shape for the search panel
 interface ResidentSummary {
+  residentId: number;
   caseId: string;
   safehouse: string;
   assignedSocialWorker: string;
   admissionDate: string;
 }
 
-// ---------------------------------------------------------------------------
-// Filler data
-// ---------------------------------------------------------------------------
-
-// TODO: Replace with GET /api/residents?fields=caseId,safehouse,socialWorker,admissionDate
-const fillerResidents: ResidentSummary[] = [
-  { caseId: 'RES-2024-001', safehouse: 'Haven House Manila',  assignedSocialWorker: 'Ana Reyes',    admissionDate: '2024-06-12' },
-  { caseId: 'RES-2024-002', safehouse: 'Light of Hope Cebu',  assignedSocialWorker: 'Ben Cruz',     admissionDate: '2024-08-03' },
-  { caseId: 'RES-2024-003', safehouse: 'New Dawn Davao',      assignedSocialWorker: 'Celia Santos', admissionDate: '2024-04-20' },
-  { caseId: 'RES-2024-004', safehouse: 'Safe Harbor Iloilo',  assignedSocialWorker: 'Ana Reyes',    admissionDate: '2024-09-15' },
-  { caseId: 'RES-2024-005', safehouse: 'Haven House Manila',  assignedSocialWorker: 'Donna Lim',    admissionDate: '2024-11-01' },
-  { caseId: 'RES-2023-018', safehouse: 'Light of Hope Cebu',  assignedSocialWorker: 'Ben Cruz',     admissionDate: '2023-10-08' },
-  { caseId: 'RES-2025-001', safehouse: 'New Dawn Davao',      assignedSocialWorker: 'Celia Santos', admissionDate: '2025-01-30' },
-  { caseId: 'RES-2024-009', safehouse: 'Haven House Manila',  assignedSocialWorker: 'Donna Lim',    admissionDate: '2024-07-22' },
-];
-
-// TODO: Replace with GET /api/process-recordings?residentCaseId=:caseId
-const fillerRecordings: ProcessRecording[] = [
-  { id: 'PR-001', residentCaseId: 'RES-2024-001', sessionDate: '2026-04-02', socialWorker: 'Ana Reyes',    sessionType: 'Individual', emotionalStateObserved: 'Anxious',    emotionalStateEnd: 'Calm',     sessionNarrative: 'Resident discussed feelings of fear related to family contact. She expressed reluctance to return home in the near term. A grounding exercise was conducted to address acute anxiety.',          interventionsApplied: 'Cognitive grounding, safe-space visualisation', followUpActions: 'Coordinate with family liaison re: visit schedule. Schedule follow-up in 2 weeks.', progressNoted: 'Resident is beginning to identify her own emotional states more accurately.', concernsFlagged: true  },
-  { id: 'PR-002', residentCaseId: 'RES-2024-001', sessionDate: '2026-03-19', socialWorker: 'Ana Reyes',    sessionType: 'Individual', emotionalStateObserved: 'Withdrawn',   emotionalStateEnd: 'Hopeful',  sessionNarrative: 'Resident was initially withdrawn. After establishing safety, she shared positive memories from childhood and expressed desire to continue her education. Session focused on strengths and future goals.', interventionsApplied: 'Narrative therapy, strengths-based dialogue',    followUpActions: 'Enrol in literacy programme. Contact school for enrolment requirements.',        progressNoted: 'Resident articulated a future goal for the first time.',                           concernsFlagged: false },
-  { id: 'PR-003', residentCaseId: 'RES-2024-001', sessionDate: '2026-03-05', socialWorker: 'Ana Reyes',    sessionType: 'Group',      emotionalStateObserved: 'Sad',         emotionalStateEnd: 'Calm',     sessionNarrative: 'Group session of 4 residents focused on peer support and trust-building. Resident participated minimally but appeared to benefit from hearing others\' stories.',                                    interventionsApplied: 'Group facilitation, psychoeducation on trauma responses', followUpActions: 'Monitor participation in next group session.',                                         progressNoted: 'First time participating in a group session without requesting early exit.',        concernsFlagged: false },
-  { id: 'PR-004', residentCaseId: 'RES-2024-002', sessionDate: '2026-04-01', socialWorker: 'Ben Cruz',     sessionType: 'Individual', emotionalStateObserved: 'Distressed',  emotionalStateEnd: 'Anxious',  sessionNarrative: 'Resident showed significant distress after receiving news about a family member. Crisis management protocol activated. Session cut short to allow for rest and emotional regulation.',                interventionsApplied: 'Crisis de-escalation, safety planning',          followUpActions: 'Daily check-in for 1 week. Brief house supervisor.',                              progressNoted: 'No regression noted beyond immediate distress.',                                    concernsFlagged: true  },
-  { id: 'PR-005', residentCaseId: 'RES-2024-002', sessionDate: '2026-03-18', socialWorker: 'Ben Cruz',     sessionType: 'Individual', emotionalStateObserved: 'Angry',       emotionalStateEnd: 'Calm',     sessionNarrative: 'Resident expressed significant anger toward her trafficker. Session explored safe outlets for anger and supported distinction between appropriate anger and harmful behaviour.',                      interventionsApplied: 'Emotion regulation, psychoeducation',            followUpActions: 'Introduce journalling as anger outlet.',                                          progressNoted: 'Resident able to name the emotion and describe its physical manifestation.',        concernsFlagged: false },
-  { id: 'PR-006', residentCaseId: 'RES-2024-003', sessionDate: '2026-03-28', socialWorker: 'Celia Santos', sessionType: 'Individual', emotionalStateObserved: 'Hopeful',     emotionalStateEnd: 'Hopeful',  sessionNarrative: 'Resident is progressing well and is excited about her upcoming school placement. Session focused on preparation for transition and addressing any fears.',                                           interventionsApplied: 'Motivational interviewing, goal-setting',        followUpActions: 'Confirm school enrolment. Prepare transition plan.',                              progressNoted: 'Reintegration readiness has significantly improved.',                               concernsFlagged: false },
-];
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -126,11 +106,31 @@ function EmotionBadge({ state }: { state: EmotionalState }) {
 // ---------------------------------------------------------------------------
 
 export default function ProcessRecordingPage() {
-  const [residents] = useState<ResidentSummary[]>(fillerResidents);
-  const [recordings, setRecordings] = useState<ProcessRecording[]>(fillerRecordings);
+  const [residents, setResidents] = useState<ResidentSummary[]>([]);
+  const [recordings, setRecordings] = useState<ProcessRecording[]>([]);
+  const [loadingResidents, setLoadingResidents] = useState(true);
+  const [loadingRecordings, setLoadingRecordings] = useState(false);
 
   const [residentSearch, setResidentSearch] = useState('');
   const [selectedResident, setSelectedResident] = useState<ResidentSummary | null>(null);
+
+  useEffect(() => {
+    Promise.all([getResidents(), getSafehouses()])
+      .then(([rawResidents, safehouses]) => {
+        const shMap = buildSafehouseNameMap(safehouses);
+        setResidents(rawResidents
+          .filter(r => r.residentId != null)
+          .map(r => ({
+            residentId:           r.residentId!,
+            caseId:               r.caseControlNo ?? `RES-${r.residentId}`,
+            safehouse:            (r.safehouseId != null ? shMap.get(r.safehouseId) : undefined) ?? 'Unknown',
+            assignedSocialWorker: r.assignedSocialWorker ?? '',
+            admissionDate:        r.dateOfAdmission ?? '',
+          }))
+        );
+      })
+      .finally(() => setLoadingResidents(false));
+  }, []);
 
   const [modal, setModal]           = useState<'add' | 'view' | 'delete' | null>(null);
   const [selectedRec, setSelectedRec] = useState<ProcessRecording | null>(null);
@@ -147,17 +147,38 @@ export default function ProcessRecordingPage() {
   });
 
   const residentRecordings = selectedResident
-    ? recordings
-        .filter(r => r.residentCaseId === selectedResident.caseId)
-        .sort((a, b) => b.sessionDate.localeCompare(a.sessionDate))
+    ? [...recordings].sort((a, b) => b.sessionDate.localeCompare(a.sessionDate))
     : [];
 
   // -------------------------------------------------------------------------
   // Handlers
   // -------------------------------------------------------------------------
 
+  function selectResident(r: ResidentSummary) {
+    setSelectedResident(r);
+    setMobileShowDetail(true);
+    setRecordings([]);
+    setLoadingRecordings(true);
+    getRecordings({ residentId: r.residentId })
+      .then(raw => setRecordings(raw.map(rec => ({
+        id: String(rec.recordingId ?? 0),
+        residentCaseId: r.caseId,
+        sessionDate: rec.sessionDate ?? '',
+        socialWorker: rec.socialWorker ?? '',
+        sessionType: (rec.sessionType as SessionType) ?? 'Individual',
+        emotionalStateObserved: (rec.emotionalStateObserved as EmotionalState) ?? 'Calm',
+        emotionalStateEnd: (rec.emotionalStateEnd as EmotionalState) ?? 'Calm',
+        sessionNarrative: rec.sessionNarrative ?? '',
+        interventionsApplied: rec.interventionsApplied ?? '',
+        followUpActions: rec.followUpActions ?? '',
+        progressNoted: rec.progressNoted ?? '',
+        concernsFlagged: isTruthy(rec.concernsFlagged),
+      }))))
+      .finally(() => setLoadingRecordings(false));
+  }
+
   function openAdd() {
-    setForm({ ...emptyForm, socialWorker: selectedResident?.assignedSocialWorker ?? SOCIAL_WORKERS[0] });
+    setForm({ ...emptyForm, socialWorker: selectedResident?.assignedSocialWorker ?? '' });
     setSelectedRec(null);
     setModal('add');
   }
@@ -168,20 +189,42 @@ export default function ProcessRecordingPage() {
   function saveForm(e: { preventDefault(): void }) {
     e.preventDefault();
     if (!selectedResident) return;
-    const newRec: ProcessRecording = {
-      id: `PR-${Date.now().toString().slice(-6)}`,
-      residentCaseId: selectedResident.caseId,
-      ...form,
-    };
-    setRecordings(p => [newRec, ...p]);
-    // TODO: POST /api/process-recordings { body: { residentCaseId: selectedResident.caseId, ...form } }
-    setModal(null);
+    createRecording({
+      residentId: selectedResident.residentId,
+      sessionDate: form.sessionDate,
+      socialWorker: form.socialWorker,
+      sessionType: form.sessionType,
+      emotionalStateObserved: form.emotionalStateObserved,
+      emotionalStateEnd: form.emotionalStateEnd,
+      sessionNarrative: form.sessionNarrative,
+      interventionsApplied: form.interventionsApplied,
+      followUpActions: form.followUpActions,
+      progressNoted: form.progressNoted,
+      concernsFlagged: form.concernsFlagged ? 'True' : 'False',
+    }).then(saved => {
+      setRecordings(p => [{
+        id: String(saved.recordingId ?? 0),
+        residentCaseId: selectedResident.caseId,
+        sessionDate: saved.sessionDate ?? form.sessionDate,
+        socialWorker: saved.socialWorker ?? form.socialWorker,
+        sessionType: (saved.sessionType as SessionType) ?? form.sessionType,
+        emotionalStateObserved: (saved.emotionalStateObserved as EmotionalState) ?? form.emotionalStateObserved,
+        emotionalStateEnd: (saved.emotionalStateEnd as EmotionalState) ?? form.emotionalStateEnd,
+        sessionNarrative: saved.sessionNarrative ?? form.sessionNarrative,
+        interventionsApplied: saved.interventionsApplied ?? form.interventionsApplied,
+        followUpActions: saved.followUpActions ?? form.followUpActions,
+        progressNoted: saved.progressNoted ?? form.progressNoted,
+        concernsFlagged: isTruthy(saved.concernsFlagged),
+      }, ...p]);
+      setModal(null);
+    });
   }
 
   function confirmDelete() {
     if (selectedRec) {
-      setRecordings(p => p.filter(r => r.id !== selectedRec.id));
-      // TODO: DELETE /api/process-recordings/${selectedRec.id}
+      deleteRecording(Number(selectedRec.id)).then(() => {
+        setRecordings(p => p.filter(r => r.id !== selectedRec.id));
+      });
     }
     setModal(null);
     setSelectedRec(null);
@@ -194,6 +237,12 @@ export default function ProcessRecordingPage() {
   // -------------------------------------------------------------------------
   // Render
   // -------------------------------------------------------------------------
+
+  if (loadingResidents) return (
+    <div className="flex items-center justify-center h-64 text-stone-400 text-sm">
+      Loading residents…
+    </div>
+  );
 
   return (
     <div className="px-4 sm:px-6 py-6 max-w-7xl mx-auto flex flex-col lg:flex-row gap-6">
@@ -214,7 +263,7 @@ export default function ProcessRecordingPage() {
         <div className="space-y-2 lg:max-h-[70vh] overflow-y-auto pr-1">
           {filteredResidents.map(r => (
             <button key={r.caseId} type="button"
-              onClick={() => { setSelectedResident(r); setMobileShowDetail(true); }}
+              onClick={() => selectResident(r)}
               className={`w-full text-left bg-white rounded-xl border p-4
                 transition-all duration-150 hover:shadow-md
                 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-haven-teal-500
@@ -264,7 +313,11 @@ export default function ProcessRecordingPage() {
             </div>
 
             {/* Session list */}
-            {residentRecordings.length === 0 ? (
+            {loadingRecordings ? (
+              <div className="bg-white rounded-xl border border-stone-200 shadow-sm p-12 text-center">
+                <p className="text-stone-400 text-sm">Loading sessions…</p>
+              </div>
+            ) : residentRecordings.length === 0 ? (
               <div className="bg-white rounded-xl border border-stone-200 shadow-sm p-12 text-center">
                 <p className="text-stone-400 text-sm">No sessions recorded for this resident.</p>
                 <button type="button" onClick={openAdd}

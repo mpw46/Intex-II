@@ -53,6 +53,7 @@ export const VISIT_OUTCOMES = [
   'Inconclusive',
 ] as const;
 
+/** @deprecated Use ResidentDto from types/resident.ts */
 export interface ResidentLookup {
   residentId: number;
   caseStatus: string | null;

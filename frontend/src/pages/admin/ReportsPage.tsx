@@ -1,4 +1,9 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { getDonations } from '../../api/donationsApi';
+import { getResidents } from '../../api/residentsApi';
+import { getSafehouses } from '../../api/safehousesApi';
+import { getRecordings } from '../../api/processRecordingsApi';
+import { getMonthlyMetrics, getSocialMediaPosts } from '../../api/reportsApi';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -58,72 +63,6 @@ interface PlatformStat {
   donationsAttributed: number;
 }
 
-// ---------------------------------------------------------------------------
-// Filler data
-// ---------------------------------------------------------------------------
-
-// TODO: Replace with GET /api/reports/monthly-donations?year=2025
-const monthlyDonations: MonthlyDonation[] = [
-  { month: 'Jul',  monetary: 185000, inKind: 12000, time: 8000,  skills: 5000  },
-  { month: 'Aug',  monetary: 210000, inKind: 9000,  time: 6000,  skills: 12000 },
-  { month: 'Sep',  monetary: 195000, inKind: 15000, time: 11000, skills: 7000  },
-  { month: 'Oct',  monetary: 240000, inKind: 8000,  time: 9000,  skills: 4000  },
-  { month: 'Nov',  monetary: 310000, inKind: 22000, time: 14000, skills: 8000  },
-  { month: 'Dec',  monetary: 420000, inKind: 35000, time: 18000, skills: 10000 },
-  { month: 'Jan',  monetary: 195000, inKind: 11000, time: 7000,  skills: 6000  },
-  { month: 'Feb',  monetary: 220000, inKind: 14000, time: 9000,  skills: 9000  },
-  { month: 'Mar',  monetary: 265000, inKind: 17000, time: 12000, skills: 11000 },
-  { month: 'Apr',  monetary: 284500, inKind: 19000, time: 8000,  skills: 7500  },
-];
-
-// TODO: Replace with GET /api/reports/safehouse-outcomes
-const safehouseOutcomes: SafehouseOutcome[] = [
-  { name: 'Haven House Manila',  region: 'Luzon',    activeResidents: 12, reintegrated: 28, avgEducationProgress: 74, avgHealthScore: 82, avgCounselingSessions: 18, reintegrationRate: 87 },
-  { name: 'Light of Hope Cebu',  region: 'Visayas',  activeResidents: 10, reintegrated: 19, avgEducationProgress: 68, avgHealthScore: 78, avgCounselingSessions: 15, reintegrationRate: 79 },
-  { name: 'New Dawn Davao',      region: 'Mindanao', activeResidents: 8,  reintegrated: 14, avgEducationProgress: 71, avgHealthScore: 80, avgCounselingSessions: 16, reintegrationRate: 82 },
-  { name: 'Safe Harbor Iloilo',  region: 'Visayas',  activeResidents: 12, reintegrated: 22, avgEducationProgress: 77, avgHealthScore: 85, avgCounselingSessions: 20, reintegrationRate: 91 },
-];
-
-// TODO: Replace with GET /api/reports/program-outcomes
-const programOutcomes: ProgramOutcome[] = [
-  { category: 'Residents Served',          count: 89,   change: 12, positive: true  },
-  { category: 'Successful Reintegrations', count: 83,   change: 18, positive: true  },
-  { category: 'Education Completions',     count: 61,   change: 8,  positive: true  },
-  { category: 'Health Goal Achieved',      count: 74,   change: 15, positive: true  },
-  { category: 'Counseling Hours Logged',   count: 1840, change: 22, positive: true  },
-  { category: 'Concerns Flagged',          count: 14,   change: 7,  positive: false },
-];
-
-// TODO: Replace with GET /api/reports/annual-accomplishment?year=2025
-const annualServiceRows: AnnualServiceRow[] = [
-  { service: 'Residential Care',          serviceType: 'Caring',  q1: 38, q2: 40, q3: 42, q4: 45, total: 165 },
-  { service: 'Medical/Dental Check-ups',  serviceType: 'Caring',  q1: 38, q2: 40, q3: 42, q4: 45, total: 165 },
-  { service: 'Nutritional Support',       serviceType: 'Caring',  q1: 38, q2: 40, q3: 42, q4: 45, total: 165 },
-  { service: 'Individual Counseling',     serviceType: 'Healing', q1: 128,q2: 140,q3: 155,q4: 148,total: 571 },
-  { service: 'Group Therapy Sessions',    serviceType: 'Healing', q1: 24, q2: 28, q3: 32, q4: 30, total: 114 },
-  { service: 'Family Counseling',         serviceType: 'Healing', q1: 18, q2: 22, q3: 25, q4: 20, total: 85  },
-  { service: 'Trauma-Informed Sessions',  serviceType: 'Healing', q1: 42, q2: 48, q3: 52, q4: 50, total: 192 },
-  { service: 'Formal Education Enrolled', serviceType: 'Teaching',q1: 28, q2: 30, q3: 34, q4: 36, total: 128 },
-  { service: 'Vocational Training',       serviceType: 'Teaching',q1: 12, q2: 14, q3: 15, q4: 18, total: 59  },
-  { service: 'Life Skills Workshops',     serviceType: 'Teaching',q1: 38, q2: 40, q3: 42, q4: 45, total: 165 },
-];
-
-// TODO: Replace with GET /api/social-media/platform-stats
-const platformStats: PlatformStat[] = [
-  { platform: 'Facebook',    followers: 4820, totalReach: 18400, engagementRate: 6.2, donationsAttributed: 45000 },
-  { platform: 'Instagram',   followers: 2340, totalReach: 9800,  engagementRate: 8.7, donationsAttributed: 22000 },
-  { platform: 'Twitter / X', followers: 890,  totalReach: 3200,  engagementRate: 3.1, donationsAttributed: 8500  },
-];
-
-// TODO: Replace with GET /api/social-media/posts?limit=8
-const fillerSocialPosts: SocialPost[] = [
-  { id: 'P1', platform: 'Facebook',    contentType: 'Impact Story',   date: '2026-04-01', reach: 4820, likes: 312, shares: 89,  donationsAttributed: 18500 },
-  { id: 'P2', platform: 'Instagram',   contentType: 'Milestone Post', date: '2026-03-28', reach: 3140, likes: 487, shares: 62,  donationsAttributed: 9200  },
-  { id: 'P3', platform: 'Facebook',    contentType: 'Program Update', date: '2026-03-22', reach: 2890, likes: 218, shares: 44,  donationsAttributed: 6800  },
-  { id: 'P4', platform: 'Twitter / X', contentType: 'Awareness',      date: '2026-03-18', reach: 1620, likes: 104, shares: 211, donationsAttributed: 3200  },
-  { id: 'P5', platform: 'Instagram',   contentType: 'Impact Story',   date: '2026-03-12', reach: 2710, likes: 395, shares: 78,  donationsAttributed: 8100  },
-  { id: 'P6', platform: 'Facebook',    contentType: 'Fundraiser',     date: '2026-03-05', reach: 5340, likes: 441, shares: 132, donationsAttributed: 28000 },
-];
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -135,7 +74,6 @@ function formatPHP(n: number) {
   return `₱${n.toLocaleString()}`;
 }
 
-const BAR_MAX = Math.max(...monthlyDonations.map(m => m.monetary));
 const BAR_H = 80;
 
 const SERVICE_TYPE_COLORS: Record<AnnualServiceRow['serviceType'], string> = {
@@ -163,12 +101,198 @@ const TABS: { id: ReportTab; label: string }[] = [
   { id: 'annual',    label: 'Annual Accomplishment'   },
 ];
 
-const totalMonetary = monthlyDonations.reduce((s, m) => s + m.monetary, 0);
-const totalAllTypes = monthlyDonations.reduce((s, m) => s + m.monetary + m.inKind + m.time + m.skills, 0);
-const avgMonthly    = Math.round(totalMonetary / monthlyDonations.length);
+const MONTH_ABBR = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+
+function quarterOf(dateStr: string | undefined | null): 'q1' | 'q2' | 'q3' | 'q4' | null {
+  if (!dateStr) return null;
+  const m = new Date(dateStr).getMonth();
+  if (m < 3) return 'q1';
+  if (m < 6) return 'q2';
+  if (m < 9) return 'q3';
+  return 'q4';
+}
 
 export default function ReportsPage() {
   const [tab, setTab] = useState<ReportTab>('donations');
+  const [monthlyDonations, setMonthlyDonations] = useState<MonthlyDonation[]>([]);
+  const [safehouseOutcomes, setSafehouseOutcomes] = useState<SafehouseOutcome[]>([]);
+  const [programOutcomes, setProgramOutcomes] = useState<ProgramOutcome[]>([]);
+  const [annualServiceRows, setAnnualServiceRows] = useState<AnnualServiceRow[]>([]);
+  const [platformStats, setPlatformStats] = useState<PlatformStat[]>([]);
+  const [socialPosts, setSocialPosts] = useState<SocialPost[]>([]);
+
+  // Derived values — recomputed whenever monthlyDonations changes
+  const BAR_MAX = monthlyDonations.length > 0 ? Math.max(...monthlyDonations.map(m => m.monetary)) : 1;
+  const totalMonetary = monthlyDonations.reduce((s, m) => s + m.monetary, 0);
+  const totalAllTypes = monthlyDonations.reduce((s, m) => s + m.monetary + m.inKind + m.time + m.skills, 0);
+  const avgMonthly    = Math.round(totalMonetary / (monthlyDonations.length || 1));
+
+  useEffect(() => {
+    Promise.all([
+      getDonations(),
+      getResidents(),
+      getSafehouses(),
+      getMonthlyMetrics(),
+      getRecordings(),
+      getSocialMediaPosts(),
+    ]).then(([donations, residents, safehouses, metrics, recordings, posts]) => {
+      const now = new Date();
+      const thisYear = now.getFullYear();
+      const lastYear = thisYear - 1;
+
+      // ---- Monthly donations ----
+      const donMap = new Map<string, MonthlyDonation>();
+      for (const d of donations) {
+        if (!d.donationDate) continue;
+        const dt = new Date(d.donationDate);
+        const key = `${dt.getFullYear()}-${String(dt.getMonth() + 1).padStart(2, '0')}`;
+        const label = `${MONTH_ABBR[dt.getMonth()]} '${String(dt.getFullYear()).slice(2)}`;
+        if (!donMap.has(key)) donMap.set(key, { month: label, monetary: 0, inKind: 0, time: 0, skills: 0 });
+        const entry = donMap.get(key)!;
+        const val = d.estimatedValue ?? 0;
+        if (d.donationType === 'Monetary')  entry.monetary += val;
+        else if (d.donationType === 'InKind')  entry.inKind  += val;
+        else if (d.donationType === 'Time')    entry.time    += val;
+        else if (d.donationType === 'Skills')  entry.skills  += val;
+      }
+      const sortedMonths = [...donMap.entries()]
+        .sort((a, b) => a[0].localeCompare(b[0]))
+        .slice(-12);
+      setMonthlyDonations(sortedMonths.map(([, v]) => v));
+
+      // ---- Safehouse outcomes ----
+      const shOutcomes: SafehouseOutcome[] = safehouses
+        .filter(sh => sh.name)
+        .map(sh => {
+          const shResidents = residents.filter(r => r.safehouseId === sh.safehouseId);
+          const active = shResidents.filter(r => r.caseStatus === 'Active').length;
+          const reintegrated = shResidents.filter(r => r.reintegrationStatus === 'Completed').length;
+          const total = shResidents.length;
+          const reintegrationRate = total > 0 ? Math.round(reintegrated / total * 100) : 0;
+
+          const shMetrics = metrics
+            .filter(m => m.safehouseId === sh.safehouseId)
+            .sort((a, b) => (b.monthStart ?? '').localeCompare(a.monthStart ?? ''));
+          const latest = shMetrics[0];
+
+          return {
+            name: sh.name ?? '',
+            region: sh.region ?? '',
+            activeResidents: active,
+            reintegrated,
+            reintegrationRate,
+            avgEducationProgress: Math.round(parseFloat(latest?.avgEducationProgress ?? '0') || 0),
+            avgHealthScore:       Math.round(parseFloat(latest?.avgHealthScore ?? '0') || 0),
+            avgCounselingSessions: latest?.processRecordingCount ?? 0,
+          };
+        });
+      setSafehouseOutcomes(shOutcomes);
+
+      // ---- Program outcomes ----
+      const pctChange = (curr: number, prev: number) =>
+        prev > 0 ? Math.round((curr - prev) / prev * 100) : 0;
+
+      const admittedThisYear  = residents.filter(r => r.dateOfAdmission?.startsWith(String(thisYear))).length;
+      const admittedLastYear  = residents.filter(r => r.dateOfAdmission?.startsWith(String(lastYear))).length;
+      const reintThisYear     = residents.filter(r =>
+        r.reintegrationStatus === 'Completed' && r.dateClosed?.startsWith(String(thisYear))
+      ).length;
+      const reintLastYear     = residents.filter(r =>
+        r.reintegrationStatus === 'Completed' && r.dateClosed?.startsWith(String(lastYear))
+      ).length;
+      const activeCount       = residents.filter(r => r.caseStatus === 'Active').length;
+      const sessThisYear      = recordings.filter(r => r.sessionDate?.startsWith(String(thisYear))).length;
+      const sessLastYear      = recordings.filter(r => r.sessionDate?.startsWith(String(lastYear))).length;
+
+      setProgramOutcomes([
+        {
+          category: `Girls Admitted (${thisYear})`,
+          count: admittedThisYear,
+          change: pctChange(admittedThisYear, admittedLastYear),
+          positive: admittedThisYear >= admittedLastYear,
+        },
+        {
+          category: 'Currently Active Residents',
+          count: activeCount,
+          change: 0,
+          positive: true,
+        },
+        {
+          category: `Reintegrated (${thisYear})`,
+          count: reintThisYear,
+          change: pctChange(reintThisYear, reintLastYear),
+          positive: reintThisYear >= reintLastYear,
+        },
+        {
+          category: `Counseling Sessions (${thisYear})`,
+          count: sessThisYear,
+          change: pctChange(sessThisYear, sessLastYear),
+          positive: sessThisYear >= sessLastYear,
+        },
+        {
+          category: 'Total Girls Served (All Time)',
+          count: residents.length,
+          change: 0,
+          positive: true,
+        },
+      ]);
+
+      // ---- Annual service rows (process recordings grouped by sessionType + quarter) ----
+      const thisYearRecs = recordings.filter(r => r.sessionDate?.startsWith(String(thisYear)));
+      const sessionTypes = [...new Set(thisYearRecs.map(r => r.sessionType).filter(Boolean))] as string[];
+      const serviceRows: AnnualServiceRow[] = sessionTypes.map(st => {
+        const recs = thisYearRecs.filter(r => r.sessionType === st);
+        const q1 = recs.filter(r => quarterOf(r.sessionDate) === 'q1').length;
+        const q2 = recs.filter(r => quarterOf(r.sessionDate) === 'q2').length;
+        const q3 = recs.filter(r => quarterOf(r.sessionDate) === 'q3').length;
+        const q4 = recs.filter(r => quarterOf(r.sessionDate) === 'q4').length;
+        const label = st === 'Individual' ? 'Individual Counseling'
+                    : st === 'Group'      ? 'Group Therapy'
+                    : st;
+        return { service: label, serviceType: 'Healing', q1, q2, q3, q4, total: q1 + q2 + q3 + q4 };
+      });
+      setAnnualServiceRows(serviceRows);
+
+      // ---- Platform stats ----
+      type PlatformAccum = { followers: number[]; reach: number[]; engagement: number[]; donations: number[] };
+      const platformMap = new Map<string, PlatformAccum>();
+      for (const post of posts) {
+        const pl = post.platform ?? 'Unknown';
+        if (!platformMap.has(pl)) platformMap.set(pl, { followers: [], reach: [], engagement: [], donations: [] });
+        const e = platformMap.get(pl)!;
+        e.followers.push(post.followerCountAtPost ?? 0);
+        e.reach.push(post.reach ?? 0);
+        e.engagement.push(post.engagementRate ?? 0);
+        e.donations.push(post.estimatedDonationValuePhp ?? 0);
+      }
+      const pStats: PlatformStat[] = [...platformMap.entries()].map(([platform, data]) => ({
+        platform: platform as PlatformStat['platform'],
+        followers: Math.round(data.followers.reduce((s, v) => s + v, 0) / (data.followers.length || 1)),
+        totalReach: data.reach.reduce((s, v) => s + v, 0),
+        engagementRate: parseFloat((data.engagement.reduce((s, v) => s + v, 0) / (data.engagement.length || 1)).toFixed(1)),
+        donationsAttributed: data.donations.reduce((s, v) => s + v, 0),
+      }));
+      setPlatformStats(pStats);
+
+      // ---- Recent social posts ----
+      const recentPosts: SocialPost[] = [...posts]
+        .sort((a, b) => (b.createdAt ?? '').localeCompare(a.createdAt ?? ''))
+        .slice(0, 8)
+        .map(p => ({
+          id: String(p.postId),
+          platform: (p.platform ?? 'Facebook') as SocialPost['platform'],
+          contentType: p.contentTopic ?? p.postType ?? 'Post',
+          date: p.createdAt
+            ? new Date(p.createdAt).toLocaleDateString('en-PH', { year: 'numeric', month: 'short', day: 'numeric' })
+            : '',
+          reach: p.reach ?? 0,
+          likes: p.likes ?? 0,
+          shares: p.shares ?? 0,
+          donationsAttributed: p.estimatedDonationValuePhp ?? 0,
+        }));
+      setSocialPosts(recentPosts);
+    });
+  }, []);
 
   const inputCls = `px-3 py-2 bg-white border border-stone-300 rounded-lg text-sm text-stone-700
     hover:border-stone-400 focus:outline-none focus:ring-2 focus:ring-haven-teal-500 focus:border-transparent`;
@@ -198,10 +322,10 @@ export default function ReportsPage() {
           {/* Summary KPIs */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
             {[
-              { label: 'Total Monetary (10 mo)',  value: formatPHP(totalMonetary) },
-              { label: 'All Contribution Types',  value: formatPHP(totalAllTypes) },
-              { label: 'Avg Monthly Monetary',    value: formatPHP(avgMonthly) },
-              { label: 'Best Month',              value: formatPHP(Math.max(...monthlyDonations.map(m => m.monetary))) },
+              { label: `Total Monetary (${monthlyDonations.length} mo)`, value: formatPHP(totalMonetary) },
+              { label: 'All Contribution Types',                          value: formatPHP(totalAllTypes) },
+              { label: 'Avg Monthly Monetary',                            value: formatPHP(avgMonthly) },
+              { label: 'Best Month',                                      value: formatPHP(BAR_MAX) },
             ].map(item => (
               <div key={item.label} className="bg-white rounded-xl border border-stone-200 shadow-sm p-5">
                 <p className="text-2xl font-bold tabular-nums text-stone-900 mb-1">{item.value}</p>
@@ -215,25 +339,29 @@ export default function ReportsPage() {
             <div className="flex items-center justify-between mb-6">
               <h3 className="text-base font-semibold text-stone-900">Monthly Monetary Donations</h3>
               <select className={inputCls} aria-label="Select year">
-                <option>2025 – 2026</option>
+                <option>Last 12 Months</option>
               </select>
             </div>
-            <div className="flex items-end gap-2">
-              {monthlyDonations.map(m => {
-                const pct = Math.round((m.monetary / BAR_MAX) * 100);
-                return (
-                  <div key={m.month} className="flex-1 flex flex-col items-center gap-1">
-                    <svg className="w-full h-20" viewBox={`0 0 1 ${BAR_H}`} preserveAspectRatio="none"
-                      aria-label={`${m.month}: ${formatPHP(m.monetary)}`}>
-                      <rect x="0" y="0" width="1" height={BAR_H} className="fill-stone-100" />
-                      <rect x="0" y={BAR_H - (pct / 100) * BAR_H} width="1" height={(pct / 100) * BAR_H}
-                        className="fill-haven-teal-500" />
-                    </svg>
-                    <span className="text-[10px] text-stone-400">{m.month}</span>
-                  </div>
-                );
-              })}
-            </div>
+            {monthlyDonations.length === 0 ? (
+              <p className="text-sm text-stone-400 text-center py-8">Loading…</p>
+            ) : (
+              <div className="flex items-end gap-2">
+                {monthlyDonations.map(m => {
+                  const pct = Math.round((m.monetary / BAR_MAX) * 100);
+                  return (
+                    <div key={m.month} className="flex-1 flex flex-col items-center gap-1">
+                      <svg className="w-full h-20" viewBox={`0 0 1 ${BAR_H}`} preserveAspectRatio="none"
+                        aria-label={`${m.month}: ${formatPHP(m.monetary)}`}>
+                        <rect x="0" y="0" width="1" height={BAR_H} className="fill-stone-100" />
+                        <rect x="0" y={BAR_H - (pct / 100) * BAR_H} width="1" height={(pct / 100) * BAR_H}
+                          className="fill-haven-teal-500" />
+                      </svg>
+                      <span className="text-[10px] text-stone-400">{m.month}</span>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
           </div>
 
           {/* Contribution mix */}
@@ -273,7 +401,6 @@ export default function ReportsPage() {
           <div className="bg-white rounded-xl border border-stone-200 shadow-sm p-6">
             <h3 className="text-base font-semibold text-stone-900 mb-1">Donor Retention & Growth</h3>
             <p className="text-xs text-stone-400 mb-5">
-              {/* TODO: Replace with GET /api/supporters?status=Active + GET /api/donations (group by supporter) */}
               Filler data — wire to supporter and donation endpoints when available
             </p>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
@@ -316,14 +443,14 @@ export default function ReportsPage() {
                 <p className="text-2xl font-bold tabular-nums text-stone-900 mb-1">
                   {p.followers.toLocaleString()}
                 </p>
-                <p className="text-xs text-stone-500 uppercase tracking-wide mb-4">Followers</p>
+                <p className="text-xs text-stone-500 uppercase tracking-wide mb-4">Avg Followers</p>
                 <div className="space-y-2 text-sm">
                   <div className="flex justify-between">
-                    <span className="text-stone-500">Monthly Reach</span>
+                    <span className="text-stone-500">Total Reach</span>
                     <span className="font-medium text-stone-700">{p.totalReach.toLocaleString()}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-stone-500">Engagement Rate</span>
+                    <span className="text-stone-500">Avg Engagement Rate</span>
                     <span className="font-medium text-stone-700">{p.engagementRate}%</span>
                   </div>
                   <div className="flex justify-between">
@@ -333,25 +460,29 @@ export default function ReportsPage() {
                 </div>
               </div>
             ))}
+            {platformStats.length === 0 && (
+              <div className="sm:col-span-3 text-center py-12 text-stone-400 text-sm">Loading…</div>
+            )}
           </div>
 
           {/* Platform totals summary */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
-            {[
-              { label: 'Total Followers', value: platformStats.reduce((s, p) => s + p.followers, 0).toLocaleString() },
-              { label: 'Total Reach',     value: platformStats.reduce((s, p) => s + p.totalReach, 0).toLocaleString() },
-              { label: 'Avg Engagement',  value: `${(platformStats.reduce((s, p) => s + p.engagementRate, 0) / platformStats.length).toFixed(1)}%` },
-              { label: 'Total Donations', value: formatPHP(platformStats.reduce((s, p) => s + p.donationsAttributed, 0)) },
-            ].map(item => (
-              <div key={item.label} className="bg-haven-teal-900 rounded-xl p-5 text-white">
-                <p className="text-2xl font-bold tabular-nums mb-1">{item.value}</p>
-                <p className="text-xs text-white/60 uppercase tracking-wide">{item.label}</p>
-              </div>
-            ))}
-          </div>
+          {platformStats.length > 0 && (
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
+              {[
+                { label: 'Total Followers', value: platformStats.reduce((s, p) => s + p.followers, 0).toLocaleString() },
+                { label: 'Total Reach',     value: platformStats.reduce((s, p) => s + p.totalReach, 0).toLocaleString() },
+                { label: 'Avg Engagement',  value: `${(platformStats.reduce((s, p) => s + p.engagementRate, 0) / platformStats.length).toFixed(1)}%` },
+                { label: 'Total Donations', value: formatPHP(platformStats.reduce((s, p) => s + p.donationsAttributed, 0)) },
+              ].map(item => (
+                <div key={item.label} className="bg-haven-teal-900 rounded-xl p-5 text-white">
+                  <p className="text-2xl font-bold tabular-nums mb-1">{item.value}</p>
+                  <p className="text-xs text-white/60 uppercase tracking-wide">{item.label}</p>
+                </div>
+              ))}
+            </div>
+          )}
 
           {/* Posts table */}
-          {/* TODO: Replace with GET /api/socialmediaposts?limit=8 */}
           <div className="bg-white rounded-xl border border-stone-200 shadow-sm overflow-hidden">
             <div className="px-6 py-4 border-b border-stone-200">
               <h3 className="text-base font-semibold text-stone-900">Recent Posts</h3>
@@ -369,7 +500,7 @@ export default function ReportsPage() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-stone-100">
-                  {fillerSocialPosts.map(post => (
+                  {socialPosts.map(post => (
                     <tr key={post.id} className="hover:bg-stone-50 transition-colors duration-100">
                       <td className="px-4 py-3 text-stone-500 whitespace-nowrap">{post.date}</td>
                       <td className="px-4 py-3 font-medium text-stone-900">{post.platform}</td>
@@ -382,6 +513,11 @@ export default function ReportsPage() {
                       </td>
                     </tr>
                   ))}
+                  {socialPosts.length === 0 && (
+                    <tr>
+                      <td colSpan={7} className="px-4 py-8 text-center text-stone-400 text-sm">Loading…</td>
+                    </tr>
+                  )}
                 </tbody>
               </table>
             </div>
@@ -395,7 +531,6 @@ export default function ReportsPage() {
       {tab === 'residents' && (
         <div>
           {/* Outcome KPI cards */}
-          {/* TODO: Replace with GET /api/residents (aggregated) + GET /api/safehousemonthlymetrics */}
           <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
             {programOutcomes.map(o => (
               <div key={o.category} className="bg-white rounded-xl border border-stone-200 shadow-sm p-5">
@@ -403,16 +538,20 @@ export default function ReportsPage() {
                   {o.count.toLocaleString()}
                 </p>
                 <p className="text-xs font-medium text-stone-500 uppercase tracking-wide mb-3">{o.category}</p>
-                <span className={`text-xs font-semibold ${o.positive ? 'text-emerald-600' : 'text-rose-600'}`}>
-                  {o.positive ? <ChevronUpIcon /> : <ChevronDownIcon />}
-                  {' '}{Math.abs(o.change)}% vs prior year
-                </span>
+                {o.change !== 0 && (
+                  <span className={`text-xs font-semibold ${o.positive ? 'text-emerald-600' : 'text-rose-600'}`}>
+                    {o.positive ? <ChevronUpIcon /> : <ChevronDownIcon />}
+                    {' '}{Math.abs(o.change)}% vs prior year
+                  </span>
+                )}
               </div>
             ))}
+            {programOutcomes.length === 0 && (
+              <div className="col-span-3 text-center py-12 text-stone-400 text-sm">Loading…</div>
+            )}
           </div>
 
           {/* Safehouse cards grid */}
-          {/* TODO: Replace with GET /api/safehouses + GET /api/safehousemonthlymetrics */}
           <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 mb-8">
             {safehouseOutcomes.map(s => (
               <div key={s.name} className="bg-white rounded-xl border border-stone-200 shadow-sm p-6
@@ -443,6 +582,9 @@ export default function ReportsPage() {
                 </div>
               </div>
             ))}
+            {safehouseOutcomes.length === 0 && (
+              <div className="sm:col-span-2 xl:col-span-4 text-center py-12 text-stone-400 text-sm">Loading…</div>
+            )}
           </div>
 
           {/* Comparison table */}
@@ -492,13 +634,15 @@ export default function ReportsPage() {
                   DSWD-Aligned Report
                 </p>
                 <h3 className="text-xl font-bold">Annual Accomplishment Report</h3>
-                <p className="text-sm text-white/60 mt-0.5">Fiscal Year 2025 — All Safehouses</p>
+                <p className="text-sm text-white/60 mt-0.5">
+                  Fiscal Year {new Date().getFullYear()} — All Safehouses
+                </p>
               </div>
               <div className="grid grid-cols-3 gap-4 text-center">
                 {[
-                  { label: 'Total Served', value: '89' },
+                  { label: 'Total Served',      value: programOutcomes.find(o => o.category.startsWith('Total'))?.count.toLocaleString() ?? '…' },
                   { label: 'Services Rendered', value: annualServiceRows.reduce((s, r) => s + r.total, 0).toLocaleString() },
-                  { label: 'Reintegrated', value: '83' },
+                  { label: 'Reintegrated',      value: programOutcomes.find(o => o.category.startsWith('Reintegrated'))?.count.toLocaleString() ?? '…' },
                 ].map(item => (
                   <div key={item.label} className="bg-white/10 backdrop-blur-md rounded-lg border border-white/20 p-3">
                     <p className="text-xl font-bold tabular-nums">{item.value}</p>
@@ -525,40 +669,47 @@ export default function ReportsPage() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-stone-100">
-                  {(['Caring', 'Healing', 'Teaching'] as AnnualServiceRow['serviceType'][]).map(type => {
-                    const rows = annualServiceRows.filter(r => r.serviceType === type);
-                    const typeTotal = rows.reduce((s, r) => s + r.total, 0);
-                    return (
-                      <>
-                        {rows.map((r, i) => (
-                          <tr key={r.service} className="hover:bg-stone-50 transition-colors duration-100">
-                            <td className="px-4 py-3 text-stone-700">{r.service}</td>
-                            <td className="px-4 py-3">
-                              {i === 0 && (
-                                <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px]
-                                  font-semibold uppercase tracking-wide border ${SERVICE_TYPE_COLORS[type]}`}>
-                                  {type}
-                                </span>
-                              )}
-                            </td>
-                            {[r.q1, r.q2, r.q3, r.q4].map((v, qi) => (
-                              <td key={qi} className="px-4 py-3 tabular-nums text-stone-700">{v}</td>
-                            ))}
-                            <td className="px-4 py-3 tabular-nums font-semibold text-stone-900">{r.total}</td>
-                          </tr>
-                        ))}
-                        <tr className="bg-stone-50 border-t border-stone-200">
-                          <td className="px-4 py-2 text-xs font-semibold text-stone-500 uppercase" colSpan={2}>{type} Subtotal</td>
-                          {(['q1','q2','q3','q4'] as const).map(q => (
-                            <td key={q} className="px-4 py-2 tabular-nums text-xs font-semibold text-stone-700">
-                              {rows.reduce((s, r) => s + r[q], 0)}
-                            </td>
+                  {annualServiceRows.length === 0 ? (
+                    <tr>
+                      <td colSpan={7} className="px-4 py-8 text-center text-stone-400 text-sm">Loading…</td>
+                    </tr>
+                  ) : (
+                    (['Caring', 'Healing', 'Teaching'] as AnnualServiceRow['serviceType'][]).map(type => {
+                      const rows = annualServiceRows.filter(r => r.serviceType === type);
+                      if (rows.length === 0) return null;
+                      const typeTotal = rows.reduce((s, r) => s + r.total, 0);
+                      return (
+                        <>
+                          {rows.map((r, i) => (
+                            <tr key={r.service} className="hover:bg-stone-50 transition-colors duration-100">
+                              <td className="px-4 py-3 text-stone-700">{r.service}</td>
+                              <td className="px-4 py-3">
+                                {i === 0 && (
+                                  <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px]
+                                    font-semibold uppercase tracking-wide border ${SERVICE_TYPE_COLORS[type]}`}>
+                                    {type}
+                                  </span>
+                                )}
+                              </td>
+                              {[r.q1, r.q2, r.q3, r.q4].map((v, qi) => (
+                                <td key={qi} className="px-4 py-3 tabular-nums text-stone-700">{v}</td>
+                              ))}
+                              <td className="px-4 py-3 tabular-nums font-semibold text-stone-900">{r.total}</td>
+                            </tr>
                           ))}
-                          <td className="px-4 py-2 tabular-nums text-xs font-bold text-haven-teal-700">{typeTotal}</td>
-                        </tr>
-                      </>
-                    );
-                  })}
+                          <tr className="bg-stone-50 border-t border-stone-200">
+                            <td className="px-4 py-2 text-xs font-semibold text-stone-500 uppercase" colSpan={2}>{type} Subtotal</td>
+                            {(['q1','q2','q3','q4'] as const).map(q => (
+                              <td key={q} className="px-4 py-2 tabular-nums text-xs font-semibold text-stone-700">
+                                {rows.reduce((s, r) => s + r[q], 0)}
+                              </td>
+                            ))}
+                            <td className="px-4 py-2 tabular-nums text-xs font-bold text-haven-teal-700">{typeTotal}</td>
+                          </tr>
+                        </>
+                      );
+                    })
+                  )}
                 </tbody>
               </table>
             </div>

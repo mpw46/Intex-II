@@ -1,4 +1,7 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { getSupporters, createSupporter, updateSupporter, deleteSupporter } from '../../api/supportersApi';
+import { getDonations, createDonationRecord, deleteDonation, getAllocations } from '../../api/donationsApi';
+import { getSafehouses, buildSafehouseNameMap } from '../../api/safehousesApi';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -71,41 +74,6 @@ interface DonationFormDraft {
   date: string;
 }
 
-// ---------------------------------------------------------------------------
-// Filler data
-// ---------------------------------------------------------------------------
-
-// TODO: Replace with GET /api/supporters
-const fillerSupporters: Supporter[] = [
-  { id: 'SUP-001', displayName: 'Reyes Family Foundation', supporterType: 'MonetaryDonor',       email: 'giving@reyesfdn.ph',      phone: '+63 2 8800 1234', relationshipType: 'Foundation',        acquisitionChannel: 'Direct Outreach', status: 'Active',   notes: 'Long-term partner since 2021. Prefers quarterly updates.' },
-  { id: 'SUP-002', displayName: 'Luz Macaraeg',            supporterType: 'Volunteer',            email: 'luz.m@email.com',         phone: '+63 917 555 0101', relationshipType: 'Individual',       acquisitionChannel: 'Website',         status: 'Active',   notes: 'Social work graduate, available weekends.' },
-  { id: 'SUP-003', displayName: 'Cebu Business Network',   supporterType: 'PartnerOrganization',  email: 'partnerships@cbnet.ph',   phone: '+63 32 411 5000', relationshipType: 'Corporate Partner', acquisitionChannel: 'Referral',        status: 'Active',   notes: '' },
-  { id: 'SUP-004', displayName: 'Daniel Tan',              supporterType: 'MonetaryDonor',        email: 'daniel.t@gmail.com',      phone: '+63 918 777 0202', relationshipType: 'Individual',       acquisitionChannel: 'Social Media',    status: 'Active',   notes: 'Discovered us via Instagram campaign.' },
-  { id: 'SUP-005', displayName: 'Grace Soriano',           supporterType: 'InKindDonor',          email: 'grace.s@email.com',       phone: '+63 919 333 0303', relationshipType: 'Individual',       acquisitionChannel: 'Event',           status: 'Active',   notes: 'Donates school supplies every school year.' },
-  { id: 'SUP-006', displayName: 'Global Care Corp.',       supporterType: 'MonetaryDonor',        email: 'csr@globalcare.com',      phone: '+1 415 222 3344',  relationshipType: 'Corporate Donor',  acquisitionChannel: 'Direct Outreach', status: 'Active',   notes: 'US-based CSR programme. Annual commitment.' },
-  { id: 'SUP-007', displayName: 'Marco Rivera',            supporterType: 'SkillsContributor',    email: 'marco.r@techconsult.ph',  phone: '+63 920 444 0404', relationshipType: 'Individual',       acquisitionChannel: 'Referral',        status: 'Inactive', notes: 'IT consultant; helped set up network at Manila house.' },
-  { id: 'SUP-008', displayName: 'Hope Advocates PH',       supporterType: 'SocialMediaAdvocate', email: 'info@hopeadvocates.ph',   phone: '+63 2 7900 5678',  relationshipType: 'Advocacy Group',   acquisitionChannel: 'Social Media',    status: 'Active',   notes: '' },
-];
-
-// TODO: Replace with GET /api/donations?supporterId=:id
-const fillerDonations: Donation[] = [
-  { id: 'DON-001', supporterId: 'SUP-001', donationType: 'Monetary', amount: 150000, description: 'Q1 2026 grant',           channel: 'Bank Transfer', isRecurring: true,  campaignName: 'General Fund',     date: '2026-01-15' },
-  { id: 'DON-002', supporterId: 'SUP-001', donationType: 'Monetary', amount: 150000, description: 'Q4 2025 grant',           channel: 'Bank Transfer', isRecurring: true,  campaignName: 'General Fund',     date: '2025-10-15' },
-  { id: 'DON-003', supporterId: 'SUP-002', donationType: 'Time',     amount: null,   description: '12 hrs group facilitation',channel: 'In Person',    isRecurring: false, campaignName: '',                 date: '2026-03-08' },
-  { id: 'DON-004', supporterId: 'SUP-004', donationType: 'Monetary', amount: 6000,   description: 'Monthly giving',          channel: 'GCash',         isRecurring: true,  campaignName: 'Monthly Donors',   date: '2026-04-01' },
-  { id: 'DON-005', supporterId: 'SUP-005', donationType: 'InKind',   amount: null,   description: '30 school supply kits',   channel: 'Drop-off',      isRecurring: false, campaignName: 'Back to School',   date: '2026-06-01' },
-  { id: 'DON-006', supporterId: 'SUP-006', donationType: 'Monetary', amount: 250000, description: '2026 CSR commitment',     channel: 'Wire Transfer', isRecurring: true,  campaignName: 'Corporate Partner',date: '2026-03-01' },
-  { id: 'DON-007', supporterId: 'SUP-008', donationType: 'SocialMedia', amount: null, description: '42 shares, 18 tags',    channel: 'Instagram',     isRecurring: false, campaignName: 'Awareness Month',  date: '2026-04-05' },
-];
-
-// TODO: Replace with GET /api/donation-allocations?donationId=:id
-const fillerAllocations: DonationAllocation[] = [
-  { id: 'ALLOC-001', donationId: 'DON-001', safehouse: 'Haven House Manila',  programArea: 'Counseling',    amount: 60000  },
-  { id: 'ALLOC-002', donationId: 'DON-001', safehouse: 'Light of Hope Cebu',  programArea: 'Education',     amount: 50000  },
-  { id: 'ALLOC-003', donationId: 'DON-001', safehouse: 'New Dawn Davao',       programArea: 'Health',        amount: 40000  },
-  { id: 'ALLOC-004', donationId: 'DON-006', safehouse: 'Safe Harbor Iloilo',  programArea: 'General Ops',   amount: 100000 },
-  { id: 'ALLOC-005', donationId: 'DON-006', safehouse: 'Haven House Manila',  programArea: 'Reintegration', amount: 150000 },
-];
 
 // ---------------------------------------------------------------------------
 // Constants / maps
@@ -200,8 +168,11 @@ function StatusPill({ status }: { status: SupporterStatus }) {
 // ---------------------------------------------------------------------------
 
 export default function DonorsContributionsPage() {
-  const [supporters, setSupporters]       = useState<Supporter[]>(fillerSupporters);
-  const [donations, setDonations]         = useState<Donation[]>(fillerDonations);
+  const [supporters, setSupporters]       = useState<Supporter[]>([]);
+  const [donations, setDonations]         = useState<Donation[]>([]);
+  const [allocations, setAllocations]     = useState<DonationAllocation[]>([]);
+  const [loading, setLoading]             = useState(true);
+  const [shMap, setShMap]                 = useState<Map<number, string>>(new Map());
   const [search, setSearch]               = useState('');
   const [typeFilter, setTypeFilter]       = useState<SupporterType | 'All'>('All');
   const [statusFilter, setStatusFilter]   = useState<SupporterStatus | 'All'>('All');
@@ -221,6 +192,60 @@ export default function DonorsContributionsPage() {
   const [donationForm, setDonationForm]   = useState<DonationFormDraft>(emptyDonationForm);
   const [selectedDonation, setSelectedDonation] = useState<Donation | null>(null);
 
+  useEffect(() => {
+    Promise.all([getSupporters(), getSafehouses()])
+      .then(([rawSupporters, safehouses]) => {
+        setShMap(buildSafehouseNameMap(safehouses));
+        setSupporters(rawSupporters.map(s => ({
+          id: String(s.supporterId ?? 0),
+          displayName: s.displayName ?? s.organizationName ?? `${s.firstName ?? ''} ${s.lastName ?? ''}`.trim(),
+          supporterType: (s.supporterType as SupporterType) ?? 'MonetaryDonor',
+          email: s.email ?? '',
+          phone: s.phone ?? '',
+          relationshipType: s.relationshipType ?? '',
+          acquisitionChannel: s.acquisitionChannel ?? '',
+          status: (s.status as SupporterStatus) ?? 'Active',
+          notes: '',
+        })));
+      })
+      .finally(() => setLoading(false));
+  }, []);
+
+  function selectSupporter(s: Supporter) {
+    setSelected(s);
+    setMobileShowDetail(true);
+    setDonations([]);
+    setAllocations([]);
+    getDonations({ supporterId: Number(s.id) }).then(rawDonations => {
+      const mapped: Donation[] = rawDonations.map(d => ({
+        id: String(d.donationId ?? 0),
+        supporterId: s.id,
+        donationType: (d.donationType as DonationType) ?? 'Monetary',
+        amount: d.estimatedValue ?? (d.amount ? Number(d.amount) : null),
+        description: d.notes ?? '',
+        channel: d.channelSource ?? '',
+        isRecurring: d.isRecurring === 'True' || d.isRecurring === 'Yes',
+        campaignName: d.campaignName ?? '',
+        date: d.donationDate ?? '',
+      }));
+      setDonations(mapped);
+      // Fetch allocations for all donations in parallel
+      if (mapped.length > 0) {
+        Promise.all(mapped.map(d => getAllocations({ donationId: Number(d.id) })))
+          .then(results => {
+            const allAllocs = results.flat();
+            setAllocations(allAllocs.map(a => ({
+              id: String(a.allocationId ?? 0),
+              donationId: String(a.donationId ?? 0),
+              safehouse: (a.safehouseId != null ? shMap.get(a.safehouseId) : undefined) ?? 'Unknown',
+              programArea: a.programArea ?? '',
+              amount: a.amountAllocated ?? 0,
+            })));
+          });
+      }
+    });
+  }
+
   // -------------------------------------------------------------------------
   // Derived
   // -------------------------------------------------------------------------
@@ -233,13 +258,8 @@ export default function DonorsContributionsPage() {
     return matchQ && matchT && matchS;
   });
 
-  const selectedDonations = selected
-    ? donations.filter(d => d.supporterId === selected.id)
-    : [];
-
-  const selectedAllocations = selectedDonations.length
-    ? fillerAllocations.filter(a => selectedDonations.some(d => d.id === a.donationId))
-    : [];
+  const selectedDonations = selected ? donations : [];
+  const selectedAllocations = selected ? allocations : [];
 
   // -------------------------------------------------------------------------
   // Supporter CRUD
@@ -251,24 +271,38 @@ export default function DonorsContributionsPage() {
 
   function saveSupporterForm(e: { preventDefault(): void }) {
     e.preventDefault();
+    const payload = {
+      displayName: supporterForm.displayName,
+      supporterType: supporterForm.supporterType,
+      email: supporterForm.email,
+      phone: supporterForm.phone,
+      relationshipType: supporterForm.relationshipType,
+      acquisitionChannel: supporterForm.acquisitionChannel,
+      status: supporterForm.status,
+    };
     if (supporterModal === 'add') {
-      const ns: Supporter = { id: `SUP-${Date.now().toString().slice(-6)}`, ...supporterForm };
-      setSupporters(p => [ns, ...p]);
-      // TODO: POST /api/supporters { body: supporterForm }
+      createSupporter(payload).then(saved => {
+        const ns: Supporter = { id: String(saved.supporterId ?? 0), ...supporterForm };
+        setSupporters(p => [ns, ...p]);
+        setSupporterModal(null);
+      });
     } else if (supporterModal === 'edit' && selected) {
-      setSupporters(p => p.map(s => s.id === selected.id ? { ...s, ...supporterForm } : s));
-      setSelected(prev => prev ? { ...prev, ...supporterForm } : null);
-      // TODO: PUT /api/supporters/${selected.id} { body: supporterForm }
+      updateSupporter(Number(selected.id), payload).then(() => {
+        setSupporters(p => p.map(s => s.id === selected.id ? { ...s, ...supporterForm } : s));
+        setSelected(prev => prev ? { ...prev, ...supporterForm } : null);
+        setSupporterModal(null);
+      });
     }
-    setSupporterModal(null);
   }
 
   function confirmDeleteSupporter() {
     if (selected) {
-      setSupporters(p => p.filter(s => s.id !== selected.id));
-      setDonations(p => p.filter(d => d.supporterId !== selected.id));
-      setSelected(null);
-      // TODO: DELETE /api/supporters/${selected.id}
+      deleteSupporter(Number(selected.id)).then(() => {
+        setSupporters(p => p.filter(s => s.id !== selected.id));
+        setDonations([]);
+        setAllocations([]);
+        setSelected(null);
+      });
     }
     setSupporterModal(null);
   }
@@ -283,26 +317,40 @@ export default function DonorsContributionsPage() {
   function saveDonationForm(e: { preventDefault(): void }) {
     e.preventDefault();
     if (!selected) return;
-    const nd: Donation = {
-      id: `DON-${Date.now().toString().slice(-6)}`,
-      supporterId: selected.id,
+    createDonationRecord({
+      supporterId: Number(selected.id),
       donationType: donationForm.donationType,
-      amount: donationForm.amount ? Number(donationForm.amount) : null,
-      description: donationForm.description,
-      channel: donationForm.channel,
-      isRecurring: donationForm.isRecurring,
+      donationDate: donationForm.date,
+      isRecurring: donationForm.isRecurring ? 'True' : 'False',
       campaignName: donationForm.campaignName,
-      date: donationForm.date,
-    };
-    setDonations(p => [nd, ...p]);
-    setDonationModal(null);
-    // TODO: POST /api/donations { body: nd }
+      channelSource: donationForm.channel,
+      currencyCode: 'PHP',
+      amount: donationForm.amount || undefined,
+      estimatedValue: donationForm.amount ? Number(donationForm.amount) : undefined,
+      notes: donationForm.description,
+    }).then(saved => {
+      const nd: Donation = {
+        id: String(saved.donationId ?? 0),
+        supporterId: selected.id,
+        donationType: donationForm.donationType,
+        amount: donationForm.amount ? Number(donationForm.amount) : null,
+        description: donationForm.description,
+        channel: donationForm.channel,
+        isRecurring: donationForm.isRecurring,
+        campaignName: donationForm.campaignName,
+        date: donationForm.date,
+      };
+      setDonations(p => [nd, ...p]);
+      setDonationModal(null);
+    });
   }
 
   function confirmDeleteDonation() {
     if (selectedDonation) {
-      setDonations(p => p.filter(d => d.id !== selectedDonation.id));
-      // TODO: DELETE /api/donations/${selectedDonation.id}
+      deleteDonation(Number(selectedDonation.id)).then(() => {
+        setDonations(p => p.filter(d => d.id !== selectedDonation.id));
+        setAllocations(p => p.filter(a => a.donationId !== selectedDonation.id));
+      });
     }
     setDonationModal(null);
     setSelectedDonation(null);
@@ -322,6 +370,12 @@ export default function DonorsContributionsPage() {
   // -------------------------------------------------------------------------
   // Render
   // -------------------------------------------------------------------------
+
+  if (loading) return (
+    <div className="flex items-center justify-center h-64 text-stone-400 text-sm">
+      Loading supporters…
+    </div>
+  );
 
   return (
     <div className="px-4 sm:px-6 py-6 max-w-7xl mx-auto">
@@ -374,7 +428,7 @@ export default function DonorsContributionsPage() {
             {filtered.length === 0 ? (
               <p className="text-sm text-stone-400 py-8 text-center">No supporters found.</p>
             ) : filtered.map(s => (
-              <button key={s.id} type="button" onClick={() => { setSelected(s); setDetailTab('profile'); setMobileShowDetail(true); }}
+              <button key={s.id} type="button" onClick={() => { selectSupporter(s); setDetailTab('profile'); }}
                 className={`w-full text-left bg-white rounded-xl border p-4 flex items-start justify-between gap-3
                   transition-all duration-150 hover:shadow-md
                   focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-haven-teal-500
