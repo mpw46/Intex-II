@@ -84,6 +84,8 @@ pnpm-debug.log*
 .env
 .env.*
 !.env.example
+!.env.development
+!.env.production
 
 # ========================
 # Misc
@@ -92,3 +94,6 @@ pnpm-debug.log*
 *.cache
 *.tmp
 *.temp
+
+
+appsettings.Development.json

@@ -1,0 +1,54 @@
+export interface HomeVisitation {
+  visitationId: number;
+  residentId: number | null;
+  visitDate: string | null;
+  socialWorker: string | null;
+  visitType: string | null;
+  locationVisited: string | null;
+  familyMembersPresent: string | null;
+  purpose: string | null;
+  observations: string | null;
+  familyCooperationLevel: string | null;
+  safetyConcernsNoted: string | null;
+  followUpNeeded: string | null;
+  followUpNotes: string | null;
+  visitOutcome: string | null;
+}
+
+export interface HomeVisitationCreate {
+  residentId: number | null;
+  visitDate: string;
+  socialWorker: string;
+  visitType: string;
+  locationVisited?: string;
+  familyMembersPresent?: string;
+  purpose?: string;
+  observations?: string;
+  familyCooperationLevel?: string;
+  safetyConcernsNoted?: string;
+  followUpNeeded?: string;
+  followUpNotes?: string;
+  visitOutcome?: string;
+}
+
+export const VISIT_TYPES = [
+  'Initial Assessment',
+  'Routine Follow-Up',
+  'Reintegration Assessment',
+  'Post-Placement Monitoring',
+  'Emergency',
+] as const;
+
+export const COOPERATION_LEVELS = [
+  'Cooperative',
+  'Partially Cooperative',
+  'Uncooperative',
+  'Hostile',
+] as const;
+
+export interface ResidentLookup {
+  residentId: number;
+  caseStatus: string | null;
+  assignedSocialWorker: string | null;
+  safehouseId: number | null;
+}
