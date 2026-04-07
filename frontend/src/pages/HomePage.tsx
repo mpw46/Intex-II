@@ -1,4 +1,7 @@
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { getResidents } from '../api/residentsApi';
+import { getSafehouses } from '../api/safehousesApi';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 // These interfaces describe the shapes coming from the API.
@@ -39,13 +42,8 @@ interface FeaturedQuote {
 // The rest of the page — section layouts, labels, copy — does not touch the API.
 // See DonorDashboardPage.tsx for a fuller example with more data shapes.
 
-// TODO: Replace with GET /api/public/impact/snapshot
-const homeStats: HomeStats = {
-  totalGirlsServed: 1247,
-  activeSafehouses: 4,
-  reintegrationSuccessRate: 95,
-  yearsOfOperation: 12,
-};
+// yearsOfOperation is static — no org founding date table in the DB
+const YEARS_OF_OPERATION = 12;
 
 // TODO: Replace with GET /api/public/impact/featured-quote
 const featuredQuote: FeaturedQuote = {
@@ -128,19 +126,38 @@ function GlassKpiCard({ value, label }: { value: string; label: string }) {
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
 function HomePage() {
-  // Derived display values — format homeStats into strings for the KPI cards.
-  // When homeStats comes from an API, these automatically update with it.
+  const [stats, setStats] = useState<HomeStats>({
+    totalGirlsServed: 0,
+    activeSafehouses: 0,
+    reintegrationSuccessRate: 0,
+    yearsOfOperation: YEARS_OF_OPERATION,
+  });
+
+  useEffect(() => {
+    Promise.all([getResidents(), getSafehouses()]).then(([residents, safehouses]) => {
+      const active = safehouses.filter(s => s.status === 'Active').length;
+      const reintegrated = residents.filter(r => r.reintegrationStatus === 'Completed').length;
+      const rate = residents.length > 0 ? Math.round(reintegrated / residents.length * 100) : 0;
+      setStats({
+        totalGirlsServed: residents.length,
+        activeSafehouses: active,
+        reintegrationSuccessRate: rate,
+        yearsOfOperation: YEARS_OF_OPERATION,
+      });
+    });
+  }, []);
+
   const heroKpis = [
-    { value: homeStats.totalGirlsServed.toLocaleString(), label: 'Lives Impacted' },
-    { value: homeStats.activeSafehouses.toString(),        label: 'Safe Homes' },
-    { value: `${homeStats.reintegrationSuccessRate}%`,     label: 'Reintegration Success' },
-    { value: `${homeStats.yearsOfOperation} yrs`,          label: 'Years of Service' },
+    { value: stats.totalGirlsServed.toLocaleString(), label: 'Lives Impacted' },
+    { value: stats.activeSafehouses.toString(),        label: 'Safe Homes' },
+    { value: `${stats.reintegrationSuccessRate}%`,     label: 'Reintegration Success' },
+    { value: `${stats.yearsOfOperation} yrs`,          label: 'Years of Service' },
   ];
 
   const impactKpis = [
-    { value: homeStats.totalGirlsServed.toLocaleString(), label: 'Girls Served Since 2012' },
-    { value: homeStats.activeSafehouses.toString(),        label: 'Active Safehouses' },
-    { value: '3',                                          label: 'Philippine Regions' },
+    { value: stats.totalGirlsServed.toLocaleString(), label: 'Girls Served Since 2012' },
+    { value: stats.activeSafehouses.toString(),        label: 'Active Safehouses' },
+    { value: '3',                                      label: 'Philippine Regions' },
   ];
 
   return (

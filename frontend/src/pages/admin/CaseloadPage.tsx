@@ -1,4 +1,9 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { getResidents, createResident, updateResident, deleteResident } from '../../api/residentsApi';
+import { getSafehouses, buildSafehouseNameMap } from '../../api/safehousesApi';
+import { isTruthy } from '../../types/resident';
+import type { ResidentDto } from '../../types/resident';
+import type { SafehouseDto } from '../../types/safehouse';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -71,26 +76,43 @@ interface ResidentFormDraft {
   disabilityDetails: string;
 }
 
-// ---------------------------------------------------------------------------
-// Filler data
-// ---------------------------------------------------------------------------
-
-// TODO: Replace with GET /api/residents
-const fillerResidents: Resident[] = [
-  { id: '1', caseId: 'RES-2024-001', safehouse: 'Haven House Manila',  caseStatus: 'Active',      caseCategory: 'Exploited',   isTrafficked: true,  isChildLabor: false, isPhysicalAbuse: false, isSexualAbuse: true,  isOsaec: true,  isCicl: false, isAtRisk: false, isStreetChild: false, isChildWithHiv: false, is4ps: true,  isSoloParent: true,  isIndigenous: false, isInformalSettler: true,  admissionDate: '2024-06-12', assignedSocialWorker: 'Ana Reyes',    referralSource: 'DSWD Referral',    riskLevel: 'High Risk', reintegrationType: 'Family',          reintegrationStatus: 'Not Started', daysInProgram: 298, hasDisability: false, disabilityDetails: '' },
-  { id: '2', caseId: 'RES-2024-002', safehouse: 'Light of Hope Cebu',  caseStatus: 'Active',      caseCategory: 'Neglected',   isTrafficked: false, isChildLabor: true,  isPhysicalAbuse: true,  isSexualAbuse: false, isOsaec: false, isCicl: false, isAtRisk: false, isStreetChild: true,  isChildWithHiv: false, is4ps: true,  isSoloParent: false, isIndigenous: true,  isInformalSettler: true,  admissionDate: '2024-08-03', assignedSocialWorker: 'Ben Cruz',     referralSource: 'Police Referral',  riskLevel: 'High Risk', reintegrationType: 'Foster Care',     reintegrationStatus: 'Not Started', daysInProgram: 246, hasDisability: false, disabilityDetails: '' },
-  { id: '3', caseId: 'RES-2024-003', safehouse: 'New Dawn Davao',      caseStatus: 'Active',      caseCategory: 'Abandoned',   isTrafficked: false, isChildLabor: false, isPhysicalAbuse: false, isSexualAbuse: false, isOsaec: false, isCicl: false, isAtRisk: true,  isStreetChild: false, isChildWithHiv: false, is4ps: false, isSoloParent: false, isIndigenous: true,  isInformalSettler: false, admissionDate: '2024-04-20', assignedSocialWorker: 'Celia Santos', referralSource: 'Barangay Official', riskLevel: 'Standard',  reintegrationType: 'Family',          reintegrationStatus: 'In Progress', daysInProgram: 351, hasDisability: true,  disabilityDetails: 'Mild hearing impairment' },
-  { id: '4', caseId: 'RES-2024-004', safehouse: 'Safe Harbor Iloilo',  caseStatus: 'Active',      caseCategory: 'Surrendered', isTrafficked: false, isChildLabor: false, isPhysicalAbuse: true,  isSexualAbuse: false, isOsaec: false, isCicl: false, isAtRisk: false, isStreetChild: false, isChildWithHiv: false, is4ps: true,  isSoloParent: true,  isIndigenous: false, isInformalSettler: true,  admissionDate: '2024-09-15', assignedSocialWorker: 'Ana Reyes',    referralSource: 'NBI Referral',     riskLevel: 'Standard',  reintegrationType: 'Independent Living', reintegrationStatus: 'Not Started', daysInProgram: 203, hasDisability: false, disabilityDetails: '' },
-  { id: '5', caseId: 'RES-2024-005', safehouse: 'Haven House Manila',  caseStatus: 'Active',      caseCategory: 'Exploited',   isTrafficked: true,  isChildLabor: false, isPhysicalAbuse: false, isSexualAbuse: true,  isOsaec: true,  isCicl: false, isAtRisk: false, isStreetChild: false, isChildWithHiv: false, is4ps: false, isSoloParent: false, isIndigenous: false, isInformalSettler: false, admissionDate: '2024-11-01', assignedSocialWorker: 'Donna Lim',    referralSource: 'DSWD Referral',    riskLevel: 'High Risk', reintegrationType: 'Family',          reintegrationStatus: 'Not Started', daysInProgram: 156, hasDisability: false, disabilityDetails: '' },
-  { id: '6', caseId: 'RES-2023-018', safehouse: 'Light of Hope Cebu',  caseStatus: 'Active',      caseCategory: 'Neglected',   isTrafficked: false, isChildLabor: false, isPhysicalAbuse: false, isSexualAbuse: false, isOsaec: false, isCicl: false, isAtRisk: false, isStreetChild: false, isChildWithHiv: false, is4ps: true,  isSoloParent: false, isIndigenous: false, isInformalSettler: false, admissionDate: '2023-10-08', assignedSocialWorker: 'Ben Cruz',     referralSource: 'Hospital Referral',riskLevel: 'Standard',  reintegrationType: 'Family',          reintegrationStatus: 'In Progress', daysInProgram: 546, hasDisability: false, disabilityDetails: '' },
-  { id: '7', caseId: 'RES-2025-001', safehouse: 'New Dawn Davao',      caseStatus: 'Pending',     caseCategory: 'Foundling',   isTrafficked: false, isChildLabor: false, isPhysicalAbuse: false, isSexualAbuse: false, isOsaec: false, isCicl: false, isAtRisk: true,  isStreetChild: false, isChildWithHiv: false, is4ps: false, isSoloParent: false, isIndigenous: false, isInformalSettler: false, admissionDate: '2025-01-30', assignedSocialWorker: 'Celia Santos', referralSource: 'LGU Referral',     riskLevel: 'Standard',  reintegrationType: 'N/A',             reintegrationStatus: 'Not Started', daysInProgram: 66,  hasDisability: false, disabilityDetails: '' },
-  { id: '8', caseId: 'RES-2023-025', safehouse: 'New Dawn Davao',      caseStatus: 'Closed',      caseCategory: 'Exploited',   isTrafficked: true,  isChildLabor: false, isPhysicalAbuse: false, isSexualAbuse: true,  isOsaec: false, isCicl: false, isAtRisk: false, isStreetChild: false, isChildWithHiv: false, is4ps: true,  isSoloParent: true,  isIndigenous: false, isInformalSettler: true,  admissionDate: '2023-03-01', assignedSocialWorker: 'Ben Cruz',     referralSource: 'DSWD Referral',    riskLevel: 'Standard',  reintegrationType: 'Family',          reintegrationStatus: 'Completed',   daysInProgram: 720, hasDisability: false, disabilityDetails: '' },
-  { id: '9', caseId: 'RES-2024-009', safehouse: 'Haven House Manila',  caseStatus: 'Active',      caseCategory: 'Neglected',   isTrafficked: false, isChildLabor: false, isPhysicalAbuse: true,  isSexualAbuse: false, isOsaec: false, isCicl: true,  isAtRisk: false, isStreetChild: false, isChildWithHiv: false, is4ps: false, isSoloParent: false, isIndigenous: false, isInformalSettler: false, admissionDate: '2024-07-22', assignedSocialWorker: 'Donna Lim',    referralSource: 'Court Order',      riskLevel: 'Standard',  reintegrationType: 'Independent Living', reintegrationStatus: 'Not Started', daysInProgram: 258, hasDisability: true,  disabilityDetails: 'Developmental delay' },
-  { id: '10', caseId: 'RES-2024-011', safehouse: 'Safe Harbor Iloilo', caseStatus: 'Transferred', caseCategory: 'Surrendered', isTrafficked: false, isChildLabor: false, isPhysicalAbuse: false, isSexualAbuse: false, isOsaec: false, isCicl: false, isAtRisk: false, isStreetChild: false, isChildWithHiv: false, is4ps: true,  isSoloParent: false, isIndigenous: true,  isInformalSettler: false, admissionDate: '2024-05-10', assignedSocialWorker: 'Ana Reyes',    referralSource: 'NGO Referral',     riskLevel: 'Standard',  reintegrationType: 'Foster Care',     reintegrationStatus: 'In Progress', daysInProgram: 331, hasDisability: false, disabilityDetails: '' },
-];
-
-const SAFEHOUSES = ['Haven House Manila', 'Light of Hope Cebu', 'New Dawn Davao', 'Safe Harbor Iloilo'];
-const SOCIAL_WORKERS = ['Ana Reyes', 'Ben Cruz', 'Celia Santos', 'Donna Lim'];
+/** Map a ResidentDto + safehouse name lookup to the local UI Resident shape */
+function mapResident(r: ResidentDto, shMap: Map<number, string>): Resident {
+  const today = new Date().toISOString().substring(0, 10);
+  const admission = r.dateOfAdmission ?? today;
+  const days = Math.max(0, Math.floor(
+    (new Date(today).getTime() - new Date(admission).getTime()) / 86_400_000
+  ));
+  return {
+    id: String(r.residentId ?? 0),
+    caseId: r.caseControlNo ?? `RES-${r.residentId}`,
+    safehouse: (r.safehouseId != null ? shMap.get(r.safehouseId) : undefined) ?? 'Unknown',
+    caseStatus: (r.caseStatus as CaseStatus) ?? 'Pending',
+    caseCategory: (r.caseCategory as CaseCategory) ?? 'Neglected',
+    isTrafficked: isTruthy(r.subCatTrafficked),
+    isChildLabor: isTruthy(r.subCatChildLabor),
+    isPhysicalAbuse: isTruthy(r.subCatPhysicalAbuse),
+    isSexualAbuse: isTruthy(r.subCatSexualAbuse),
+    isOsaec: isTruthy(r.subCatOsaec),
+    isCicl: isTruthy(r.subCatCicl),
+    isAtRisk: isTruthy(r.subCatAtRisk),
+    isStreetChild: isTruthy(r.subCatStreetChild),
+    isChildWithHiv: isTruthy(r.subCatChildWithHiv),
+    is4ps: isTruthy(r.familyIs4ps),
+    isSoloParent: isTruthy(r.familySoloParent),
+    isIndigenous: isTruthy(r.familyIndigenous),
+    isInformalSettler: isTruthy(r.familyInformalSettler),
+    admissionDate: r.dateOfAdmission ?? '',
+    assignedSocialWorker: r.assignedSocialWorker ?? '',
+    referralSource: r.referralSource ?? '',
+    riskLevel: (r.currentRiskLevel as RiskLevel) ?? 'Standard',
+    reintegrationType: (r.reintegrationType as ReintegrationType) ?? 'N/A',
+    reintegrationStatus: (r.reintegrationStatus as ReintegrationStatus) ?? 'Not Started',
+    daysInProgram: days,
+    hasDisability: isTruthy(r.isPwd),
+    disabilityDetails: r.pwdType ?? '',
+  };
+}
 
 const STATUS_COLORS: Record<CaseStatus, string> = {
   Active:      'bg-emerald-100 text-emerald-800 border-emerald-200',
@@ -100,12 +122,12 @@ const STATUS_COLORS: Record<CaseStatus, string> = {
 };
 
 const emptyForm: ResidentFormDraft = {
-  safehouse: SAFEHOUSES[0], caseStatus: 'Pending', caseCategory: 'Neglected',
+  safehouse: '', caseStatus: 'Pending', caseCategory: 'Neglected',
   isTrafficked: false, isChildLabor: false, isPhysicalAbuse: false, isSexualAbuse: false,
   isOsaec: false, isCicl: false, isAtRisk: false, isStreetChild: false, isChildWithHiv: false,
   is4ps: false, isSoloParent: false, isIndigenous: false, isInformalSettler: false,
   admissionDate: new Date().toISOString().substring(0, 10),
-  assignedSocialWorker: SOCIAL_WORKERS[0], referralSource: '', riskLevel: 'Standard',
+  assignedSocialWorker: '', referralSource: '', riskLevel: 'Standard',
   reintegrationType: 'N/A', reintegrationStatus: 'Not Started',
   hasDisability: false, disabilityDetails: '',
 };
@@ -147,7 +169,10 @@ function CheckBox({ label, checked, onChange }: { label: string; checked: boolea
 // ---------------------------------------------------------------------------
 
 export default function CaseloadPage() {
-  const [residents, setResidents]     = useState<Resident[]>(fillerResidents);
+  const [residents, setResidents]     = useState<Resident[]>([]);
+  const [apiSafehouses, setApiSafehouses] = useState<SafehouseDto[]>([]);
+  const [shMap, setShMap]             = useState<Map<number, string>>(new Map());
+  const [loading, setLoading]         = useState(true);
   const [search, setSearch]           = useState('');
   const [statusFilter, setStatusFilter] = useState<CaseStatus | 'All'>('All');
   const [safeFilter, setSafeFilter]   = useState('All');
@@ -159,6 +184,21 @@ export default function CaseloadPage() {
   const [selected, setSelected]       = useState<Resident | null>(null);
   const [detailOpen, setDetailOpen]   = useState(false);
   const [form, setForm]               = useState<ResidentFormDraft>(emptyForm);
+
+  // Derived lists for filter dropdowns (from real API data)
+  const SAFEHOUSES = apiSafehouses.map(s => s.name ?? '').filter(Boolean);
+  const SOCIAL_WORKERS = Array.from(new Set(residents.map(r => r.assignedSocialWorker).filter(Boolean)));
+
+  useEffect(() => {
+    Promise.all([getResidents(), getSafehouses()])
+      .then(([rawResidents, safehouses]) => {
+        const map = buildSafehouseNameMap(safehouses);
+        setShMap(map);
+        setApiSafehouses(safehouses);
+        setResidents(rawResidents.map(r => mapResident(r, map)));
+      })
+      .finally(() => setLoading(false));
+  }, []);
 
   // -------------------------------------------------------------------------
   // Derived
@@ -187,27 +227,56 @@ export default function CaseloadPage() {
 
   function saveForm(e: { preventDefault(): void }) {
     e.preventDefault();
-    const today = new Date().toISOString().substring(0, 10);
-    const admission = form.admissionDate || today;
-    const days = Math.floor((new Date(today).getTime() - new Date(admission).getTime()) / 86400000);
+    // Resolve safehouseId from name
+    const shEntry = apiSafehouses.find(s => s.name === form.safehouse);
+    const payload = {
+      safehouseId: shEntry?.safehouseId ?? undefined,
+      caseStatus: form.caseStatus,
+      caseCategory: form.caseCategory,
+      subCatTrafficked: form.isTrafficked ? 'Yes' : 'No',
+      subCatChildLabor: form.isChildLabor ? 'Yes' : 'No',
+      subCatPhysicalAbuse: form.isPhysicalAbuse ? 'Yes' : 'No',
+      subCatSexualAbuse: form.isSexualAbuse ? 'Yes' : 'No',
+      subCatOsaec: form.isOsaec ? 'Yes' : 'No',
+      subCatCicl: form.isCicl ? 'Yes' : 'No',
+      subCatAtRisk: form.isAtRisk ? 'Yes' : 'No',
+      subCatStreetChild: form.isStreetChild ? 'Yes' : 'No',
+      subCatChildWithHiv: form.isChildWithHiv ? 'Yes' : 'No',
+      familyIs4ps: form.is4ps ? 'Yes' : 'No',
+      familySoloParent: form.isSoloParent ? 'Yes' : 'No',
+      familyIndigenous: form.isIndigenous ? 'Yes' : 'No',
+      familyInformalSettler: form.isInformalSettler ? 'Yes' : 'No',
+      dateOfAdmission: form.admissionDate,
+      assignedSocialWorker: form.assignedSocialWorker,
+      referralSource: form.referralSource,
+      currentRiskLevel: form.riskLevel,
+      reintegrationType: form.reintegrationType,
+      reintegrationStatus: form.reintegrationStatus,
+      isPwd: form.hasDisability ? 'Yes' : 'No',
+      pwdType: form.disabilityDetails,
+    };
     if (modal === 'add') {
-      const nr: Resident = { id: String(Date.now()), caseId: `RES-${new Date().getFullYear()}-${String(residents.length + 1).padStart(3,'0')}`, ...form, daysInProgram: days };
-      setResidents(p => [nr, ...p]);
-      // TODO: POST /api/residents { body: form }
+      createResident(payload).then(saved => {
+        setResidents(p => [mapResident(saved, shMap), ...p]);
+        setModal(null);
+      });
     } else if (modal === 'edit' && selected) {
-      setResidents(p => p.map(r => r.id === selected.id ? { ...r, ...form, daysInProgram: days } : r));
-      setSelected(prev => prev ? { ...prev, ...form, daysInProgram: days } : null);
-      // TODO: PUT /api/residents/${selected.id} { body: form }
+      updateResident(Number(selected.id), payload).then(() => {
+        const updated = { ...selected, ...form };
+        setResidents(p => p.map(r => r.id === selected.id ? updated : r));
+        setSelected(updated);
+        setModal(null);
+      });
     }
-    setModal(null);
   }
 
   function confirmDelete() {
     if (selected) {
-      setResidents(p => p.filter(r => r.id !== selected.id));
-      setSelected(null);
-      setDetailOpen(false);
-      // TODO: DELETE /api/residents/${selected.id}
+      deleteResident(Number(selected.id)).then(() => {
+        setResidents(p => p.filter(r => r.id !== selected.id));
+        setSelected(null);
+        setDetailOpen(false);
+      });
     }
     setModal(null);
   }
@@ -223,6 +292,12 @@ export default function CaseloadPage() {
   // -------------------------------------------------------------------------
   // Render
   // -------------------------------------------------------------------------
+
+  if (loading) return (
+    <div className="flex items-center justify-center h-64 text-stone-400 text-sm">
+      Loading residents…
+    </div>
+  );
 
   return (
     <div className="px-4 sm:px-6 py-6 max-w-7xl mx-auto">

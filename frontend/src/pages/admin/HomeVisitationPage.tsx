@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react';
-import { getVisitations } from '../../api/homeVisitationApi';
+import { getVisitations, getResidents, createVisitation, deleteVisitation } from '../../api/homeVisitationApi';
+import { getSafehouses, buildSafehouseNameMap } from '../../api/safehousesApi';
 import type { HomeVisitation, HomeVisitationCreate } from '../../types/homeVisitation';
 import { VISIT_TYPES, COOPERATION_LEVELS, VISIT_OUTCOMES } from '../../types/homeVisitation';
 
 // ---------------------------------------------------------------------------
-// Local display type — augments the DB-level ResidentLookup with UI fields
+// Local display type — maps ResidentDto + Safehouse lookup to UI fields
 // ---------------------------------------------------------------------------
 
 interface ResidentDisplay {
@@ -14,22 +15,6 @@ interface ResidentDisplay {
   assignedSocialWorker: string;
   caseStatus: string;
 }
-
-// ---------------------------------------------------------------------------
-// Filler data
-// ---------------------------------------------------------------------------
-
-// TODO: Replace with GET /api/residents
-const fillerResidents: ResidentDisplay[] = [
-  { residentId: 1, caseLabel: 'RES-2024-001', safehouseName: 'Haven House Manila',  assignedSocialWorker: 'Ana Reyes',    caseStatus: 'Active'      },
-  { residentId: 2, caseLabel: 'RES-2024-002', safehouseName: 'Light of Hope Cebu',  assignedSocialWorker: 'Ben Cruz',     caseStatus: 'Active'      },
-  { residentId: 3, caseLabel: 'RES-2024-003', safehouseName: 'New Dawn Davao',      assignedSocialWorker: 'Celia Santos', caseStatus: 'Closed'      },
-  { residentId: 4, caseLabel: 'RES-2024-004', safehouseName: 'Safe Harbor Iloilo',  assignedSocialWorker: 'Ana Reyes',    caseStatus: 'Active'      },
-  { residentId: 5, caseLabel: 'RES-2024-005', safehouseName: 'Haven House Manila',  assignedSocialWorker: 'Donna Lim',    caseStatus: 'Active'      },
-  { residentId: 6, caseLabel: 'RES-2023-018', safehouseName: 'Light of Hope Cebu',  assignedSocialWorker: 'Ben Cruz',     caseStatus: 'Transferred' },
-  { residentId: 7, caseLabel: 'RES-2025-001', safehouseName: 'New Dawn Davao',      assignedSocialWorker: 'Celia Santos', caseStatus: 'Active'      },
-  { residentId: 8, caseLabel: 'RES-2024-009', safehouseName: 'Haven House Manila',  assignedSocialWorker: 'Donna Lim',    caseStatus: 'Active'      },
-];
 
 
 // ---------------------------------------------------------------------------
@@ -71,8 +56,8 @@ function makeEmptyForm(residentId: number, socialWorker: string): HomeVisitation
     purpose: '',
     observations: '',
     familyCooperationLevel: 'Cooperative',
-    safetyConcernsNoted: false,
-    followUpNeeded: false,
+    safetyConcernsNoted: 'False',
+    followUpNeeded: 'False',
     followUpNotes: '',
     visitOutcome: '',
   };
@@ -142,15 +127,28 @@ function DetailRow({ label, children }: { label: string; children: React.ReactNo
 // ---------------------------------------------------------------------------
 
 export default function HomeVisitationPage() {
-  const [residents]   = useState<ResidentDisplay[]>(fillerResidents);
+  const [residents, setResidents] = useState<ResidentDisplay[]>([]);
   const [visitations, setVisitations] = useState<HomeVisitation[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError]     = useState<string | null>(null);
 
   useEffect(() => {
-    getVisitations()
-      .then(setVisitations)
-      .catch(() => setError('Failed to load visitations. Is the backend running?'))
+    Promise.all([getVisitations(), getResidents(), getSafehouses()])
+      .then(([visits, rawResidents, safehouses]) => {
+        setVisitations(visits);
+        const shMap = buildSafehouseNameMap(safehouses);
+        const mapped: ResidentDisplay[] = rawResidents
+          .filter(r => r.residentId != null)
+          .map(r => ({
+            residentId:           r.residentId!,
+            caseLabel:            r.caseControlNo ?? `RES-${r.residentId}`,
+            safehouseName:        (r.safehouseId != null ? shMap.get(r.safehouseId) : undefined) ?? 'Unknown',
+            assignedSocialWorker: r.assignedSocialWorker ?? '',
+            caseStatus:           r.caseStatus ?? '',
+          }));
+        setResidents(mapped);
+      })
+      .catch(() => setError('Failed to load data. Is the backend running?'))
       .finally(() => setLoading(false));
   }, []);
 
@@ -198,31 +196,17 @@ export default function HomeVisitationPage() {
 
   function saveForm(e: { preventDefault(): void }) {
     e.preventDefault();
-    const newVisit: HomeVisitation = {
-      visitationId: Date.now(),
-      residentId:            form.residentId,
-      visitDate:             form.visitDate,
-      socialWorker:          form.socialWorker,
-      visitType:             form.visitType,
-      locationVisited:       form.locationVisited ?? null,
-      familyMembersPresent:  form.familyMembersPresent ?? null,
-      purpose:               form.purpose ?? null,
-      observations:          form.observations ?? null,
-      familyCooperationLevel: form.familyCooperationLevel ?? null,
-      safetyConcernsNoted:   form.safetyConcernsNoted ?? false,
-      followUpNeeded:        form.followUpNeeded ?? null,
-      followUpNotes:         form.followUpNeeded ? (form.followUpNotes ?? null) : null,
-      visitOutcome:          form.visitOutcome ?? null,
-    };
-    setVisitations(prev => [newVisit, ...prev]);
-    // TODO: POST /api/homevisitation { body: form }
-    setModal(null);
+    createVisitation(form).then(saved => {
+      setVisitations(prev => [saved, ...prev]);
+      setModal(null);
+    });
   }
 
   function confirmDelete() {
     if (selectedVisit) {
-      setVisitations(prev => prev.filter(v => v.visitationId !== selectedVisit.visitationId));
-      // TODO: DELETE /api/homevisitation/${selectedVisit.visitationId}
+      deleteVisitation(selectedVisit.visitationId).then(() => {
+        setVisitations(prev => prev.filter(v => v.visitationId !== selectedVisit.visitationId));
+      });
     }
     setModal(null);
     setSelectedVisit(null);
@@ -373,7 +357,7 @@ export default function HomeVisitationPage() {
                         <span className="text-xs text-stone-400">·</span>
                         <span className="text-sm text-stone-600">{visit.socialWorker}</span>
                         <VisitTypeBadge type={visit.visitType} />
-                        {visit.safetyConcernsNoted && (
+                        {visit.safetyConcernsNoted === 'True' && (
                           <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px]
                             font-semibold uppercase tracking-wide border bg-rose-100 text-rose-800 border-rose-200">
                             <AlertIcon /> Safety Concern
@@ -428,7 +412,7 @@ export default function HomeVisitationPage() {
                           </div>
                         </div>
                       )}
-                      {visit.followUpNeeded && visit.followUpNotes && (
+                      {visit.followUpNeeded === 'True' && visit.followUpNotes && (
                         <div className="sm:col-span-2 mt-1 p-3 bg-amber-50 border border-amber-200 rounded-lg">
                           <p className="text-xs font-semibold text-amber-700 uppercase tracking-wide mb-1">Follow-up Required</p>
                           <p className="text-xs text-amber-900">{visit.followUpNotes}</p>
@@ -569,8 +553,8 @@ export default function HomeVisitationPage() {
                   <input
                     id="safetyConcern"
                     type="checkbox"
-                    checked={form.safetyConcernsNoted ?? false}
-                    onChange={e => setForm(f => ({ ...f, safetyConcernsNoted: e.target.checked }))}
+                    checked={form.safetyConcernsNoted === 'True'}
+                    onChange={e => setForm(f => ({ ...f, safetyConcernsNoted: e.target.checked ? 'True' : 'False' }))}
                     className="h-4 w-4 rounded border-stone-300 text-rose-600 focus:ring-rose-500"
                   />
                   <label htmlFor="safetyConcern" className="text-sm font-medium text-stone-700">
@@ -597,8 +581,8 @@ export default function HomeVisitationPage() {
                 <input
                   id="hv-followUp"
                   type="checkbox"
-                  checked={form.followUpNeeded ?? false}
-                  onChange={e => setForm(f => ({ ...f, followUpNeeded: e.target.checked }))}
+                  checked={form.followUpNeeded === 'True'}
+                  onChange={e => setForm(f => ({ ...f, followUpNeeded: e.target.checked ? 'True' : 'False' }))}
                   className="h-4 w-4 rounded border-stone-300 text-haven-teal-600 focus:ring-haven-teal-500"
                 />
                 <label htmlFor="hv-followUp" className="text-sm font-medium text-stone-700">
@@ -606,7 +590,7 @@ export default function HomeVisitationPage() {
                 </label>
               </div>
 
-              {form.followUpNeeded && (
+              {form.followUpNeeded === 'True' && (
                 <div>
                   <label htmlFor="hv-followUpNotes" className="block text-xs font-semibold text-stone-600 uppercase tracking-wide mb-1.5">
                     Follow-up Notes
@@ -649,7 +633,7 @@ export default function HomeVisitationPage() {
               <div className="flex flex-wrap items-center gap-2">
                 <span className="text-base font-bold text-stone-900">{selectedVisit.visitDate}</span>
                 <VisitTypeBadge type={selectedVisit.visitType} />
-                {selectedVisit.safetyConcernsNoted && (
+                {selectedVisit.safetyConcernsNoted === 'True' && (
                   <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px]
                     font-semibold uppercase tracking-wide border bg-rose-100 text-rose-800 border-rose-200">
                     <AlertIcon /> Safety Concern
@@ -675,7 +659,7 @@ export default function HomeVisitationPage() {
                   : '—'}
               </DetailRow>
               <DetailRow label="Safety Concern">
-                {selectedVisit.safetyConcernsNoted
+                {selectedVisit.safetyConcernsNoted === 'True'
                   ? <span className="text-rose-700 font-medium">Yes</span>
                   : <span className="text-stone-500">No</span>}
               </DetailRow>
@@ -685,11 +669,11 @@ export default function HomeVisitationPage() {
                   : '—'}
               </DetailRow>
               <DetailRow label="Follow-up">
-                {selectedVisit.followUpNeeded
+                {selectedVisit.followUpNeeded === 'True'
                   ? <span className="text-amber-700 font-medium">Yes</span>
                   : <span className="text-stone-500">No</span>}
               </DetailRow>
-              {selectedVisit.followUpNeeded && (
+              {selectedVisit.followUpNeeded === 'True' && (
                 <DetailRow label="Follow-up Notes">{selectedVisit.followUpNotes ?? '—'}</DetailRow>
               )}
             </dl>

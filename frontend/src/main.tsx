@@ -13,6 +13,7 @@ import LoginPage from './pages/LoginPage'
 import PrivacyPage from './pages/PrivacyPage'
 import RegisterPage from './pages/RegisterPage'
 import LogoutPage from './pages/LogoutPage'
+import DonatePage from './pages/DonatePage'
 
 import AdminDashboardPage from './pages/admin/AdminDashboardPage'
 import DonorsContributionsPage from './pages/admin/DonorsContributionsPage'
@@ -32,6 +33,7 @@ const router = createBrowserRouter([
       { path: 'privacy', element: <PrivacyPage /> },
       { path: 'register', element: <RegisterPage /> },
       { path: 'logout', element: <LogoutPage /> }
+      { path: 'donate', element: <DonatePage /> },
     ],
   },
   {

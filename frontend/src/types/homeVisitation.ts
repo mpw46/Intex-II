@@ -9,8 +9,8 @@ export interface HomeVisitation {
   purpose: string | null;
   observations: string | null;
   familyCooperationLevel: string | null;
-  safetyConcernsNoted: boolean | null;
-  followUpNeeded: boolean | null;
+  safetyConcernsNoted: string | null;
+  followUpNeeded: string | null;
   followUpNotes: string | null;
   visitOutcome: string | null;
 }
@@ -25,8 +25,8 @@ export interface HomeVisitationCreate {
   purpose?: string;
   observations?: string;
   familyCooperationLevel?: string;
-  safetyConcernsNoted?: boolean;
-  followUpNeeded?: boolean;
+  safetyConcernsNoted?: string;
+  followUpNeeded?: string;
   followUpNotes?: string;
   visitOutcome?: string;
 }
@@ -53,6 +53,7 @@ export const VISIT_OUTCOMES = [
   'Inconclusive',
 ] as const;
 
+/** @deprecated Use ResidentDto from types/resident.ts */
 export interface ResidentLookup {
   residentId: number;
   caseStatus: string | null;

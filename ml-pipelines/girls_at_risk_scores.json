@@ -4,7 +4,7 @@
   "residents": [
     {
       "resident_id": 32,
-      "risk_probability": 0.46973498556488297,
+      "risk_probability": 0.46973498556488286,
       "risk_level": "High",
       "cutoff": "2027-01-01"
     },
@@ -46,7 +46,7 @@
     },
     {
       "resident_id": 1,
-      "risk_probability": 0.26967276992181494,
+      "risk_probability": 0.269672769921815,
       "risk_level": "High",
       "cutoff": "2027-01-01"
     },
@@ -88,7 +88,7 @@
     },
     {
       "resident_id": 27,
-      "risk_probability": 0.20646291727210195,
+      "risk_probability": 0.2064629172721019,
       "risk_level": "Medium",
       "cutoff": "2027-01-01"
     },
@@ -106,13 +106,13 @@
     },
     {
       "resident_id": 40,
-      "risk_probability": 0.13781609499225317,
+      "risk_probability": 0.13781609499225314,
       "risk_level": "Medium",
       "cutoff": "2027-01-01"
     },
     {
       "resident_id": 12,
-      "risk_probability": 0.12614459556694402,
+      "risk_probability": 0.126144595566944,
       "risk_level": "Medium",
       "cutoff": "2027-01-01"
     },
