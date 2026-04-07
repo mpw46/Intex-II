@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 
@@ -54,8 +54,9 @@ public partial class Intex2104Context : DbContext
         modelBuilder.Entity<Donation>(entity =>
         {
             entity
-                .HasNoKey()
-                .ToTable("donations");
+                .HasKey(e => e.DonationId);
+
+            entity.ToTable("donations");
 
             entity.Property(e => e.Amount).HasColumnName("amount");
             entity.Property(e => e.CampaignName).HasColumnName("campaign_name");
@@ -75,8 +76,9 @@ public partial class Intex2104Context : DbContext
         modelBuilder.Entity<DonationAllocation>(entity =>
         {
             entity
-                .HasNoKey()
-                .ToTable("donation_allocations");
+                .HasKey(e => e.AllocationId);
+
+            entity.ToTable("donation_allocations");
 
             entity.Property(e => e.AllocationDate).HasColumnName("allocation_date");
             entity.Property(e => e.AllocationId).HasColumnName("allocation_id");
@@ -90,8 +92,9 @@ public partial class Intex2104Context : DbContext
         modelBuilder.Entity<EducationRecord>(entity =>
         {
             entity
-                .HasNoKey()
-                .ToTable("education_records");
+                .HasKey(e => e.EducationRecordId);
+
+            entity.ToTable("education_records");
 
             entity.Property(e => e.AttendanceRate).HasColumnName("attendance_rate");
             entity.Property(e => e.CompletionStatus).HasColumnName("completion_status");
@@ -108,8 +111,9 @@ public partial class Intex2104Context : DbContext
         modelBuilder.Entity<HealthWellbeingRecord>(entity =>
         {
             entity
-                .HasNoKey()
-                .ToTable("health_wellbeing_records");
+                .HasKey(e => e.HealthRecordId);
+
+            entity.ToTable("health_wellbeing_records");
 
             entity.Property(e => e.Bmi).HasColumnName("bmi");
             entity.Property(e => e.DentalCheckupDone).HasColumnName("dental_checkup_done");
@@ -153,8 +157,9 @@ public partial class Intex2104Context : DbContext
         modelBuilder.Entity<InKindDonationItem>(entity =>
         {
             entity
-                .HasNoKey()
-                .ToTable("in_kind_donation_items");
+                .HasKey(e => e.ItemId);
+
+            entity.ToTable("in_kind_donation_items");
 
             entity.Property(e => e.DonationId).HasColumnName("donation_id");
             entity.Property(e => e.EstimatedUnitValue).HasColumnName("estimated_unit_value");
@@ -170,8 +175,9 @@ public partial class Intex2104Context : DbContext
         modelBuilder.Entity<IncidentReport>(entity =>
         {
             entity
-                .HasNoKey()
-                .ToTable("incident_reports");
+                .HasKey(e => e.IncidentId);
+
+            entity.ToTable("incident_reports");
 
             entity.Property(e => e.Description).HasColumnName("description");
             entity.Property(e => e.FollowUpRequired).HasColumnName("follow_up_required");
@@ -190,8 +196,9 @@ public partial class Intex2104Context : DbContext
         modelBuilder.Entity<InterventionPlan>(entity =>
         {
             entity
-                .HasNoKey()
-                .ToTable("intervention_plans");
+                .HasKey(e => e.PlanId);
+
+            entity.ToTable("intervention_plans");
 
             entity.Property(e => e.CaseConferenceDate).HasColumnName("case_conference_date");
             entity.Property(e => e.CreatedAt).HasColumnName("created_at");
@@ -209,8 +216,9 @@ public partial class Intex2104Context : DbContext
         modelBuilder.Entity<Partner>(entity =>
         {
             entity
-                .HasNoKey()
-                .ToTable("partners");
+                .HasKey(e => e.PartnerId);
+
+            entity.ToTable("partners");
 
             entity.Property(e => e.ContactName).HasColumnName("contact_name");
             entity.Property(e => e.Email).HasColumnName("email");
@@ -229,8 +237,9 @@ public partial class Intex2104Context : DbContext
         modelBuilder.Entity<PartnerAssignment>(entity =>
         {
             entity
-                .HasNoKey()
-                .ToTable("partner_assignments");
+                .HasKey(e => e.AssignmentId);
+
+            entity.ToTable("partner_assignments");
 
             entity.Property(e => e.AssignmentEnd).HasColumnName("assignment_end");
             entity.Property(e => e.AssignmentId).HasColumnName("assignment_id");
@@ -246,8 +255,9 @@ public partial class Intex2104Context : DbContext
         modelBuilder.Entity<ProcessRecording>(entity =>
         {
             entity
-                .HasNoKey()
-                .ToTable("process_recordings");
+                .HasKey(e => e.RecordingId);
+
+            entity.ToTable("process_recordings");
 
             entity.Property(e => e.ConcernsFlagged).HasColumnName("concerns_flagged");
             entity.Property(e => e.EmotionalStateEnd).HasColumnName("emotional_state_end");
@@ -269,8 +279,9 @@ public partial class Intex2104Context : DbContext
         modelBuilder.Entity<PublicImpactSnapshot>(entity =>
         {
             entity
-                .HasNoKey()
-                .ToTable("public_impact_snapshots");
+                .HasKey(e => e.SnapshotId);
+
+            entity.ToTable("public_impact_snapshots");
 
             entity.Property(e => e.Headline).HasColumnName("headline");
             entity.Property(e => e.IsPublished).HasColumnName("is_published");
@@ -284,8 +295,9 @@ public partial class Intex2104Context : DbContext
         modelBuilder.Entity<Resident>(entity =>
         {
             entity
-                .HasNoKey()
-                .ToTable("residents");
+                .HasKey(e => e.ResidentId);
+
+            entity.ToTable("residents");
 
             entity.Property(e => e.AgeUponAdmission).HasColumnName("age_upon_admission");
             entity.Property(e => e.AssignedSocialWorker).HasColumnName("assigned_social_worker");
@@ -341,8 +353,9 @@ public partial class Intex2104Context : DbContext
         modelBuilder.Entity<Safehouse>(entity =>
         {
             entity
-                .HasNoKey()
-                .ToTable("safehouses");
+                .HasKey(e => e.SafehouseId);
+
+            entity.ToTable("safehouses");
 
             entity.Property(e => e.CapacityGirls).HasColumnName("capacity_girls");
             entity.Property(e => e.CapacityStaff).HasColumnName("capacity_staff");
@@ -362,8 +375,9 @@ public partial class Intex2104Context : DbContext
         modelBuilder.Entity<SafehouseMonthlyMetric>(entity =>
         {
             entity
-                .HasNoKey()
-                .ToTable("safehouse_monthly_metrics");
+                .HasKey(e => e.MetricId);
+
+            entity.ToTable("safehouse_monthly_metrics");
 
             entity.Property(e => e.ActiveResidents).HasColumnName("active_residents");
             entity.Property(e => e.AvgEducationProgress).HasColumnName("avg_education_progress");
@@ -381,8 +395,9 @@ public partial class Intex2104Context : DbContext
         modelBuilder.Entity<SocialMediaPost>(entity =>
         {
             entity
-                .HasNoKey()
-                .ToTable("social_media_posts");
+                .HasKey(e => e.PostId);
+
+            entity.ToTable("social_media_posts");
 
             entity.Property(e => e.AvgViewDurationSeconds).HasColumnName("avg_view_duration_seconds");
             entity.Property(e => e.BoostBudgetPhp).HasColumnName("boost_budget_php");
@@ -428,8 +443,9 @@ public partial class Intex2104Context : DbContext
         modelBuilder.Entity<Supporter>(entity =>
         {
             entity
-                .HasNoKey()
-                .ToTable("supporters");
+                .HasKey(e => e.SupporterId);
+
+            entity.ToTable("supporters");
 
             entity.Property(e => e.AcquisitionChannel).HasColumnName("acquisition_channel");
             entity.Property(e => e.Country).HasColumnName("country");

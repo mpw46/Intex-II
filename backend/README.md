@@ -1,6 +1,6 @@
 # Backend — ASP.NET Core 10 API
 
-REST API for the Intex-II nonprofit safehouse management platform.
+REST API for Haven, the nonprofit safehouse management platform.
 
 ## Setup
 
@@ -11,107 +11,156 @@ dotnet run --project Intex2.API
 # HTTPS: https://localhost:7082
 ```
 
+**Connection string:** Configure `IntexConnection` in `appsettings.json` (or user secrets / environment variables).
+
 ## Project Structure
 
 ```
-backend/
+backend/Intex2.API/
+├── Intex2.API.slnx                          # Solution file
 └── Intex2.API/
-    ├── Intex2.API.slnx                  # Solution file
-    └── Intex2.API/
-        ├── Program.cs                    # App entry point — middleware pipeline
-        ├── Intex2.API.csproj             # .NET 10 project config
-        ├── Controllers/
-        │   └── WeatherForecastController.cs  # Template placeholder (replace)
-        ├── WeatherForecast.cs            # Template model (replace)
-        ├── Properties/
-        │   └── launchSettings.json       # Dev server ports and profiles
-        ├── appsettings.json              # Production config
-        ├── appsettings.Development.json  # Dev config
-        └── Intex2.API.http               # REST client test file
+    ├── Program.cs                            # App entry — EF Core, CORS, middleware
+    ├── Intex2.API.csproj                     # .NET 10, EF Core 10.0.5, SqlServer
+    ├── Controllers/
+    │   ├── HomeVisitationController.cs       # Full CRUD + filtering (LIVE)
+    │   ├── ResidentsController.cs            # GET all with projection
+    │   └── WeatherForecastController.cs      # Template placeholder (unused)
+    ├── DTOs/
+    │   └── HomeVisitationDto.cs              # Create/Update DTOs for HomeVisitation
+    ├── Data/
+    │   ├── Intex2104Context.cs               # DbContext — 27 DbSets
+    │   ├── Safehouse.cs
+    │   ├── Partner.cs
+    │   ├── PartnerAssignment.cs
+    │   ├── Supporter.cs
+    │   ├── Donation.cs
+    │   ├── InKindDonationItem.cs
+    │   ├── DonationAllocation.cs
+    │   ├── Resident.cs                       # 40+ properties (demographics, case categories, risk levels)
+    │   ├── ProcessRecording.cs
+    │   ├── HomeVisitation.cs
+    │   ├── EducationRecord.cs
+    │   ├── HealthWellbeingRecord.cs
+    │   ├── InterventionPlan.cs
+    │   ├── IncidentReport.cs
+    │   ├── SocialMediaPost.cs                # 60+ engagement metrics
+    │   ├── SafehouseMonthlyMetric.cs
+    │   └── PublicImpactSnapshot.cs
+    ├── Properties/launchSettings.json
+    ├── appsettings.json                      # ConnectionStrings:IntexConnection
+    ├── appsettings.Development.json
+    └── Intex2.API.http                       # REST client test file
 ```
 
 ## Current State
 
-The backend is a fresh ASP.NET Core 10 template with only the default WeatherForecast controller. Everything below needs to be built.
+### Implemented
+
+| Component | Details |
+|-----------|---------|
+| **18 Entity Models** | All domain entities mapped with proper types and nullable annotations |
+| **Intex2104Context** | 27 DbSets covering all tables |
+| **HomeVisitationController** | Full CRUD: GET (with filtering by visitType, residentId, socialWorker), GET by ID, POST, PUT, DELETE |
+| **ResidentsController** | GET all with select projection (ResidentId, CaseStatus, AssignedSocialWorker, SafehouseId) |
+| **DTOs** | HomeVisitationDto, HomeVisitationCreateDto |
+| **CORS** | AllowAnyOrigin policy (needs tightening for production) |
+| **EF Core + SQL Server** | Configured in Program.cs |
+| **OpenAPI/Swagger** | Available in dev environment |
+
+### Live API Endpoints
+
+```
+GET    /api/HomeVisitation?visitType=...&residentId=...&socialWorker=...
+GET    /api/homevisitation/{id}
+POST   /api/homevisitation
+PUT    /api/homevisitation/{id}
+DELETE /api/homevisitation/{id}
+GET    /api/residents
+```
 
 ## What Needs to Be Built
 
-### Database & Models
+### Priority 1: Authentication & Authorization
 
-Choose one: Azure SQL Database, MySQL, or PostgreSQL. Use Entity Framework Core for ORM.
-
-**17 tables across three domains:**
-
-**Donor & Support Domain:**
-- `Safehouses` — Physical locations (id, name, region, city, province, status, capacity_girls, capacity_staff, current_occupancy)
-- `Partners` — Service delivery orgs/individuals (partner_type [Organization/Individual], role_type [Education/Evaluation/SafehouseOps/FindSafehouse/Logistics/Transport/Maintenance])
-- `PartnerAssignments` — Partner ↔ safehouse ↔ program area mapping
-- `Supporters` — Donors/volunteers (supporter_type [MonetaryDonor/InKindDonor/Volunteer/SkillsContributor/SocialMediaAdvocate/PartnerOrganization], relationship_type [Local/International/PartnerOrganization], acquisition_channel [Website/SocialMedia/Event/WordOfMouth/PartnerReferral/Church])
-- `Donations` — All donation events (donation_type [Monetary/InKind/Time/Skills/SocialMedia], channel_source [Campaign/Event/Direct/SocialMedia/PartnerReferral], currency: PHP)
-- `InKindDonationItems` — Line items (item_category [Food/Supplies/Clothing/SchoolMaterials/Hygiene/Furniture/Medical])
-- `DonationAllocations` — Distribution across safehouses and program areas [Education/Wellbeing/Operations/Transport/Maintenance/Outreach]
-
-**Case Management Domain:**
-- `Residents` — Core case records (case_status [Active/Closed/Transferred], case_category [Abandoned/Foundling/Surrendered/Neglected], boolean sub-categories for trafficked/child_labor/physical_abuse/sexual_abuse/osaec/cicl/at_risk/street_child/child_with_hiv, disability fields, family flags [4ps/solo_parent/indigenous/informal_settler], reintegration_type, risk_level [Low/Medium/High/Critical])
-- `ProcessRecordings` — Counseling sessions (session_type [Individual/Group], emotional_state [Calm/Anxious/Sad/Angry/Hopeful/Withdrawn/Happy/Distressed], interventions, follow-ups)
-- `HomeVisitations` — Field visits (visit_type [Initial Assessment/Routine Follow-Up/Reintegration Assessment/Post-Placement Monitoring/Emergency], family_cooperation_level [Highly Cooperative/Cooperative/Neutral/Uncooperative], visit_outcome [Favorable/Needs Improvement/Unfavorable/Inconclusive])
-- `EducationRecords` — Monthly progress (program_name [Bridge Program/Secondary Support/Vocational Skills/Literacy Boost], attendance_rate 0-1, progress_percent 0-100)
-- `HealthWellbeingRecords` — Monthly health data (weight, height, bmi, nutrition/sleep/energy scores)
-- `InterventionPlans` — Individual goals and services
-- `IncidentReports` — Safety and behavioral incidents
-
-**Outreach Domain:**
-- `SocialMediaPosts` — Posts with engagement metrics (platform, likes, shares, comments, reach, donations_attributed)
-- `SafehouseMonthlyMetrics` — Aggregated monthly outcome metrics
-- `PublicImpactSnapshots` — Anonymized impact reports for public/donor communication
-
-### API Controllers to Build
-
-Each controller should support appropriate CRUD operations:
-
-| Controller | Endpoints | Auth Required |
-|-----------|-----------|---------------|
-| AuthController | POST /login, GET /auth/me, POST /register | No (public) |
-| SafehousesController | GET, POST, PUT, DELETE | Read: mixed, CUD: Admin |
-| SupportersController | Full CRUD + search/filter | Admin |
-| DonationsController | Full CRUD + aggregations | Admin; Donor can read own |
-| ResidentsController | Full CRUD + search/filter | Admin/Staff |
-| ProcessRecordingsController | Full CRUD per resident | Admin/Staff |
-| HomeVisitationsController | Full CRUD per resident | Admin/Staff |
-| EducationRecordsController | Full CRUD per resident | Admin/Staff |
-| HealthRecordsController | Full CRUD per resident | Admin/Staff |
-| ReportsController | GET aggregated analytics | Admin/Staff |
-| PublicImpactController | GET anonymized data | No (public) |
-| SocialMediaController | Full CRUD | Admin |
-
-### Authentication & Security
-
-- **ASP.NET Identity** for user management
-- **JWT tokens** for API authentication
+- **ASP.NET Identity** setup (user registration, login, JWT tokens)
 - **Roles:** Admin, Staff (optional), Donor
-- **Strong password policy** (per class instruction — NOT Microsoft's default suggestions)
-- **HTTPS** with HTTP → HTTPS redirect
-- **CORS** configured for frontend origin
-- **CSP header** via middleware
-- **HSTS** (bonus)
-- **Data sanitization** to prevent injection attacks
+- **Strong password policy** (per class instruction — NOT Microsoft's default values)
+- **Auth middleware** on all CUD endpoints (and most R endpoints)
+- **Endpoints:** `POST /api/auth/login`, `POST /api/auth/register`, `GET /api/auth/me`
 
-### Configuration
+### Priority 2: Remaining CRUD Controllers
 
-- Database connection string in `appsettings.json` (or .env / secrets manager — never commit secrets)
-- Identity database can be separate from operational database
-- CORS origins for frontend dev server (localhost:5173) and production URL
+The frontend has TODO comments for these endpoints:
 
-## Dependencies to Add
+| Controller | Endpoints | Frontend Consumer |
+|-----------|-----------|-------------------|
+| SafehousesController | GET, POST, PUT, DELETE | AdminDashboard, DonorDashboard |
+| SupportersController | Full CRUD + search | DonorsContributionsPage |
+| DonationsController | Full CRUD + aggregations | DonorsContributionsPage, ReportsPage |
+| ProcessRecordingsController | Full CRUD per resident | ProcessRecordingPage |
+| EducationRecordsController | Full CRUD per resident | ReportsPage |
+| HealthRecordsController | Full CRUD per resident | ReportsPage |
+| InterventionPlansController | Full CRUD per resident | CaseloadPage |
+| IncidentReportsController | Full CRUD per resident | CaseloadPage |
+| SocialMediaController | Full CRUD | AdminDashboard |
+| **DonorPortalController** | GET own donations, POST fake donation | **DonorPortalPage (NOT BUILT)** — Donor role only |
+
+### Priority 3: Aggregation / Public Endpoints
+
+```
+GET /api/public/impact/snapshot          → HomePage, DonorDashboardPage
+GET /api/public/impact/featured-quote    → HomePage
+GET /api/public/impact/yearly            → DonorDashboardPage
+GET /api/public/impact/allocations       → DonorDashboardPage
+GET /api/public/impact/highlights        → DonorDashboardPage
+GET /api/public/impact/outcomes          → DonorDashboardPage
+GET /api/public/safehouses               → DonorDashboardPage
+GET /api/admin/dashboard-stats           → AdminDashboardPage
+GET /api/reports/monthly-donations       → ReportsPage
+GET /api/reports/safehouse-outcomes      → ReportsPage
+GET /api/reports/program-outcomes        → ReportsPage
+GET /api/reports/annual-accomplishment   → ReportsPage
+GET /api/donor/donations                 → DonorPortalPage (donor's own history)
+POST /api/donor/donate                   → DonorPortalPage (submit fake donation)
+```
+
+### Priority 4: Security Middleware
+
+- **CSP Header** — Content-Security-Policy via middleware (required for IS 414)
+- **HSTS** — HTTP Strict Transport Security (bonus)
+- **CORS lockdown** — Replace `AllowAnyOrigin` with specific frontend origins
+- **Data sanitization** — Input validation on all endpoints
+
+## Dependencies
 
 ```xml
-<!-- Likely needed packages -->
+<PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.4" />
+<PackageReference Include="Microsoft.EntityFrameworkCore" Version="10.0.5" />
+<PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="10.0.5" />
+<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.5" />
+<PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="10.0.5" />
+```
+
+### To Add for Auth
+
+```xml
 <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" />
-<PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" />  <!-- or Npgsql/Pomelo for PG/MySQL -->
-<PackageReference Include="Microsoft.EntityFrameworkCore.Tools" />
 <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" />
 ```
 
+## Configuration
+
+- **Connection string key:** `IntexConnection` in `ConnectionStrings` section of `appsettings.json`
+- **Database:** Azure SQL Server (EF Core SqlServer provider)
+- **CORS:** Currently `AllowAnyOrigin` — tighten before production
+- **Launch profiles:** HTTP (5063), HTTPS (7082)
+- **Swagger:** Available at `/openapi/v1.json` in development
+
+## Deployment
+
+Currently deployed to Azure App Service at:
+`https://intex2-backend-ezargqcgdwbgd4hq.francecentral-01.azurewebsites.net`
+
 ## ML Pipeline Integration
 
-The `ml-pipelines/` folder will contain Jupyter notebooks with trained models. The backend needs to expose prediction endpoints (e.g., donor churn probability, reintegration readiness score) by loading serialized models or calling a Python microservice.
+The `ml-pipelines/` folder will contain trained models. The backend needs prediction endpoints (e.g., donor churn, reintegration readiness) — either by loading serialized models directly or calling a Python microservice.

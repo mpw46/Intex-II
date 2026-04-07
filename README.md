@@ -1,28 +1,22 @@
-# Intex-II
+# Haven — Intex-II
 
-Full-stack web application for a nonprofit organization operating safehouses for survivors of abuse and trafficking in the Philippines. Built as a BYU INTEX capstone project (IS 401, IS 413, IS 414, IS 455).
+Full-stack web application for a nonprofit operating safehouses for survivors of abuse and trafficking in the Philippines. BYU INTEX capstone (IS 401, 413, 414, 455).
 
 ## Tech Stack
 
-- **Frontend:** React 19 + TypeScript 6 + Vite 8 + React Router v7
-- **Backend:** ASP.NET Core 10 / C# (.NET 10)
-- **Database:** TBD (Azure SQL, MySQL, or PostgreSQL)
-- **ML:** Jupyter notebooks (Python) with deployed API endpoints
-- **Deployment:** Microsoft Azure
+- **Frontend:** React 19 + TypeScript 6 + Vite 8 + Tailwind CSS 4 + React Router 7 + Axios
+- **Backend:** ASP.NET Core 10 / C# + Entity Framework Core 10 + SQL Server
+- **Deployment:** Microsoft Azure (App Service + Static Web Apps)
 
 ## Quick Start
 
-### Frontend
-
 ```bash
+# Frontend
 cd frontend
 npm install
 npm run dev        # http://localhost:5173
-```
 
-### Backend
-
-```bash
+# Backend
 cd backend/Intex2.API
 dotnet run --project Intex2.API   # http://localhost:5063
 ```
@@ -31,83 +25,85 @@ dotnet run --project Intex2.API   # http://localhost:5063
 
 ```
 Intex-II/
-├── backend/                  # ASP.NET Core 10 API
+├── backend/                     # ASP.NET Core 10 API
 │   └── Intex2.API/
-├── frontend/                 # React + Vite SPA
+│       └── Intex2.API/
+│           ├── Controllers/     # HomeVisitationController, ResidentsController
+│           ├── Data/            # 18 entity models + Intex2104Context (27 DbSets)
+│           ├── DTOs/            # Data transfer objects
+│           └── Program.cs       # App config (EF Core, CORS, middleware)
+├── frontend/                    # React + Vite SPA
 │   └── src/
-│       ├── components/       # Layout, AdminLayout
-│       └── pages/            # Public and admin page components
-│           └── admin/        # Authenticated admin pages
-├── ml-pipelines/             # (Planned) Jupyter notebooks
-├── admin-dashboard-mockup.jsx  # Design reference
-├── CLAUDE.md                 # AI context file (detailed project spec)
-└── README.md                 # This file
+│       ├── api/                 # Axios client + API functions
+│       ├── types/               # TypeScript interfaces
+│       ├── components/          # Layout, AdminLayout
+│       └── pages/               # Public and admin page components
+│           └── admin/           # 6 admin pages
+├── ml-pipelines/                # (Planned) Jupyter notebooks
+├── admin-dashboard-mockup.jsx   # Original design reference
+├── CLAUDE.md                    # Full AI context file
+└── README.md
 ```
 
-## Application Pages
+## Pages
 
-### Public (No Authentication)
+### Public (No Auth)
 
-| Route | Description |
-|-------|-------------|
-| `/` | Landing page — organization mission, safehouses, calls to action |
-| `/impact` | Donor-facing dashboard — anonymized impact data and outcomes |
-| `/login` | Login and registration |
-| `/privacy` | GDPR-compliant privacy policy |
+| Route | Page | Status |
+|-------|------|--------|
+| `/` | Landing page — hero, KPIs, mission, testimonials | UI complete (filler data) |
+| `/impact` | Donor-facing impact dashboard — safehouses, outcomes, allocations | UI complete (filler data) |
+| `/login` | Sign-in + registration forms | UI complete (needs API) |
+| `/privacy` | GDPR + Philippine DPA privacy policy | Complete |
 
-### Admin Portal (Authenticated)
+### Donor Portal (Donor Auth Required)
 
-| Route | Description |
-|-------|-------------|
-| `/admin` | Dashboard — KPIs, active residents, donations, case conferences |
-| `/admin/donors` | Manage supporters and track all contribution types |
-| `/admin/caseload` | Case management — resident profiles, demographics, filtering |
-| `/admin/process-recording` | Counseling session documentation |
-| `/admin/home-visitation` | Home/field visits and case conferences |
-| `/admin/reports` | Analytics, trends, and reports |
+| Route | Page | Status |
+|-------|------|--------|
+| `/donor` | Donor dashboard — fake donation form + donation history | **Not built yet** |
+
+### Admin Portal (Admin Auth Required)
+
+| Route | Page | Status |
+|-------|------|--------|
+| `/admin` | Dashboard — KPIs, safehouse selector, tabs | UI complete (filler data) |
+| `/admin/donors` | Supporter management + donation tracking | UI complete (filler data) |
+| `/admin/caseload` | Resident case management + filtering | UI complete (filler data) |
+| `/admin/process-recording` | Counseling session documentation | UI complete (filler data) |
+| `/admin/home-visitation` | Home/field visits + case conferences | **Live API** |
+| `/admin/reports` | Analytics — donations, outcomes, quarterly | UI complete (filler data) |
 
 ## Domain Overview
 
-The application serves three core domains:
-
-1. **Donor & Support** — Track safehouses, partners, supporters, and all donation types (monetary, in-kind, time, skills, social media advocacy). Support donor retention analysis and campaign effectiveness.
-
-2. **Case Management** — Manage residents across their full lifecycle: intake, case assessment, counseling (process recordings), education, health services, home visitations, intervention plans, and reintegration. Follows Philippine social welfare agency documentation standards.
-
-3. **Outreach & Communication** — Track social media activity and engagement metrics. Connect content strategy to donation outcomes.
+1. **Donor & Support** — Safehouses, partners, supporters, donations (monetary, in-kind, time, skills, social media), allocations
+2. **Case Management** — Residents, process recordings, home visitations, education, health, intervention plans, incident reports
+3. **Outreach** — Social media posts, engagement metrics, public impact snapshots
 
 ## Database
 
-17 tables across three domains. See `CLAUDE.md` for the full schema reference, or the data dictionary in the project specification.
+18 entity models across three domains, mapped to 27 DbSets in `Intex2104Context`. Connected to Azure SQL Server via `IntexConnection` connection string. See `CLAUDE.md` for full schema.
 
-**Donor Domain:** safehouses, partners, partner_assignments, supporters, donations, in_kind_donation_items, donation_allocations
+## What Still Needs to Be Done
 
-**Case Management Domain:** residents, process_recordings, home_visitations, education_records, health_wellbeing_records, intervention_plans, incident_reports
+- [ ] **Donor Portal page** — `/donor` route: fake donation form + donation history (new requirement from updated spec)
+- [ ] **Authentication** — ASP.NET Identity with JWT, role-based (Admin/Staff/Donor)
+- [ ] **Remaining API controllers** — Donors, Donations, ProcessRecordings, Education, Health, Reports, etc.
+- [ ] **Donor API endpoints** — `GET /api/donor/donations` (own history), `POST /api/donor/donate` (fake donation)
+- [ ] **Wire frontend pages to API** — Replace filler data with real API calls (TODO comments in each page)
+- [ ] **CSP Header** — Content-Security-Policy middleware
+- [ ] **CORS lockdown** — Replace AllowAnyOrigin with specific origins
+- [ ] **ML Pipelines** — Jupyter notebooks in `ml-pipelines/`
+- [ ] **Accessibility** — Lighthouse score ≥ 90% on every page
+- [ ] **Responsive polish** — Desktop + mobile on all pages
 
-**Outreach Domain:** social_media_posts, safehouse_monthly_metrics, public_impact_snapshots
+## Design System
 
-## Security Requirements
+- **Tailwind CSS v4** with custom `@theme` in `src/index.css`
+- **Haven Teal** (50–950) — primary palette
+- **Haven Violet** (50–950) — accent for public pages
+- **Font:** Inter (Google Fonts)
+- **Neutrals:** Tailwind `stone` palette
 
-- HTTPS/TLS with HTTP → HTTPS redirect
-- ASP.NET Identity authentication with strong password policy
-- Role-based access control (Admin, Donor, unauthenticated)
-- Content-Security-Policy HTTP header
-- GDPR privacy policy and functional cookie consent
-- Credentials stored securely (never in code)
-- Delete confirmation for data integrity
+## Security Requirements (IS 414)
 
-## ML Pipelines
-
-Jupyter notebooks in `ml-pipelines/`. Each pipeline follows the full lifecycle:
-Problem Framing → Data Prep → Exploration → Modeling → Evaluation → Deployment
-
-Pipelines should address meaningful business questions across donor analytics, case management outcomes, and social media effectiveness.
-
-## Key Notes
-
-- Organization name is TBD (using "Intex II" as placeholder)
-- All resident data involves minors who are abuse survivors — privacy is paramount
-- Currency: Philippine Pesos (PHP)
-- Geography: Philippines (Luzon, Visayas, Mindanao regions)
-- Must be responsive (desktop + mobile) with Lighthouse accessibility ≥ 90%
-- Design reference: `admin-dashboard-mockup.jsx` (color scheme: `#0f4c5c` teal, `#e8b931` gold)
+HTTPS/TLS, HTTP→HTTPS redirect, ASP.NET Identity auth, strong passwords, RBAC, API auth on all CUD endpoints, delete confirmation, credential security, GDPR privacy policy (done), cookie consent (done), CSP header, public deployment. See `CLAUDE.md` for full details.
