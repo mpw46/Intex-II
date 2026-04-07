@@ -1,18 +1,10 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import {
-  getSafehouses,
-  createDonation,
-} from '../api/donationApi';
-import type { SafehouseOption } from '../api/donationApi';
+import { createDonation } from '../api/donationApi';
 
 function DonatePage() {
-  const [safehouses, setSafehouses] = useState<SafehouseOption[]>([]);
-
   const [amount, setAmount] = useState('');
   const [isRecurring, setIsRecurring] = useState(false);
-  const [safehouseId, setSafehouseId] = useState<string>('');
-  const [campaignName, setCampaignName] = useState('');
   const [notes, setNotes] = useState('');
   const [donorName, setDonorName] = useState('');
   const [donorEmail, setDonorEmail] = useState('');
@@ -20,12 +12,6 @@ function DonatePage() {
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState('');
-
-  useEffect(() => {
-    getSafehouses()
-      .then(setSafehouses)
-      .catch(() => {});
-  }, []);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -37,14 +23,12 @@ function DonatePage() {
         donationType: 'Monetary',
         donationDate: new Date().toISOString().split('T')[0],
         isRecurring: isRecurring ? 'True' : 'False',
-        campaignName: campaignName || undefined,
         channelSource: 'Website',
         currencyCode: 'PHP',
         amount,
         notes: [
           donorName ? `Donor: ${donorName}` : '',
           donorEmail ? `Email: ${donorEmail}` : '',
-          safehouseId ? `Safehouse: ${safehouseId}` : '',
           notes,
         ].filter(Boolean).join(' | ') || undefined,
       });
@@ -85,7 +69,6 @@ function DonatePage() {
                 setSubmitted(false);
                 setAmount('');
                 setNotes('');
-                setCampaignName('');
               }}
               className="inline-flex items-center justify-center px-6 py-3
                          bg-white text-stone-700 font-medium rounded-lg border border-stone-300
@@ -183,43 +166,6 @@ function DonatePage() {
               <span className="text-sm text-stone-700">
                 {isRecurring ? 'Monthly recurring donation' : 'One-time donation'}
               </span>
-            </div>
-
-            {/* Safehouse */}
-            <div>
-              <label htmlFor="safehouse" className="block text-sm font-semibold text-stone-700 mb-2">
-                Support a Safehouse <span className="text-stone-400 font-normal">(optional)</span>
-              </label>
-              <select
-                id="safehouse"
-                value={safehouseId}
-                onChange={(e) => setSafehouseId(e.target.value)}
-                className="w-full px-4 py-3 rounded-lg border border-stone-300 text-stone-900 bg-white
-                           focus:outline-none focus:ring-2 focus:ring-haven-teal-500 focus:border-haven-teal-500"
-              >
-                <option value="">Any safehouse</option>
-                {safehouses.map((sh) => (
-                  <option key={sh.safehouseId} value={sh.safehouseId}>
-                    {sh.name} — {sh.region}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            {/* Campaign */}
-            <div>
-              <label htmlFor="campaign" className="block text-sm font-semibold text-stone-700 mb-2">
-                Campaign <span className="text-stone-400 font-normal">(optional)</span>
-              </label>
-              <input
-                id="campaign"
-                type="text"
-                value={campaignName}
-                onChange={(e) => setCampaignName(e.target.value)}
-                placeholder="e.g. Holiday Drive 2026"
-                className="w-full px-4 py-3 rounded-lg border border-stone-300 text-stone-900
-                           focus:outline-none focus:ring-2 focus:ring-haven-teal-500 focus:border-haven-teal-500"
-              />
             </div>
 
             {/* Donor info */}
