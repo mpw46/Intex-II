@@ -130,8 +130,9 @@ public partial class Intex2104Context : DbContext
         modelBuilder.Entity<HomeVisitation>(entity =>
         {
             entity
-                .HasNoKey()
-                .ToTable("home_visitations");
+                .HasKey(e => e.VisitationId);
+
+            entity.ToTable("home_visitations");
 
             entity.Property(e => e.FamilyCooperationLevel).HasColumnName("family_cooperation_level");
             entity.Property(e => e.FamilyMembersPresent).HasColumnName("family_members_present");
