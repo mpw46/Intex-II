@@ -49,6 +49,11 @@ public partial class Intex2104Context : DbContext
 
     public virtual DbSet<Supporter> Supporters { get; set; }
 
+    // ML prediction tables
+    public DbSet<MlResidentRiskScore> MlResidentRiskScores { get; set; }
+    public DbSet<MlDonorRiskScore> MlDonorRiskScores { get; set; }
+    public DbSet<MlSocialEngagementDriver> MlSocialEngagementDrivers { get; set; }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Donation>(entity =>
@@ -462,6 +467,50 @@ public partial class Intex2104Context : DbContext
             entity.Property(e => e.Status).HasColumnName("status");
             entity.Property(e => e.SupporterId).HasColumnName("supporter_id");
             entity.Property(e => e.SupporterType).HasColumnName("supporter_type");
+        });
+
+        // ML prediction tables — created via manual SQL; EF maps to existing schema
+        modelBuilder.Entity<MlResidentRiskScore>(entity =>
+        {
+            entity.HasKey(e => e.ScoreId);
+            entity.ToTable("ml_resident_risk_scores");
+            entity.Property(e => e.ScoreId).HasColumnName("score_id");
+            entity.Property(e => e.ResidentId).HasColumnName("resident_id");
+            entity.Property(e => e.ScoredAt).HasColumnName("scored_at");
+            entity.Property(e => e.AsOfDate).HasColumnName("as_of_date");
+            entity.Property(e => e.RiskProbability).HasColumnName("risk_probability");
+            entity.Property(e => e.RiskLevel).HasColumnName("risk_level");
+            entity.Property(e => e.ModelVersion).HasColumnName("model_version");
+            entity.Property(e => e.IsCurrent).HasColumnName("is_current");
+        });
+
+        modelBuilder.Entity<MlDonorRiskScore>(entity =>
+        {
+            entity.HasKey(e => e.ScoreId);
+            entity.ToTable("ml_donor_risk_scores");
+            entity.Property(e => e.ScoreId).HasColumnName("score_id");
+            entity.Property(e => e.SupporterId).HasColumnName("supporter_id");
+            entity.Property(e => e.ScoredAt).HasColumnName("scored_at");
+            entity.Property(e => e.AsOfDate).HasColumnName("as_of_date");
+            entity.Property(e => e.LapseProbability).HasColumnName("lapse_probability");
+            entity.Property(e => e.RiskTier).HasColumnName("risk_tier");
+            entity.Property(e => e.ModelVersion).HasColumnName("model_version");
+            entity.Property(e => e.IsCurrent).HasColumnName("is_current");
+        });
+
+        modelBuilder.Entity<MlSocialEngagementDriver>(entity =>
+        {
+            entity.HasKey(e => e.DriverId);
+            entity.ToTable("ml_social_engagement_drivers");
+            entity.Property(e => e.DriverId).HasColumnName("driver_id");
+            entity.Property(e => e.ScoredAt).HasColumnName("scored_at");
+            entity.Property(e => e.ModelType).HasColumnName("model_type");
+            entity.Property(e => e.Rank).HasColumnName("rank");
+            entity.Property(e => e.FeatureName).HasColumnName("feature_name");
+            entity.Property(e => e.Importance).HasColumnName("importance");
+            entity.Property(e => e.Direction).HasColumnName("direction");
+            entity.Property(e => e.ModelVersion).HasColumnName("model_version");
+            entity.Property(e => e.IsCurrent).HasColumnName("is_current");
         });
 
         OnModelCreatingPartial(modelBuilder);

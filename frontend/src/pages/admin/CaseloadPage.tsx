@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { getResidents, createResident, updateResident, deleteResident } from '../../api/residentsApi';
 import { getSafehouses, buildSafehouseNameMap } from '../../api/safehousesApi';
+import { getMlResidentRisk } from '../../api/mlApi';
 import { isTruthy } from '../../types/resident';
 import type { ResidentDto } from '../../types/resident';
 import type { SafehouseDto } from '../../types/safehouse';
@@ -76,13 +77,30 @@ interface ResidentFormDraft {
   disabilityDetails: string;
 }
 
-/** Map a ResidentDto + safehouse name lookup to the local UI Resident shape */
-function mapResident(r: ResidentDto, shMap: Map<number, string>): Resident {
+/** Map a ResidentDto + safehouse name lookup to the local UI Resident shape.
+ *  mlRiskMap (optional): Map<residentId, 'High'|'Medium'|'Low'> from ML model.
+ *  When present, ML risk overrides the clinical currentRiskLevel field. */
+function mapResident(
+  r: ResidentDto,
+  shMap: Map<number, string>,
+  mlRiskMap?: Map<number, string>,
+): Resident {
   const today = new Date().toISOString().substring(0, 10);
   const admission = r.dateOfAdmission ?? today;
   const days = Math.max(0, Math.floor(
     (new Date(today).getTime() - new Date(admission).getTime()) / 86_400_000
   ));
+
+  // Prefer ML-predicted risk; fall back to clinical field
+  const mlRisk = mlRiskMap?.get(r.residentId ?? 0);
+  const riskLevel: RiskLevel = mlRisk === 'High'
+    ? 'High Risk'
+    : mlRisk === 'Medium' || mlRisk === 'Low'
+      ? 'Standard'
+      : (r.currentRiskLevel === 'High' || r.currentRiskLevel === 'Critical')
+        ? 'High Risk'
+        : 'Standard';
+
   return {
     id: String(r.residentId ?? 0),
     caseId: r.caseControlNo ?? `RES-${r.residentId}`,
@@ -105,7 +123,7 @@ function mapResident(r: ResidentDto, shMap: Map<number, string>): Resident {
     admissionDate: r.dateOfAdmission ?? '',
     assignedSocialWorker: r.assignedSocialWorker ?? '',
     referralSource: r.referralSource ?? '',
-    riskLevel: (r.currentRiskLevel as RiskLevel) ?? 'Standard',
+    riskLevel,
     reintegrationType: (r.reintegrationType as ReintegrationType) ?? 'N/A',
     reintegrationStatus: (r.reintegrationStatus as ReintegrationStatus) ?? 'Not Started',
     daysInProgram: days,
@@ -190,12 +208,16 @@ export default function CaseloadPage() {
   const SOCIAL_WORKERS = Array.from(new Set(residents.map(r => r.assignedSocialWorker).filter(Boolean)));
 
   useEffect(() => {
-    Promise.all([getResidents(), getSafehouses()])
-      .then(([rawResidents, safehouses]) => {
+    Promise.all([getResidents(), getSafehouses(), getMlResidentRisk().catch(() => [])])
+      .then(([rawResidents, safehouses, mlScores]) => {
         const map = buildSafehouseNameMap(safehouses);
+        // Build ML risk lookup: residentId → 'High' | 'Medium' | 'Low'
+        const mlMap = new Map<number, string>(
+          mlScores.map(s => [s.residentId, s.riskLevel])
+        );
         setShMap(map);
         setApiSafehouses(safehouses);
-        setResidents(rawResidents.map(r => mapResident(r, map)));
+        setResidents(rawResidents.map(r => mapResident(r, map, mlMap)));
       })
       .finally(() => setLoading(false));
   }, []);
@@ -367,7 +389,7 @@ export default function CaseloadPage() {
                   <td className="px-4 py-3"><StatusBadge status={r.caseStatus} /></td>
                   <td className="px-4 py-3">
                     {r.riskLevel === 'High Risk'
-                      ? <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-semibold uppercase tracking-wide border transition-none bg-rose-100 text-rose-800 border-rose-200"><span className="h-1.5 w-1.5 rounded-full bg-current" />High Risk</span>
+                      ? <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-semibold uppercase tracking-wide border transition-none bg-rose-100 text-rose-800 border-rose-200"><span className="h-1.5 w-1.5 rounded-full bg-current" />High Risk <span className="ml-0.5 text-[9px] font-bold opacity-60">ML</span></span>
                       : <span className="text-xs text-stone-400">Standard</span>}
                   </td>
                   <td className="px-4 py-3 text-stone-700 whitespace-nowrap">{r.assignedSocialWorker}</td>
