@@ -3,6 +3,7 @@ import { getSupporters, createSupporter, updateSupporter, deleteSupporter } from
 import { getDonations, createDonationRecord, deleteDonation, getAllocations } from '../../api/donationsApi';
 import { getSafehouses, buildSafehouseNameMap } from '../../api/safehousesApi';
 import { getMlDonorRisk } from '../../api/mlApi';
+import PaginationBar from '../../components/PaginationBar';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -178,6 +179,9 @@ export default function DonorsContributionsPage() {
   const [search, setSearch]               = useState('');
   const [typeFilter, setTypeFilter]       = useState<SupporterType | 'All'>('All');
   const [statusFilter, setStatusFilter]   = useState<SupporterStatus | 'All'>('All');
+  const [page, setPage]                   = useState(1);
+
+  const PAGE_SIZE = 20;
 
   // Selected supporter detail panel
   const [selected, setSelected]           = useState<Supporter | null>(null);
@@ -264,6 +268,10 @@ export default function DonorsContributionsPage() {
     const matchS = statusFilter === 'All' || s.status === statusFilter;
     return matchQ && matchT && matchS;
   });
+
+  useEffect(() => { setPage(1); }, [search, typeFilter, statusFilter]);
+
+  const paginated = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
 
   const selectedDonations = selected ? donations : [];
   const selectedAllocations = selected ? allocations : [];
@@ -434,7 +442,7 @@ export default function DonorsContributionsPage() {
           <div className="space-y-2 lg:max-h-[60vh] overflow-y-auto pr-1">
             {filtered.length === 0 ? (
               <p className="text-sm text-stone-400 py-8 text-center">No supporters found.</p>
-            ) : filtered.map(s => (
+            ) : paginated.map(s => (
               <button key={s.id} type="button" onClick={() => { selectSupporter(s); setDetailTab('profile'); }}
                 className={`w-full text-left bg-white rounded-xl border p-4 flex items-start justify-between gap-3
                   transition-all duration-150 hover:shadow-md
@@ -464,6 +472,7 @@ export default function DonorsContributionsPage() {
               </button>
             ))}
           </div>
+          <PaginationBar page={page} pageSize={PAGE_SIZE} total={filtered.length} onChange={setPage} />
         </div>
 
         {/* ---------------------------------------------------------------- */}
