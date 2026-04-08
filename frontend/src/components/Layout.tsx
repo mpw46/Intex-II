@@ -149,6 +149,13 @@ function Layout() {
           )}
 
           {isAuthenticated ? (
+            <span className={`text-sm transition-colors duration-300
+                              ${navSolid ? 'text-stone-500' : 'text-white/70'}`}>
+              {authSession.userName ?? authSession.email}
+            </span>
+          ) : null}
+
+          {isAuthenticated ? (
             <NavLink
               to="/logout"
               className={`text-sm font-medium transition-colors duration-150
@@ -167,7 +174,7 @@ function Layout() {
           )}
 
           <NavLink
-            to="/login"
+            to={isAuthenticated ? '/donate' : '/login'}
             className="inline-flex items-center justify-center px-4 py-2
                        bg-haven-teal-600 text-white text-sm font-semibold rounded-lg
                        transition-colors duration-150 hover:bg-haven-teal-700

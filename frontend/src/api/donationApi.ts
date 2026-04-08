@@ -1,4 +1,6 @@
-import apiClient from './apiClient';
+import { readApiError } from './authAPI';
+
+const apiBaseUrl = import.meta.env.VITE_API_URL ?? '';
 
 export interface SafehouseOption {
   safehouseId: number;
@@ -35,15 +37,28 @@ export interface DonationAllocationCreate {
 }
 
 export async function getSafehouses(): Promise<SafehouseOption[]> {
-  const res = await apiClient.get('/Safehouses');
-  return res.data;
+  const response = await fetch(`${apiBaseUrl}/Safehouses`, { credentials: 'include' });
+  if (!response.ok) throw new Error(await readApiError(response, 'Unable to load safehouses.'));
+  return response.json();
 }
 
 export async function createDonation(data: DonationCreate): Promise<DonationResponse> {
-  const res = await apiClient.post<DonationResponse>('/Donations', data);
-  return res.data;
+  const response = await fetch(`${apiBaseUrl}/Donations`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    credentials: 'include',
+    body: JSON.stringify(data),
+  });
+  if (!response.ok) throw new Error(await readApiError(response, 'Unable to create donation.'));
+  return response.json();
 }
 
 export async function createDonationAllocation(data: DonationAllocationCreate): Promise<void> {
-  await apiClient.post('/DonationAllocations', data);
+  const response = await fetch(`${apiBaseUrl}/DonationAllocations`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    credentials: 'include',
+    body: JSON.stringify(data),
+  });
+  if (!response.ok) throw new Error(await readApiError(response, 'Unable to create donation allocation.'));
 }

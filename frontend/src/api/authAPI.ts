@@ -2,7 +2,7 @@ import type { AuthSession } from "../types/AuthSession";
 
 const apiBaseUrl = import.meta.env.VITE_API_URL ?? '';
 
-async function readApiError(
+export async function readApiError(
     response: Response,
     fallbackMessage: string
 ): Promise<string> {
@@ -121,7 +121,11 @@ export async function loginUser(
 export async function logoutUser(): Promise<void> {
     const response = await fetch(`${apiBaseUrl}/auth/logout`, {
         method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
         credentials: 'include',
+        body: '{}',
     });
 
     if (!response.ok) {

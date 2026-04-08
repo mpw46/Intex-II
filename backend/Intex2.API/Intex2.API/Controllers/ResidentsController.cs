@@ -2,11 +2,13 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Intex2.API.Data;
 using Intex2.API.DTOs;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Intex2.API.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
+[Authorize(Policy = AuthPolicies.AdminOnly)]
 public class ResidentsController : ControllerBase
 {
     private readonly Intex2104Context _context;
@@ -23,7 +25,7 @@ public class ResidentsController : ControllerBase
         [FromQuery] string? riskLevel,
         [FromQuery] string? socialWorker)
     {
-        var query = _context.Residents.AsQueryable();
+        var query = _context.Residents.Where(r => r.ResidentId != null && r.CaseControlNo != null).AsQueryable();
 
         if (safehouseId.HasValue)
             query = query.Where(r => r.SafehouseId == safehouseId.Value);

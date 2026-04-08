@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { getResidents } from '../api/residentsApi';
-import { getSafehouses } from '../api/safehousesApi';
+import { getImpactSnapshot } from '../api/impactApi';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 // These interfaces describe the shapes coming from the API.
@@ -134,14 +133,11 @@ function HomePage() {
   });
 
   useEffect(() => {
-    Promise.all([getResidents(), getSafehouses()]).then(([residents, safehouses]) => {
-      const active = safehouses.filter(s => s.status === 'Active').length;
-      const reintegrated = residents.filter(r => r.reintegrationStatus === 'Completed').length;
-      const rate = residents.length > 0 ? Math.round(reintegrated / residents.length * 100) : 0;
+    getImpactSnapshot().then(snapshot => {
       setStats({
-        totalGirlsServed: residents.length,
-        activeSafehouses: active,
-        reintegrationSuccessRate: rate,
+        totalGirlsServed: snapshot.totalGirlsServed,
+        activeSafehouses: snapshot.activeSafehouses,
+        reintegrationSuccessRate: snapshot.reintegrationSuccessRate,
         yearsOfOperation: YEARS_OF_OPERATION,
       });
     });

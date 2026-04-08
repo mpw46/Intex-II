@@ -1,5 +1,6 @@
 import { useState, type ReactElement } from 'react';
 import { NavLink, Outlet, useLocation } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 
 // ---------------------------------------------------------------------------
 // Icons
@@ -123,6 +124,9 @@ export default function AdminLayout() {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const location = useLocation();
   const pageTitle = pageTitles[location.pathname] ?? 'Admin';
+  const { authSession } = useAuth();
+  const displayName = authSession.userName ?? authSession.email ?? 'Staff';
+  const avatarLetter = displayName.charAt(0).toUpperCase();
 
   const Sidebar = (
     <aside
@@ -213,16 +217,15 @@ export default function AdminLayout() {
           <span className="text-base font-semibold text-stone-900">{pageTitle}</span>
         </div>
 
-        {/* User badge — TODO: Replace with authenticated user */}
         <div className="flex items-center gap-2">
           <div
             className="h-8 w-8 rounded-full bg-haven-teal-600 flex items-center justify-center
               text-xs font-bold text-white"
             aria-hidden="true"
           >
-            S
+            {avatarLetter}
           </div>
-          <span className="hidden sm:block text-sm font-medium text-stone-700">Staff User</span>
+          <span className="hidden sm:block text-sm font-medium text-stone-700">{displayName}</span>
         </div>
       </header>
 
