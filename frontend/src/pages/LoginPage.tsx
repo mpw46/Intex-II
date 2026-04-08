@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import {
   getAuthSession,
@@ -103,7 +103,6 @@ export default function LoginPage() {
   const [impactSnap, setImpactSnap] = useState<ImpactSnapshot | null>(null);
 
   useEffect(() => {
-    void loadExternalProviders();
     getImpactSnapshot().then(setImpactSnap).catch(() => {});
   }, []);
 
@@ -113,15 +112,6 @@ export default function LoginPage() {
     { label: 'Active Safehouses',  value: String(impactSnap?.activeSafehouses ?? 4) },
     { label: 'Philippine Regions', value: String(impactSnap?.philippineRegionsCovered ?? 3) },
   ];
-
-  async function loadExternalProviders() {
-    try {
-      const providers = await getExternalProviders();
-      setExternalProviders(providers);
-    } catch {
-      setExternalProviders([]);
-    }
-  }
 
   // -------------------------------------------------------------------------
   // Handlers
