@@ -4,6 +4,8 @@ import { getResidents } from '../../api/residentsApi';
 import { getSafehouses } from '../../api/safehousesApi';
 import { getRecordings } from '../../api/processRecordingsApi';
 import { getMonthlyMetrics, getSocialMediaPosts } from '../../api/reportsApi';
+import { getMlDonorRisk, getMlResidentRisk, getMlSocialEngagement } from '../../api/mlApi';
+import type { MlDonorRiskDto, MlResidentRiskDto, MlSocialEngagementDriverDto } from '../../types/ml';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -120,6 +122,9 @@ export default function ReportsPage() {
   const [annualServiceRows, setAnnualServiceRows] = useState<AnnualServiceRow[]>([]);
   const [platformStats, setPlatformStats] = useState<PlatformStat[]>([]);
   const [socialPosts, setSocialPosts] = useState<SocialPost[]>([]);
+  const [mlHighDonors, setMlHighDonors] = useState<MlDonorRiskDto[]>([]);
+  const [mlHighResidents, setMlHighResidents] = useState<MlResidentRiskDto[]>([]);
+  const [mlEngagementDrivers, setMlEngagementDrivers] = useState<MlSocialEngagementDriverDto[]>([]);
 
   // Derived values — recomputed whenever monthlyDonations changes
   const BAR_MAX = monthlyDonations.length > 0 ? Math.max(...monthlyDonations.map(m => m.monetary)) : 1;
@@ -135,7 +140,10 @@ export default function ReportsPage() {
       getMonthlyMetrics(),
       getRecordings(),
       getSocialMediaPosts(),
-    ]).then(([donations, residents, safehouses, metrics, recordings, posts]) => {
+      getMlDonorRisk('High').catch(() => [] as MlDonorRiskDto[]),
+      getMlResidentRisk('High').catch(() => [] as MlResidentRiskDto[]),
+      getMlSocialEngagement('OLS').catch(() => [] as MlSocialEngagementDriverDto[]),
+    ]).then(([donations, residents, safehouses, metrics, recordings, posts, mlDonors, mlResidents, mlDrivers]) => {
       const now = new Date();
       const thisYear = now.getFullYear();
       const lastYear = thisYear - 1;
@@ -291,6 +299,11 @@ export default function ReportsPage() {
           donationsAttributed: p.estimatedDonationValuePhp ?? 0,
         }));
       setSocialPosts(recentPosts);
+
+      // ---- ML data ----
+      setMlHighDonors((mlDonors as MlDonorRiskDto[]).slice(0, 5));
+      setMlHighResidents((mlResidents as MlResidentRiskDto[]).sort((a, b) => b.riskProbability - a.riskProbability).slice(0, 8));
+      setMlEngagementDrivers((mlDrivers as MlSocialEngagementDriverDto[]).slice(0, 5));
     });
   }, []);
 
@@ -397,29 +410,41 @@ export default function ReportsPage() {
             </div>
           </div>
 
-          {/* Donor Retention & Growth — filler with TODO */}
+          {/* ML — Contact ASAP (high lapse-risk donors) */}
           <div className="bg-white rounded-xl border border-stone-200 shadow-sm p-6">
-            <h3 className="text-base font-semibold text-stone-900 mb-1">Donor Retention & Growth</h3>
-            <p className="text-xs text-stone-400 mb-5">
-              Filler data — wire to supporter and donation endpoints when available
-            </p>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              <div className="bg-stone-50 rounded-xl border border-stone-200 p-5">
-                <p className="text-2xl font-bold tabular-nums text-stone-900 mb-1">71%</p>
-                <p className="text-xs font-medium text-stone-500 uppercase tracking-wide">Returning Donor Rate</p>
-                <p className="text-xs text-emerald-600 mt-2">↑ 6 pts vs last year</p>
-              </div>
-              <div className="bg-stone-50 rounded-xl border border-stone-200 p-5">
-                <p className="text-2xl font-bold tabular-nums text-stone-900 mb-1">14</p>
-                <p className="text-xs font-medium text-stone-500 uppercase tracking-wide">New Donors This Period</p>
-                <p className="text-xs text-emerald-600 mt-2">↑ 2 vs prior period</p>
-              </div>
-              <div className="bg-stone-50 rounded-xl border border-stone-200 p-5">
-                <p className="text-2xl font-bold tabular-nums text-stone-900 mb-1">89</p>
-                <p className="text-xs font-medium text-stone-500 uppercase tracking-wide">Active Donors</p>
-                <p className="text-xs text-emerald-600 mt-2">↑ 5 vs last month</p>
-              </div>
+            <div className="flex items-center justify-between mb-1">
+              <h3 className="text-base font-semibold text-stone-900">Donor Retention — Contact ASAP</h3>
+              <span className="text-[10px] font-semibold uppercase tracking-wider text-rose-600 bg-rose-50
+                border border-rose-200 rounded-full px-2 py-0.5">ML Model</span>
             </div>
+            <p className="text-xs text-stone-400 mb-5">
+              Donors flagged as high lapse-risk by the nightly retention model.
+            </p>
+            {mlHighDonors.length === 0 ? (
+              <p className="text-sm text-stone-400 py-4 text-center">
+                No high-risk donors scored yet — model runs nightly.
+              </p>
+            ) : (
+              <div className="space-y-2">
+                {mlHighDonors.map(d => (
+                  <div key={d.supporterId}
+                    className="flex items-center justify-between px-4 py-3 rounded-lg bg-rose-50
+                      border border-rose-100">
+                    <span className="text-sm font-medium text-stone-800">
+                      {d.displayName ?? `Supporter #${d.supporterId}`}
+                    </span>
+                    <div className="flex items-center gap-3">
+                      <span className="text-xs text-stone-500">
+                        Lapse probability
+                      </span>
+                      <span className="text-sm font-bold tabular-nums text-rose-700">
+                        {Math.round(d.lapseProbability * 100)}%
+                      </span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         </div>
       )}
@@ -483,7 +508,7 @@ export default function ReportsPage() {
           )}
 
           {/* Posts table */}
-          <div className="bg-white rounded-xl border border-stone-200 shadow-sm overflow-hidden">
+          <div className="bg-white rounded-xl border border-stone-200 shadow-sm overflow-hidden mb-6">
             <div className="px-6 py-4 border-b border-stone-200">
               <h3 className="text-base font-semibold text-stone-900">Recent Posts</h3>
             </div>
@@ -521,6 +546,59 @@ export default function ReportsPage() {
                 </tbody>
               </table>
             </div>
+          </div>
+
+          {/* ML — Top Engagement Drivers */}
+          <div className="bg-white rounded-xl border border-stone-200 shadow-sm overflow-hidden">
+            <div className="px-6 py-4 border-b border-stone-200 flex items-center justify-between">
+              <h3 className="text-base font-semibold text-stone-900">Top Engagement Drivers (OLS Model)</h3>
+              <span className="text-[10px] font-semibold uppercase tracking-wider text-haven-teal-700
+                bg-haven-teal-50 border border-haven-teal-200 rounded-full px-2 py-0.5">ML Model</span>
+            </div>
+            {mlEngagementDrivers.length === 0 ? (
+              <p className="text-sm text-stone-400 py-8 text-center">
+                No engagement drivers scored yet — model runs nightly.
+              </p>
+            ) : (
+              <div className="overflow-x-auto">
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr className="bg-stone-50 border-b border-stone-200">
+                      {['Rank', 'Feature', 'Direction', 'Weight'].map(h => (
+                        <th key={h} className="text-left text-xs font-semibold uppercase tracking-wider
+                          text-stone-500 px-4 py-3 whitespace-nowrap">{h}</th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-stone-100">
+                    {mlEngagementDrivers.map(d => (
+                      <tr key={d.rank} className="hover:bg-stone-50 transition-colors duration-100">
+                        <td className="px-4 py-3 tabular-nums font-semibold text-stone-400 w-12">
+                          #{d.rank}
+                        </td>
+                        <td className="px-4 py-3 font-mono text-xs text-stone-800">
+                          {d.featureName}
+                        </td>
+                        <td className="px-4 py-3">
+                          {d.direction === 'positive' && (
+                            <span className="text-emerald-600 font-bold text-base">↑</span>
+                          )}
+                          {d.direction === 'negative' && (
+                            <span className="text-rose-600 font-bold text-base">↓</span>
+                          )}
+                          {!d.direction && (
+                            <span className="text-stone-300">—</span>
+                          )}
+                        </td>
+                        <td className="px-4 py-3 tabular-nums text-stone-700">
+                          {d.importance.toFixed(3)}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
           </div>
         </div>
       )}
@@ -584,6 +662,61 @@ export default function ReportsPage() {
             ))}
             {safehouseOutcomes.length === 0 && (
               <div className="sm:col-span-2 xl:col-span-4 text-center py-12 text-stone-400 text-sm">Loading…</div>
+            )}
+          </div>
+
+          {/* ML — Struggling Residents */}
+          <div className="bg-white rounded-xl border border-stone-200 shadow-sm p-6 mb-8">
+            <div className="flex items-center justify-between mb-1">
+              <h3 className="text-base font-semibold text-stone-900">Struggling Residents — Flagged High Risk</h3>
+              <span className="text-[10px] font-semibold uppercase tracking-wider text-rose-600 bg-rose-50
+                border border-rose-200 rounded-full px-2 py-0.5">ML Model</span>
+            </div>
+            <p className="text-xs text-stone-400 mb-5">
+              Residents scored as high-risk by the nightly girls-at-risk model. Sorted by risk probability.
+            </p>
+            {mlHighResidents.length === 0 ? (
+              <p className="text-sm text-stone-400 py-4 text-center">
+                No high-risk residents scored yet — model runs nightly.
+              </p>
+            ) : (
+              <div className="overflow-x-auto">
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr className="bg-stone-50 border-b border-stone-200">
+                      {['Case ID', 'Safehouse', 'Risk Probability'].map(h => (
+                        <th key={h} className="text-left text-xs font-semibold uppercase tracking-wider
+                          text-stone-500 px-4 py-3 whitespace-nowrap">{h}</th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-stone-100">
+                    {mlHighResidents.map(r => (
+                      <tr key={r.residentId} className="hover:bg-rose-50 transition-colors duration-100">
+                        <td className="px-4 py-3 font-mono text-xs text-stone-700">
+                          {r.caseControlNo ?? `#${r.residentId}`}
+                        </td>
+                        <td className="px-4 py-3 text-stone-600">
+                          {r.safehouseName ?? '—'}
+                        </td>
+                        <td className="px-4 py-3">
+                          <div className="flex items-center gap-2">
+                            <div className="w-20 h-1.5 rounded-full bg-stone-100 overflow-hidden">
+                              <div
+                                className="h-full rounded-full bg-rose-500"
+                                style={{ width: `${Math.round(r.riskProbability * 100)}%` }}
+                              />
+                            </div>
+                            <span className="tabular-nums font-bold text-rose-700">
+                              {Math.round(r.riskProbability * 100)}%
+                            </span>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             )}
           </div>
 

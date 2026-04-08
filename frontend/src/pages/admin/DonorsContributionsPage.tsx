@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { getSupporters, createSupporter, updateSupporter, deleteSupporter } from '../../api/supportersApi';
 import { getDonations, createDonationRecord, deleteDonation, getAllocations } from '../../api/donationsApi';
 import { getSafehouses, buildSafehouseNameMap } from '../../api/safehousesApi';
+import { getMlDonorRisk } from '../../api/mlApi';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -31,6 +32,7 @@ interface Supporter {
   acquisitionChannel: string;
   status: SupporterStatus;
   notes: string;
+  retentionRisk?: 'High' | 'Medium' | 'Low'; // ML donor lapse prediction
 }
 
 interface Donation {
@@ -193,9 +195,13 @@ export default function DonorsContributionsPage() {
   const [selectedDonation, setSelectedDonation] = useState<Donation | null>(null);
 
   useEffect(() => {
-    Promise.all([getSupporters(), getSafehouses()])
-      .then(([rawSupporters, safehouses]) => {
+    Promise.all([getSupporters(), getSafehouses(), getMlDonorRisk().catch(() => [])])
+      .then(([rawSupporters, safehouses, mlScores]) => {
         setShMap(buildSafehouseNameMap(safehouses));
+        // Build ML risk lookup: supporterId → 'High' | 'Medium' | 'Low'
+        const mlMap = new Map<number, string>(
+          mlScores.map(s => [s.supporterId, s.riskTier])
+        );
         setSupporters(rawSupporters.map(s => ({
           id: String(s.supporterId ?? 0),
           displayName: s.displayName ?? s.organizationName ?? `${s.firstName ?? ''} ${s.lastName ?? ''}`.trim(),
@@ -206,6 +212,7 @@ export default function DonorsContributionsPage() {
           acquisitionChannel: s.acquisitionChannel ?? '',
           status: (s.status as SupporterStatus) ?? 'Active',
           notes: '',
+          retentionRisk: mlMap.get(s.supporterId ?? 0) as 'High' | 'Medium' | 'Low' | undefined,
         })));
       })
       .finally(() => setLoading(false));
@@ -440,6 +447,18 @@ export default function DonorsContributionsPage() {
                 </div>
                 <div className="flex flex-col items-end gap-2 shrink-0">
                   <StatusPill status={s.status} />
+                  {s.retentionRisk === 'High' && (
+                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px]
+                      font-bold uppercase tracking-wide bg-rose-100 text-rose-700 border border-rose-200">
+                      At Risk <span className="opacity-50">ML</span>
+                    </span>
+                  )}
+                  {s.retentionRisk === 'Medium' && (
+                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px]
+                      font-bold uppercase tracking-wide bg-amber-100 text-amber-700 border border-amber-200">
+                      Monitor <span className="opacity-50">ML</span>
+                    </span>
+                  )}
                   <ChevronRightIcon />
                 </div>
               </button>
