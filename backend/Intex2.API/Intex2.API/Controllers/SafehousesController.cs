@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Intex2.API.Data;
 using Intex2.API.DTOs;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Intex2.API.Controllers;
 
@@ -16,6 +17,7 @@ public class SafehousesController : ControllerBase
         _context = context;
     }
 
+    [Authorize(Policy = AuthPolicies.AdminOnly)]
     [HttpGet]
     public async Task<ActionResult<IEnumerable<SafehouseDto>>> GetAll([FromQuery] string? status, [FromQuery] string? region)
     {
@@ -49,6 +51,7 @@ public class SafehousesController : ControllerBase
         return Ok(results);
     }
 
+    [Authorize(Policy = AuthPolicies.AdminOnly)]
     [HttpGet("{id}")]
     public async Task<ActionResult<SafehouseDto>> GetById(int id)
     {
@@ -73,6 +76,7 @@ public class SafehousesController : ControllerBase
         });
     }
 
+    [Authorize(Policy = AuthPolicies.AdminOnly)]
     [HttpPost]
     public async Task<ActionResult<SafehouseDto>> Create([FromBody] SafehouseCreateDto dto)
     {
@@ -113,6 +117,7 @@ public class SafehousesController : ControllerBase
         });
     }
 
+    [Authorize(Policy = AuthPolicies.AdminOnly)]
     [HttpPut("{id}")]
     public async Task<IActionResult> Update(int id, [FromBody] SafehouseCreateDto dto)
     {
@@ -136,6 +141,7 @@ public class SafehousesController : ControllerBase
         return NoContent();
     }
 
+    [Authorize(Policy = AuthPolicies.AdminOnly)]
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id)
     {

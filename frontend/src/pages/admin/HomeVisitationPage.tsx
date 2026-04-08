@@ -15,6 +15,7 @@ import {
   COOPERATION_LEVELS,
   VISIT_OUTCOMES,
 } from "../../types/homeVisitation";
+import PaginationBar from "../../components/PaginationBar";
 
 // ---------------------------------------------------------------------------
 // Local display type — maps ResidentDto + Safehouse lookup to UI fields
@@ -242,6 +243,9 @@ export default function HomeVisitationPage() {
   const [residentSearch, setResidentSearch] = useState("");
   const [selectedResident, setSelectedResident] =
     useState<ResidentDisplay | null>(null);
+  const [page, setPage] = useState(1);
+
+  const PAGE_SIZE = 20;
 
   const [modal, setModal] = useState<"add" | "view" | "delete" | null>(null);
   const [selectedVisit, setSelectedVisit] = useState<HomeVisitation | null>(
@@ -263,6 +267,10 @@ export default function HomeVisitationPage() {
       r.assignedSocialWorker.toLowerCase().includes(q)
     );
   });
+
+  useEffect(() => { setPage(1); }, [residentSearch]);
+
+  const paginatedResidents = filteredResidents.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
 
   const residentVisitations = selectedResident
     ? visitations
@@ -365,7 +373,7 @@ export default function HomeVisitationPage() {
         </div>
 
         <div className="space-y-2 lg:max-h-[70vh] overflow-y-auto pr-1">
-          {filteredResidents.map((r) => (
+          {paginatedResidents.map((r) => (
             <button
               key={r.residentId}
               type="button"
@@ -404,6 +412,7 @@ export default function HomeVisitationPage() {
             </button>
           ))}
         </div>
+        <PaginationBar page={page} pageSize={PAGE_SIZE} total={filteredResidents.length} onChange={setPage} />
       </div>
 
       {/* ------------------------------------------------------------------ */}

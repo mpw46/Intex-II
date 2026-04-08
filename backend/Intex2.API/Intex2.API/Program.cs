@@ -21,6 +21,12 @@ builder.Services.AddIdentityApiEndpoints<DonorUser>()
     .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<AuthIdentityDbContext>();
 
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    options.Cookie.SameSite = SameSiteMode.None;
+    options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+});
+
 builder.Services.AddAuthorization(options =>
 {
     options.AddPolicy(AuthPolicies.AdminOnly, policy => policy.RequireRole(AuthRoles.Admin));
@@ -45,9 +51,11 @@ var app = builder.Build();
 
 
 
-// Apply Identity migrations automatically on startup
+// Apply Identity migrations and seed default users on startup
 using (var scope = app.Services.CreateScope())
 {
+    var authDb = scope.ServiceProvider.GetRequiredService<AuthIdentityDbContext>();
+    await authDb.Database.MigrateAsync();
     await AuthIdentityGenerator.GenerateDefaultIdentityAsync(scope.ServiceProvider, app.Configuration);
 }
 

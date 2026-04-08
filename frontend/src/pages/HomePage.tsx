@@ -1,7 +1,5 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { getResidents } from '../api/residentsApi';
-import { getSafehouses } from '../api/safehousesApi';
 import { getImpactSnapshot } from '../api/impactApi';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -134,16 +132,14 @@ function HomePage() {
   });
 
   useEffect(() => {
-    Promise.all([getResidents(), getSafehouses(), getImpactSnapshot().catch(() => null)])
-      .then(([residents, safehouses, snap]) => {
-        const active = safehouses.filter(s => s.status === 'Active').length;
-        setStats({
-          totalGirlsServed: residents.length,
-          activeSafehouses: active,
-          reintegrationSuccessRate: snap?.reintegrationSuccessRate ?? 0,
-          yearsOfOperation: snap?.yearsOfOperation ?? 0,
-        });
+    getImpactSnapshot().then(snap => {
+      setStats({
+        totalGirlsServed: snap.totalGirlsServed,
+        activeSafehouses: snap.activeSafehouses,
+        reintegrationSuccessRate: snap.reintegrationSuccessRate,
+        yearsOfOperation: snap.yearsOfOperation,
       });
+    }).catch(() => {});
   }, []);
 
   const heroKpis = [

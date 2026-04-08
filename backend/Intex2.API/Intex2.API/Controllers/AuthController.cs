@@ -1,14 +1,46 @@
 using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Intex2.API.Data;
 
 namespace Intex2.API.Controllers;
 
+public record RegisterRequest(string Email, string Password);
+
 [ApiController]
 [Route("api/auth")]
-public class AuthController(UserManager<DonorUser> userManager) : ControllerBase
+public class AuthController(UserManager<DonorUser> userManager, SignInManager<DonorUser> signInManager) : ControllerBase
 {
+    [HttpPost("register")]
+    public async Task<IActionResult> Register([FromBody] RegisterRequest request)
+    {
+        var user = new DonorUser
+        {
+            UserName = request.Email,
+            Email = request.Email,
+            EmailConfirmed = true,
+        };
+
+        var result = await userManager.CreateAsync(user, request.Password);
+        if (!result.Succeeded)
+        {
+            var detail = string.Join("; ", result.Errors.Select(e => e.Description));
+            return BadRequest(new { detail });
+        }
+
+        await userManager.AddToRoleAsync(user, AuthRoles.Donor);
+        return Ok();
+    }
+
+    [Authorize]
+    [HttpPost("logout")]
+    public async Task<IActionResult> Logout()
+    {
+        await signInManager.SignOutAsync();
+        return Ok();
+    }
+
     [HttpGet("me")]
     public async Task<IActionResult> GetCurrentSession()
     {

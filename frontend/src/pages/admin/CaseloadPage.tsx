@@ -5,6 +5,7 @@ import { getMlResidentRisk } from '../../api/mlApi';
 import { isTruthy } from '../../types/resident';
 import type { ResidentDto } from '../../types/resident';
 import type { SafehouseDto } from '../../types/safehouse';
+import PaginationBar from '../../components/PaginationBar';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -52,6 +53,7 @@ interface Resident {
 }
 
 interface ResidentFormDraft {
+  caseControlNo: string;
   safehouse: string;
   caseStatus: CaseStatus;
   caseCategory: CaseCategory;
@@ -143,7 +145,7 @@ const STATUS_COLORS: Record<CaseStatus, string> = {
 };
 
 const emptyForm: ResidentFormDraft = {
-  safehouse: '', caseStatus: 'Pending', caseCategory: 'Neglected',
+  caseControlNo: '', safehouse: '', caseStatus: 'Pending', caseCategory: 'Neglected',
   isTrafficked: false, isChildLabor: false, isPhysicalAbuse: false, isSexualAbuse: false,
   isOsaec: false, isCicl: false, isAtRisk: false, isStreetChild: false, isChildWithHiv: false,
   is4ps: false, isSoloParent: false, isIndigenous: false, isInformalSettler: false,
@@ -199,12 +201,16 @@ export default function CaseloadPage() {
   const [safeFilter, setSafeFilter]   = useState('All');
   const [catFilter, setCatFilter]     = useState<CaseCategory | 'All'>('All');
   const [riskFilter, setRiskFilter]   = useState<string>('All');
+  const [page, setPage]               = useState(1);
+
+  const PAGE_SIZE = 20;
 
   // Modal / detail
   const [modal, setModal]             = useState<'add' | 'edit' | 'delete' | null>(null);
   const [selected, setSelected]       = useState<Resident | null>(null);
   const [detailOpen, setDetailOpen]   = useState(false);
   const [form, setForm]               = useState<ResidentFormDraft>(emptyForm);
+  const [caseIdError, setCaseIdError] = useState<string>('');
 
   // Derived lists for filter dropdowns (from real API data)
   const SAFEHOUSES = apiSafehouses.map(s => s.name ?? '').filter(Boolean);
@@ -239,22 +245,38 @@ export default function CaseloadPage() {
     return matchQ && matchS && matchSh && matchC && matchR;
   });
 
+  useEffect(() => { setPage(1); }, [search, statusFilter, safeFilter, catFilter, riskFilter]);
+
+  const paginated = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
+
   // -------------------------------------------------------------------------
   // CRUD
   // -------------------------------------------------------------------------
 
-  function openAdd() { setForm(emptyForm); setSelected(null); setModal('add'); }
+  function openAdd() { setForm(emptyForm); setCaseIdError(''); setSelected(null); setModal('add'); }
   function openEdit(r: Resident) {
-    setForm({ safehouse: r.safehouse, caseStatus: r.caseStatus, caseCategory: r.caseCategory, isTrafficked: r.isTrafficked, isChildLabor: r.isChildLabor, isPhysicalAbuse: r.isPhysicalAbuse, isSexualAbuse: r.isSexualAbuse, isOsaec: r.isOsaec, isCicl: r.isCicl, isAtRisk: r.isAtRisk, isStreetChild: r.isStreetChild, isChildWithHiv: r.isChildWithHiv, is4ps: r.is4ps, isSoloParent: r.isSoloParent, isIndigenous: r.isIndigenous, isInformalSettler: r.isInformalSettler, admissionDate: r.admissionDate, assignedSocialWorker: r.assignedSocialWorker, referralSource: r.referralSource, riskLevel: r.riskLevel, reintegrationType: r.reintegrationType, reintegrationStatus: r.reintegrationStatus, hasDisability: r.hasDisability, disabilityDetails: r.disabilityDetails });
+    setForm({ caseControlNo: r.caseId.startsWith('RES-') ? '' : r.caseId, safehouse: r.safehouse, caseStatus: r.caseStatus, caseCategory: r.caseCategory, isTrafficked: r.isTrafficked, isChildLabor: r.isChildLabor, isPhysicalAbuse: r.isPhysicalAbuse, isSexualAbuse: r.isSexualAbuse, isOsaec: r.isOsaec, isCicl: r.isCicl, isAtRisk: r.isAtRisk, isStreetChild: r.isStreetChild, isChildWithHiv: r.isChildWithHiv, is4ps: r.is4ps, isSoloParent: r.isSoloParent, isIndigenous: r.isIndigenous, isInformalSettler: r.isInformalSettler, admissionDate: r.admissionDate, assignedSocialWorker: r.assignedSocialWorker, referralSource: r.referralSource, riskLevel: r.riskLevel, reintegrationType: r.reintegrationType, reintegrationStatus: r.reintegrationStatus, hasDisability: r.hasDisability, disabilityDetails: r.disabilityDetails });
+    setCaseIdError('');
     setSelected(r);
     setModal('edit');
   }
 
   function saveForm(e: { preventDefault(): void }) {
     e.preventDefault();
+    // Validate Case ID uniqueness
+    const trimmedCaseId = form.caseControlNo.trim();
+    const duplicate = residents.some(r =>
+      r.caseId === trimmedCaseId && r.id !== (selected?.id ?? '')
+    );
+    if (duplicate) {
+      setCaseIdError(`Case ID "${trimmedCaseId}" is already assigned to another resident.`);
+      return;
+    }
+    setCaseIdError('');
     // Resolve safehouseId from name
     const shEntry = apiSafehouses.find(s => s.name === form.safehouse);
     const payload = {
+      caseControlNo: trimmedCaseId || undefined,
       safehouseId: shEntry?.safehouseId ?? undefined,
       caseStatus: form.caseStatus,
       caseCategory: form.caseCategory,
@@ -384,7 +406,7 @@ export default function CaseloadPage() {
             <tbody className="divide-y divide-stone-100">
               {filtered.length === 0 ? (
                 <tr><td colSpan={9} className="px-4 py-12 text-center text-sm text-stone-400">No residents match the current filters.</td></tr>
-              ) : filtered.map(r => (
+              ) : paginated.map(r => (
                 <tr key={r.id}
                   className="hover:bg-stone-50 transition-colors duration-100 cursor-pointer"
                   onClick={() => handleRowClick(r)}>
@@ -432,6 +454,7 @@ export default function CaseloadPage() {
             </tbody>
           </table>
         </div>
+        <PaginationBar page={page} pageSize={PAGE_SIZE} total={filtered.length} onChange={setPage} />
       </div>
 
       {/* ================================================================== */}
@@ -584,6 +607,25 @@ export default function CaseloadPage() {
               </div>
 
               <div className="flex-1 overflow-y-auto px-6 py-5 space-y-6">
+                {/* Case ID */}
+                <div>
+                  <label htmlFor="r-caseid" className="block text-xs font-semibold text-stone-700 uppercase tracking-wide mb-1.5">
+                    Case ID <span className="text-rose-500">*</span>
+                  </label>
+                  <input
+                    id="r-caseid"
+                    type="text"
+                    required
+                    value={form.caseControlNo}
+                    onChange={e => { setForm(f => ({ ...f, caseControlNo: e.target.value })); setCaseIdError(''); }}
+                    className={`${inputCls}${caseIdError ? ' border-rose-400 focus:ring-rose-400' : ''}`}
+                    placeholder="e.g. C0001"
+                  />
+                  {caseIdError && (
+                    <p className="mt-1 text-xs text-rose-600">{caseIdError}</p>
+                  )}
+                </div>
+
                 {/* Placement */}
                 <div>
                   <h3 className="text-xs font-semibold uppercase tracking-widest text-stone-400 mb-3">Placement</h3>

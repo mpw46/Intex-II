@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Intex2.API.Data;
 using Intex2.API.DTOs;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Intex2.API.Controllers;
 
@@ -16,6 +17,7 @@ public class DonationsController : ControllerBase
         _context = context;
     }
 
+    [Authorize]
     [HttpGet]
     public async Task<ActionResult<IEnumerable<DonationDto>>> GetAll(
         [FromQuery] int? supporterId,
@@ -24,7 +26,14 @@ public class DonationsController : ControllerBase
     {
         var query = _context.Donations.AsQueryable();
 
-        if (supporterId.HasValue)
+        if (!User.IsInRole(AuthRoles.Admin))
+        {
+            var email = User.Identity?.Name;
+            var supporter = await _context.Supporters.FirstOrDefaultAsync(s => s.Email == email);
+            if (supporter == null) return Ok(Array.Empty<DonationDto>());
+            query = query.Where(d => d.SupporterId == supporter.SupporterId);
+        }
+        else if (supporterId.HasValue)
             query = query.Where(d => d.SupporterId == supporterId.Value);
 
         if (!string.IsNullOrEmpty(donationType))
@@ -55,11 +64,19 @@ public class DonationsController : ControllerBase
         return Ok(results);
     }
 
+    [Authorize]
     [HttpGet("{id}")]
     public async Task<ActionResult<DonationDto>> GetById(int id)
     {
         var d = await _context.Donations.FindAsync(id);
         if (d == null) return NotFound();
+
+        if (!User.IsInRole(AuthRoles.Admin))
+        {
+            var email = User.Identity?.Name;
+            var supporter = await _context.Supporters.FirstOrDefaultAsync(s => s.Email == email);
+            if (supporter == null || d.SupporterId != supporter.SupporterId) return Forbid();
+        }
 
         return Ok(new DonationDto
         {
@@ -79,9 +96,17 @@ public class DonationsController : ControllerBase
         });
     }
 
+    [Authorize]
     [HttpPost]
     public async Task<ActionResult<DonationDto>> Create([FromBody] DonationCreateDto dto)
     {
+        if (!User.IsInRole(AuthRoles.Admin))
+        {
+            var email = User.Identity?.Name;
+            var supporter = await _context.Supporters.FirstOrDefaultAsync(s => s.Email == email);
+            if (supporter == null || dto.SupporterId != supporter.SupporterId) return Forbid();
+        }
+
         var entity = new Donation
         {
             SupporterId = dto.SupporterId,
@@ -119,6 +144,7 @@ public class DonationsController : ControllerBase
         });
     }
 
+    [Authorize(Policy = AuthPolicies.AdminOnly)]
     [HttpPut("{id}")]
     public async Task<IActionResult> Update(int id, [FromBody] DonationCreateDto dto)
     {
@@ -142,6 +168,7 @@ public class DonationsController : ControllerBase
         return NoContent();
     }
 
+    [Authorize(Policy = AuthPolicies.AdminOnly)]
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id)
     {
