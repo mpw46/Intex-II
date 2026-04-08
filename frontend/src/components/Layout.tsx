@@ -112,7 +112,7 @@ function Layout() {
                     px-6 md:px-12 transition-all duration-300
                     ${navSolid
                       ? 'bg-white border-b border-stone-200 shadow-sm'
-                      : 'bg-transparent'
+                      : 'bg-haven-teal-900'
                     }`}
         aria-label="Main navigation"
       >

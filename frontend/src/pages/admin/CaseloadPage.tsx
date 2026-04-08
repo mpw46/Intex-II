@@ -42,6 +42,7 @@ interface Resident {
   assignedSocialWorker: string;
   referralSource: string;
   riskLevel: RiskLevel;
+  mlRiskLevel: string; // 'High' | 'Medium' | 'Low' | 'No Predictions'
   reintegrationType: ReintegrationType;
   reintegrationStatus: ReintegrationStatus;
   daysInProgram: number;
@@ -91,15 +92,16 @@ function mapResident(
     (new Date(today).getTime() - new Date(admission).getTime()) / 86_400_000
   ));
 
-  // Prefer ML-predicted risk; fall back to clinical field
-  const mlRisk = mlRiskMap?.get(r.residentId ?? 0);
-  const riskLevel: RiskLevel = mlRisk === 'High'
+  // Clinical risk for form editing (fallback from DB field)
+  const riskLevel: RiskLevel = (r.currentRiskLevel === 'High' || r.currentRiskLevel === 'Critical')
     ? 'High Risk'
-    : mlRisk === 'Medium' || mlRisk === 'Low'
-      ? 'Standard'
-      : (r.currentRiskLevel === 'High' || r.currentRiskLevel === 'Critical')
-        ? 'High Risk'
-        : 'Standard';
+    : 'Standard';
+
+  // ML-predicted risk for display in the table
+  const rawMlRisk = mlRiskMap?.get(r.residentId ?? 0);
+  const mlRiskLevel: string = rawMlRisk
+    ? rawMlRisk  // 'High' | 'Medium' | 'Low' directly from model
+    : 'No Predictions';
 
   return {
     id: String(r.residentId ?? 0),
@@ -124,6 +126,7 @@ function mapResident(
     assignedSocialWorker: r.assignedSocialWorker ?? '',
     referralSource: r.referralSource ?? '',
     riskLevel,
+    mlRiskLevel,
     reintegrationType: (r.reintegrationType as ReintegrationType) ?? 'N/A',
     reintegrationStatus: (r.reintegrationStatus as ReintegrationStatus) ?? 'Not Started',
     daysInProgram: days,
@@ -195,7 +198,7 @@ export default function CaseloadPage() {
   const [statusFilter, setStatusFilter] = useState<CaseStatus | 'All'>('All');
   const [safeFilter, setSafeFilter]   = useState('All');
   const [catFilter, setCatFilter]     = useState<CaseCategory | 'All'>('All');
-  const [riskFilter, setRiskFilter]   = useState<RiskLevel | 'All'>('All');
+  const [riskFilter, setRiskFilter]   = useState<string>('All');
 
   // Modal / detail
   const [modal, setModal]             = useState<'add' | 'edit' | 'delete' | null>(null);
@@ -232,7 +235,7 @@ export default function CaseloadPage() {
     const matchS = statusFilter === 'All' || r.caseStatus === statusFilter;
     const matchSh = safeFilter === 'All' || r.safehouse === safeFilter;
     const matchC = catFilter === 'All' || r.caseCategory === catFilter;
-    const matchR = riskFilter === 'All' || r.riskLevel === riskFilter;
+    const matchR = riskFilter === 'All' || r.mlRiskLevel === riskFilter;
     return matchQ && matchS && matchSh && matchC && matchR;
   });
 
@@ -358,10 +361,12 @@ export default function CaseloadPage() {
           <option value="All">All Categories</option>
           {(['Abandoned','Foundling','Surrendered','Neglected','Exploited'] as CaseCategory[]).map(c => <option key={c} value={c}>{c}</option>)}
         </select>
-        <select value={riskFilter} onChange={e => setRiskFilter(e.target.value as RiskLevel | 'All')} className={selectCls} aria-label="Filter by risk">
+        <select value={riskFilter} onChange={e => setRiskFilter(e.target.value)} className={selectCls} aria-label="Filter by risk">
           <option value="All">All Risk Levels</option>
-          <option value="Standard">Standard</option>
-          <option value="High Risk">High Risk</option>
+          <option value="High">High</option>
+          <option value="Medium">Medium</option>
+          <option value="Low">Low</option>
+          <option value="No Predictions">No Predictions</option>
         </select>
       </div>
 
@@ -388,9 +393,24 @@ export default function CaseloadPage() {
                   <td className="px-4 py-3 text-stone-700">{r.caseCategory}</td>
                   <td className="px-4 py-3"><StatusBadge status={r.caseStatus} /></td>
                   <td className="px-4 py-3">
-                    {r.riskLevel === 'High Risk'
-                      ? <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-semibold uppercase tracking-wide border transition-none bg-rose-100 text-rose-800 border-rose-200"><span className="h-1.5 w-1.5 rounded-full bg-current" />High Risk <span className="ml-0.5 text-[9px] font-bold opacity-60">ML</span></span>
-                      : <span className="text-xs text-stone-400">Standard</span>}
+                    {r.mlRiskLevel === 'High' && (
+                      <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-semibold uppercase tracking-wide border bg-rose-100 text-rose-800 border-rose-200">
+                        <span className="h-1.5 w-1.5 rounded-full bg-current" />High <span className="ml-0.5 text-[9px] font-bold opacity-60">ML</span>
+                      </span>
+                    )}
+                    {r.mlRiskLevel === 'Medium' && (
+                      <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-semibold uppercase tracking-wide border bg-amber-100 text-amber-800 border-amber-200">
+                        <span className="h-1.5 w-1.5 rounded-full bg-current" />Medium <span className="ml-0.5 text-[9px] font-bold opacity-60">ML</span>
+                      </span>
+                    )}
+                    {r.mlRiskLevel === 'Low' && (
+                      <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-semibold uppercase tracking-wide border bg-emerald-100 text-emerald-800 border-emerald-200">
+                        <span className="h-1.5 w-1.5 rounded-full bg-current" />Low <span className="ml-0.5 text-[9px] font-bold opacity-60">ML</span>
+                      </span>
+                    )}
+                    {r.mlRiskLevel === 'No Predictions' && (
+                      <span className="text-xs text-stone-400 italic">No Predictions</span>
+                    )}
                   </td>
                   <td className="px-4 py-3 text-stone-700 whitespace-nowrap">{r.assignedSocialWorker}</td>
                   <td className="px-4 py-3 text-stone-500 whitespace-nowrap">{r.admissionDate}</td>
@@ -444,9 +464,13 @@ export default function CaseloadPage() {
               {/* Status row */}
               <div className="flex flex-wrap gap-2">
                 <StatusBadge status={selected.caseStatus} />
-                {selected.riskLevel === 'High Risk' && (
-                  <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-semibold uppercase tracking-wide border transition-none bg-rose-100 text-rose-800 border-rose-200">
-                    <span className="h-1.5 w-1.5 rounded-full bg-current" />High Risk</span>
+                {selected.mlRiskLevel !== 'No Predictions' && (
+                  <span className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-semibold uppercase tracking-wide border ${
+                    selected.mlRiskLevel === 'High' ? 'bg-rose-100 text-rose-800 border-rose-200' :
+                    selected.mlRiskLevel === 'Medium' ? 'bg-amber-100 text-amber-800 border-amber-200' :
+                    'bg-emerald-100 text-emerald-800 border-emerald-200'
+                  }`}>
+                    <span className="h-1.5 w-1.5 rounded-full bg-current" />{selected.mlRiskLevel} Risk <span className="text-[9px] font-bold opacity-60">ML</span></span>
                 )}
               </div>
 

@@ -9,6 +9,7 @@ import {
   type ExternalAuthProvider,
 } from '../api/authAPI';
 import { useAuth } from '../context/AuthContext';
+import { getImpactSnapshot, type ImpactSnapshot } from '../api/impactApi';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -32,13 +33,7 @@ interface RegisterForm {
 // Filler data — replace with real API calls
 // ---------------------------------------------------------------------------
 
-// Left-panel stats — TODO: Replace with GET /api/public/impact-snapshot
-const panelStats = [
-  { label: 'Girls Supported', value: '247' },
-  { label: 'Reintegrated', value: '89' },
-  { label: 'Active Safehouses', value: '4' },
-  { label: 'Partner Organizations', value: '12' },
-];
+// panelStats is now derived from the impact snapshot API inside the component
 
 // ---------------------------------------------------------------------------
 // Icon helpers (inline SVG — no icon library dependency)
@@ -110,10 +105,19 @@ export default function LoginPage() {
   // Shared state
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(searchParams.get('externalError'));
+  const [impactSnap, setImpactSnap] = useState<ImpactSnapshot | null>(null);
 
   useEffect(() => {
     void loadExternalProviders();
+    getImpactSnapshot().then(setImpactSnap).catch(() => {});
   }, []);
+
+  const panelStats = [
+    { label: 'Girls Supported',    value: String(impactSnap?.totalGirlsServed ?? 247) },
+    { label: 'Reintegration Rate', value: `${impactSnap?.reintegrationSuccessRate ?? 89}%` },
+    { label: 'Active Safehouses',  value: String(impactSnap?.activeSafehouses ?? 4) },
+    { label: 'Philippine Regions', value: String(impactSnap?.philippineRegionsCovered ?? 3) },
+  ];
 
   async function loadExternalProviders() {
     try {

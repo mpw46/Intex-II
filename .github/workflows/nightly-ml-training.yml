@@ -1,0 +1,47 @@
+name: Nightly ML Training
+
+on:
+  schedule:
+    - cron: '0 2 * * *'   # 2 AM UTC every night
+  workflow_dispatch:        # allow manual trigger from GitHub Actions UI
+
+jobs:
+  train-and-score:
+    runs-on: ubuntu-latest
+    env:
+      DB_CONNECTION_STRING: ${{ secrets.ML_DB_CONNECTION_STRING }}
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install ODBC Driver 17 for SQL Server
+        run: |
+          curl https://packages.microsoft.com/keys/microsoft.asc | sudo apt-key add -
+          curl https://packages.microsoft.com/config/ubuntu/22.04/prod.list | sudo tee /etc/apt/sources.list.d/mssql-release.list
+          sudo apt-get update
+          sudo ACCEPT_EULA=Y apt-get install -y msodbcsql17
+
+      - name: Install Python dependencies
+        run: pip install -r ml-pipelines/requirements.txt
+
+      - name: Train & score — Girls at Risk
+        run: |
+          jupyter nbconvert --to notebook --execute \
+            --ExecutePreprocessor.timeout=600 \
+            ml-pipelines/girls-at-risk.ipynb
+
+      - name: Train & score — Donor Retention
+        run: |
+          jupyter nbconvert --to notebook --execute \
+            --ExecutePreprocessor.timeout=600 \
+            ml-pipelines/donor-retention.ipynb
+
+      - name: Train & score — Social Media Effectiveness
+        run: |
+          jupyter nbconvert --to notebook --execute \
+            --ExecutePreprocessor.timeout=600 \
+            ml-pipelines/social-media-effectiveness.ipynb
