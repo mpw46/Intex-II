@@ -89,9 +89,7 @@ function Layout() {
   const navSolid = !isHome || scrolled;
 
   const { authSession, isAuthenticated } = useAuth();
-  const { isAdmin } = authSession.roles.includes('Admin')
-    ? { isAdmin: true }
-    : { isAdmin: false };
+  const isAdmin = authSession.roles.includes('Admin');
 
 
   return (
