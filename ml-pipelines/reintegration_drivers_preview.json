@@ -1,0 +1,173 @@
+{
+  "pipeline": "reintegration-readiness",
+  "target_raw_days": "days_to_closure",
+  "sklearn_models": "LinearRegression + DecisionTree raw days; test_size=0.2",
+  "ols_model": "statsmodels OLS log1p(days) train-only explanatory",
+  "n_cases": 30,
+  "linear_reg_test_metrics": {
+    "mae": 230.7579590855465,
+    "rmse": 291.32337447656977,
+    "r2": -8.892808919152198
+  },
+  "tree_test_metrics": {
+    "mae": 125.02777777777777,
+    "rmse": 143.7729852799068,
+    "r2": -1.4094811768769162
+  },
+  "top_ols_terms": [
+    {
+      "term": "initial_risk_level_Low",
+      "coefficient": 2.9910210109200674,
+      "robust_se": 0.7790235506663101,
+      "pvalue": 0.00012331085724965457,
+      "note": "statsmodels OLS on train; log1p(days); HC3; association not causal."
+    },
+    {
+      "term": "initial_risk_level_Medium",
+      "coefficient": 2.179015377239496,
+      "robust_se": 0.970454798892712,
+      "pvalue": 0.024745362249429026,
+      "note": "statsmodels OLS on train; log1p(days); HC3; association not causal."
+    },
+    {
+      "term": "occupancy_ratio",
+      "coefficient": -2.1249078142902986,
+      "robust_se": 1.9895642984308473,
+      "pvalue": 0.28550846301168076,
+      "note": "statsmodels OLS on train; log1p(days); HC3; association not causal."
+    },
+    {
+      "term": "initial_risk_level_High",
+      "coefficient": 1.0622715147274016,
+      "robust_se": 0.7440555205034041,
+      "pvalue": 0.1533846319651591,
+      "note": "statsmodels OLS on train; log1p(days); HC3; association not causal."
+    },
+    {
+      "term": "risk_ordinal",
+      "coefficient": 0.9236209427025426,
+      "robust_se": 0.3559701038353206,
+      "pvalue": 0.00946848777078916,
+      "note": "statsmodels OLS on train; log1p(days); HC3; association not causal."
+    },
+    {
+      "term": "region_Visayas",
+      "coefficient": -0.4035337446620604,
+      "robust_se": 0.7144965485022154,
+      "pvalue": 0.5722230465758946,
+      "note": "statsmodels OLS on train; log1p(days); HC3; association not causal."
+    },
+    {
+      "term": "region_Mindanao",
+      "coefficient": -0.3276343832021791,
+      "robust_se": 0.804851112945222,
+      "pvalue": 0.6839532543626459,
+      "note": "statsmodels OLS on train; log1p(days); HC3; association not causal."
+    },
+    {
+      "term": "case_category_Neglected",
+      "coefficient": 0.26000628944573934,
+      "robust_se": 0.5583389580643373,
+      "pvalue": 0.6414458479830614,
+      "note": "statsmodels OLS on train; log1p(days); HC3; association not causal."
+    },
+    {
+      "term": "case_category_Surrendered",
+      "coefficient": 0.24073726240373838,
+      "robust_se": 0.5583729264046832,
+      "pvalue": 0.6663661102321331,
+      "note": "statsmodels OLS on train; log1p(days); HC3; association not causal."
+    },
+    {
+      "term": "family_risk_flag_count",
+      "coefficient": -0.07707968345667526,
+      "robust_se": 0.2258440247555952,
+      "pvalue": 0.7328806882692886,
+      "note": "statsmodels OLS on train; log1p(days); HC3; association not causal."
+    },
+    {
+      "term": "n_subcategory_flags",
+      "coefficient": 0.07373567850843538,
+      "robust_se": 0.2074223830712689,
+      "pvalue": 0.7222258012815688,
+      "note": "statsmodels OLS on train; log1p(days); HC3; association not causal."
+    },
+    {
+      "term": "case_category_Foundling",
+      "coefficient": -0.00848355649084942,
+      "robust_se": 0.415827994818458,
+      "pvalue": 0.9837230073637911,
+      "note": "statsmodels OLS on train; log1p(days); HC3; association not causal."
+    },
+    {
+      "term": "total_vulnerability_score",
+      "coefficient": -0.0033440049482434397,
+      "robust_se": 0.07018735834170095,
+      "pvalue": 0.9619999825263091,
+      "note": "statsmodels OLS on train; log1p(days); HC3; association not causal."
+    }
+  ],
+  "top_tree_importances": [
+    {
+      "feature": "num__occupancy_ratio",
+      "importance": 0.25023595444130403
+    },
+    {
+      "feature": "cat__case_category_Abandoned",
+      "importance": 0.20865996592462718
+    },
+    {
+      "feature": "cat__reintegration_type_Independent Living",
+      "importance": 0.19812167348960316
+    },
+    {
+      "feature": "num__family_risk_flag_count",
+      "importance": 0.1278081008348947
+    },
+    {
+      "feature": "cat__region_Visayas",
+      "importance": 0.11612897352346693
+    },
+    {
+      "feature": "cat__case_x_occ_bucket_Surrendered | medium",
+      "importance": 0.06403374840321774
+    },
+    {
+      "feature": "cat__reintegration_type_Adoption (Domestic)",
+      "importance": 0.031244841010977513
+    },
+    {
+      "feature": "cat__occupancy_bucket_high",
+      "importance": 0.0037667423719088
+    },
+    {
+      "feature": "cat__case_x_occ_bucket_Foundling | high",
+      "importance": 0.0
+    },
+    {
+      "feature": "cat__case_x_occ_bucket_Neglected | medium",
+      "importance": 0.0
+    },
+    {
+      "feature": "cat__reintegration_x_risk_(unknown) \u00d7 High",
+      "importance": 0.0
+    },
+    {
+      "feature": "cat__reintegration_x_risk_(unknown) \u00d7 Medium",
+      "importance": 0.0
+    },
+    {
+      "feature": "cat__case_x_occ_bucket_Surrendered | low",
+      "importance": 0.0
+    },
+    {
+      "feature": "cat__reintegration_x_risk_Adoption (Domestic) \u00d7 High",
+      "importance": 0.0
+    },
+    {
+      "feature": "cat__reintegration_x_risk_Adoption (Domestic) \u00d7 Low",
+      "importance": 0.0
+    }
+  ],
+  "disclaimer": "Associations / MDI are not causal effects."
+}

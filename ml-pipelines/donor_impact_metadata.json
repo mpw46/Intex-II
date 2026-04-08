@@ -1,0 +1,81 @@
+{
+  "model": "multiclass_program_bucket_best_cv",
+  "primary_estimator": "random_forest",
+  "target": "primary_program_area_coarse (3 buckets; fine label = argmax allocation line)",
+  "program_area_coarse_map": {
+    "Education": "Resident_programs",
+    "Wellbeing": "Resident_programs",
+    "Operations": "Operations_and_facilities",
+    "Maintenance": "Operations_and_facilities",
+    "Transport": "Operations_and_facilities",
+    "Outreach": "Outreach_and_growth"
+  },
+  "extra_numeric_winsor_caps_train_p99": {
+    "n_allocation_lines": 2.0,
+    "days_since_supporter_created": 1423.1499999999996,
+    "supporter_donation_seq": 19.649999999999977,
+    "supporter_gift_count_in_cohort": 23.0
+  },
+  "features": [
+    "n_allocation_lines",
+    "supporter_gift_count_in_cohort",
+    "is_recurring",
+    "relationship_type"
+  ],
+  "numeric_features": [
+    "n_allocation_lines",
+    "supporter_gift_count_in_cohort"
+  ],
+  "categorical_features": [
+    "is_recurring",
+    "relationship_type"
+  ],
+  "train_n": 336,
+  "test_n": 84,
+  "cv_f1_macro_best": 0.38415974574874584,
+  "best_params": {
+    "clf__max_depth": 8,
+    "clf__min_samples_leaf": 2,
+    "clf__n_estimators": 300
+  },
+  "grid_cv_results": [
+    {
+      "model": "random_forest",
+      "cv_f1_macro": 0.38415974574874584,
+      "best_params": {
+        "clf__max_depth": 8,
+        "clf__min_samples_leaf": 2,
+        "clf__n_estimators": 300
+      }
+    },
+    {
+      "model": "hist_gradient_boosting",
+      "cv_f1_macro": 0.3817141621320046,
+      "best_params": {
+        "clf__learning_rate": 0.05,
+        "clf__max_depth": null,
+        "clf__max_iter": 300
+      }
+    },
+    {
+      "model": "gradient_boosting",
+      "cv_f1_macro": 0.3753172432891995,
+      "best_params": {
+        "clf__learning_rate": 0.1,
+        "clf__max_depth": 3,
+        "clf__n_estimators": 150
+      }
+    },
+    {
+      "model": "logistic",
+      "cv_f1_macro": 0.31206244454321147,
+      "best_params": {
+        "clf__C": 0.1
+      }
+    }
+  ],
+  "test_accuracy": 0.44047619047619047,
+  "test_macro_f1": 0.4085384309040223,
+  "gift_amount_winsor_p99_train": 3006.8489999999883,
+  "trained_at": "2026-04-08T21:12:57.098127+00:00"
+}
