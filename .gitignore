@@ -102,3 +102,5 @@ appsettings.Development.json
 *.sqlite
 *.sqlite-shm
 *.sqlite-wal
+
+AuthIdentityGenerator.cs
