@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { getResidents } from '../api/residentsApi';
+import { getSafehouses } from '../api/safehousesApi';
 import { getImpactSnapshot } from '../api/impactApi';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -41,8 +43,7 @@ interface FeaturedQuote {
 // The rest of the page — section layouts, labels, copy — does not touch the API.
 // See DonorDashboardPage.tsx for a fuller example with more data shapes.
 
-// yearsOfOperation is static — no org founding date table in the DB
-const YEARS_OF_OPERATION = 12;
+// yearsOfOperation is computed server-side from earliest DateOfAdmission via getImpactSnapshot()
 
 // TODO: Replace with GET /api/public/impact/featured-quote
 const featuredQuote: FeaturedQuote = {
@@ -129,18 +130,20 @@ function HomePage() {
     totalGirlsServed: 0,
     activeSafehouses: 0,
     reintegrationSuccessRate: 0,
-    yearsOfOperation: YEARS_OF_OPERATION,
+    yearsOfOperation: 0,
   });
 
   useEffect(() => {
-    getImpactSnapshot().then(snapshot => {
-      setStats({
-        totalGirlsServed: snapshot.totalGirlsServed,
-        activeSafehouses: snapshot.activeSafehouses,
-        reintegrationSuccessRate: snapshot.reintegrationSuccessRate,
-        yearsOfOperation: YEARS_OF_OPERATION,
+    Promise.all([getResidents(), getSafehouses(), getImpactSnapshot().catch(() => null)])
+      .then(([residents, safehouses, snap]) => {
+        const active = safehouses.filter(s => s.status === 'Active').length;
+        setStats({
+          totalGirlsServed: residents.length,
+          activeSafehouses: active,
+          reintegrationSuccessRate: snap?.reintegrationSuccessRate ?? 0,
+          yearsOfOperation: snap?.yearsOfOperation ?? 0,
+        });
       });
-    });
   }, []);
 
   const heroKpis = [
@@ -157,7 +160,7 @@ function HomePage() {
   ];
 
   return (
-    <div>
+    <div className="pt-16">
 
       {/* ── Hero ────────────────────────────────────────────────────────── */}
       <section className="relative min-h-screen flex flex-col justify-end bg-haven-teal-900">

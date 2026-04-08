@@ -58,7 +58,7 @@
   {
     "supporter_id": 12,
     "cutoff": "2025-11-01",
-    "lapse_probability": 0.9950863718986511,
+    "lapse_probability": 0.9950862526893616,
     "risk_tier": "High",
     "display_name": "Ella Lopez"
   },
@@ -408,7 +408,7 @@
   {
     "supporter_id": 43,
     "cutoff": "2025-09-01",
-    "lapse_probability": 0.9584122896194458,
+    "lapse_probability": 0.9584121704101562,
     "risk_tier": "High",
     "display_name": "Hugo Ross"
   },
@@ -436,7 +436,7 @@
   {
     "supporter_id": 56,
     "cutoff": "2025-06-01",
-    "lapse_probability": 0.9523152709007263,
+    "lapse_probability": 0.9523151516914368,
     "risk_tier": "High",
     "display_name": "Lyle Gomez"
   },
@@ -513,7 +513,7 @@
   {
     "supporter_id": 51,
     "cutoff": "2025-07-01",
-    "lapse_probability": 0.934783399105072,
+    "lapse_probability": 0.9347835183143616,
     "risk_tier": "High",
     "display_name": "Mira Bello"
   },
@@ -534,7 +534,7 @@
   {
     "supporter_id": 10,
     "cutoff": "2025-08-01",
-    "lapse_probability": 0.9307377338409424,
+    "lapse_probability": 0.9307376146316528,
     "risk_tier": "High",
     "display_name": "Lucas Jones"
   },
@@ -555,7 +555,7 @@
   {
     "supporter_id": 36,
     "cutoff": "2025-07-01",
-    "lapse_probability": 0.9292427897453308,
+    "lapse_probability": 0.9292426705360413,
     "risk_tier": "High",
     "display_name": "Lara Johnson"
   },
@@ -611,7 +611,7 @@
   {
     "supporter_id": 59,
     "cutoff": "2025-09-01",
-    "lapse_probability": 0.9171437621116638,
+    "lapse_probability": 0.9171438813209534,
     "risk_tier": "High",
     "display_name": "Lea Jain"
   },
@@ -681,7 +681,7 @@
   {
     "supporter_id": 52,
     "cutoff": "2025-11-01",
-    "lapse_probability": 0.9009866118431091,
+    "lapse_probability": 0.9009865522384644,
     "risk_tier": "High",
     "display_name": "Cole Cruz"
   },
@@ -765,7 +765,7 @@
   {
     "supporter_id": 57,
     "cutoff": "2025-09-01",
-    "lapse_probability": 0.8821818232536316,
+    "lapse_probability": 0.8821817636489868,
     "risk_tier": "High",
     "display_name": "Paz Hale"
   },
@@ -779,7 +779,7 @@
   {
     "supporter_id": 14,
     "cutoff": "2025-11-01",
-    "lapse_probability": 0.8802103400230408,
+    "lapse_probability": 0.880210280418396,
     "risk_tier": "High",
     "display_name": "Owen Nguyen"
   },
@@ -800,7 +800,7 @@
   {
     "supporter_id": 47,
     "cutoff": "2025-12-01",
-    "lapse_probability": 0.8769662380218506,
+    "lapse_probability": 0.8769662976264954,
     "risk_tier": "High",
     "display_name": "Kaya Ward"
   },
@@ -814,7 +814,7 @@
   {
     "supporter_id": 2,
     "cutoff": "2025-06-01",
-    "lapse_probability": 0.8583429455757141,
+    "lapse_probability": 0.8583430647850037,
     "risk_tier": "High",
     "display_name": "Aria Brown"
   },
@@ -828,7 +828,7 @@
   {
     "supporter_id": 49,
     "cutoff": "2025-09-01",
-    "lapse_probability": 0.8576195240020752,
+    "lapse_probability": 0.85761958360672,
     "risk_tier": "High",
     "display_name": "Faye Yu"
   },
@@ -849,7 +849,7 @@
   {
     "supporter_id": 30,
     "cutoff": "2025-11-01",
-    "lapse_probability": 0.8547221422195435,
+    "lapse_probability": 0.8547220230102539,
     "risk_tier": "High",
     "display_name": "Rina Davis"
   },
@@ -919,7 +919,7 @@
   {
     "supporter_id": 21,
     "cutoff": "2025-09-01",
-    "lapse_probability": 0.8410160541534424,
+    "lapse_probability": 0.8410161733627319,
     "risk_tier": "High",
     "display_name": "June Usman"
   },
@@ -933,7 +933,7 @@
   {
     "supporter_id": 35,
     "cutoff": "2025-11-01",
-    "lapse_probability": 0.8340258002281189,
+    "lapse_probability": 0.8340258598327637,
     "risk_tier": "High",
     "display_name": "Jose Inoue"
   },
@@ -947,7 +947,7 @@
   {
     "supporter_id": 18,
     "cutoff": "2025-10-01",
-    "lapse_probability": 0.8324960470199585,
+    "lapse_probability": 0.832495927810669,
     "risk_tier": "High",
     "display_name": "Theo Reed"
   },
@@ -961,7 +961,7 @@
   {
     "supporter_id": 18,
     "cutoff": "2025-12-01",
-    "lapse_probability": 0.8322865962982178,
+    "lapse_probability": 0.8322864174842834,
     "risk_tier": "High",
     "display_name": "Theo Reed"
   },
@@ -982,14 +982,14 @@
   {
     "supporter_id": 30,
     "cutoff": "2025-09-01",
-    "lapse_probability": 0.830482006072998,
+    "lapse_probability": 0.8304818868637085,
     "risk_tier": "Medium",
     "display_name": "Rina Davis"
   },
   {
     "supporter_id": 30,
     "cutoff": "2025-10-01",
-    "lapse_probability": 0.8275651931762695,
+    "lapse_probability": 0.8275651335716248,
     "risk_tier": "Medium",
     "display_name": "Rina Davis"
   },
@@ -1017,14 +1017,14 @@
   {
     "supporter_id": 44,
     "cutoff": "2025-07-01",
-    "lapse_probability": 0.8145747184753418,
+    "lapse_probability": 0.8145748376846313,
     "risk_tier": "Medium",
     "display_name": "Vera Stone"
   },
   {
     "supporter_id": 49,
     "cutoff": "2025-10-01",
-    "lapse_probability": 0.8145484328269958,
+    "lapse_probability": 0.8145484924316406,
     "risk_tier": "Medium",
     "display_name": "Faye Yu"
   },
@@ -1059,14 +1059,14 @@
   {
     "supporter_id": 23,
     "cutoff": "2025-12-01",
-    "lapse_probability": 0.8015635013580322,
+    "lapse_probability": 0.8015633225440979,
     "risk_tier": "Medium",
     "display_name": "Ria White"
   },
   {
     "supporter_id": 58,
     "cutoff": "2025-07-01",
-    "lapse_probability": 0.8006815910339355,
+    "lapse_probability": 0.8006815314292908,
     "risk_tier": "Medium",
     "display_name": "Rico Iglesias"
   },
@@ -1080,7 +1080,7 @@
   {
     "supporter_id": 58,
     "cutoff": "2025-09-01",
-    "lapse_probability": 0.7976366877555847,
+    "lapse_probability": 0.7976366281509399,
     "risk_tier": "Medium",
     "display_name": "Rico Iglesias"
   },
@@ -1108,56 +1108,56 @@
   {
     "supporter_id": 39,
     "cutoff": "2025-10-01",
-    "lapse_probability": 0.7945107221603394,
+    "lapse_probability": 0.7945107817649841,
     "risk_tier": "Medium",
     "display_name": "Ben Morris"
   },
   {
     "supporter_id": 52,
     "cutoff": "2025-10-01",
-    "lapse_probability": 0.7932215929031372,
+    "lapse_probability": 0.7932215332984924,
     "risk_tier": "Medium",
     "display_name": "Cole Cruz"
   },
   {
     "supporter_id": 35,
     "cutoff": "2025-12-01",
-    "lapse_probability": 0.7928309440612793,
+    "lapse_probability": 0.7928310036659241,
     "risk_tier": "Medium",
     "display_name": "Jose Inoue"
   },
   {
     "supporter_id": 58,
     "cutoff": "2025-10-01",
-    "lapse_probability": 0.7915152907371521,
+    "lapse_probability": 0.7915152311325073,
     "risk_tier": "Medium",
     "display_name": "Rico Iglesias"
   },
   {
     "supporter_id": 16,
     "cutoff": "2025-08-01",
-    "lapse_probability": 0.7899496555328369,
+    "lapse_probability": 0.7899495959281921,
     "risk_tier": "Medium",
     "display_name": "Iris Patel"
   },
   {
     "supporter_id": 46,
     "cutoff": "2025-12-01",
-    "lapse_probability": 0.7873628735542297,
+    "lapse_probability": 0.787362813949585,
     "risk_tier": "Medium",
     "display_name": "Faith Alliance"
   },
   {
     "supporter_id": 14,
     "cutoff": "2025-08-01",
-    "lapse_probability": 0.787043571472168,
+    "lapse_probability": 0.7870435118675232,
     "risk_tier": "Medium",
     "display_name": "Owen Nguyen"
   },
   {
     "supporter_id": 2,
     "cutoff": "2025-08-01",
-    "lapse_probability": 0.7850282192230225,
+    "lapse_probability": 0.7850281000137329,
     "risk_tier": "Medium",
     "display_name": "Aria Brown"
   },
@@ -1178,14 +1178,14 @@
   {
     "supporter_id": 2,
     "cutoff": "2025-07-01",
-    "lapse_probability": 0.7797201871871948,
+    "lapse_probability": 0.7797202467918396,
     "risk_tier": "Medium",
     "display_name": "Aria Brown"
   },
   {
     "supporter_id": 13,
     "cutoff": "2025-06-01",
-    "lapse_probability": 0.7790423631668091,
+    "lapse_probability": 0.7790424227714539,
     "risk_tier": "Medium",
     "display_name": "Hope Group"
   },
@@ -1206,7 +1206,7 @@
   {
     "supporter_id": 17,
     "cutoff": "2025-11-01",
-    "lapse_probability": 0.7637909054756165,
+    "lapse_probability": 0.7637908458709717,
     "risk_tier": "Medium",
     "display_name": "Hana Quinn"
   },
@@ -1220,7 +1220,7 @@
   {
     "supporter_id": 37,
     "cutoff": "2025-11-01",
-    "lapse_probability": 0.7613645195960999,
+    "lapse_probability": 0.7613646388053894,
     "risk_tier": "Medium",
     "display_name": "Rae Klein"
   },
@@ -1234,14 +1234,14 @@
   {
     "supporter_id": 35,
     "cutoff": "2025-09-01",
-    "lapse_probability": 0.756312906742096,
+    "lapse_probability": 0.7563127875328064,
     "risk_tier": "Medium",
     "display_name": "Jose Inoue"
   },
   {
     "supporter_id": 19,
     "cutoff": "2025-12-01",
-    "lapse_probability": 0.7533717751502991,
+    "lapse_probability": 0.7533717155456543,
     "risk_tier": "Medium",
     "display_name": "Nora Singh"
   },
@@ -1297,21 +1297,21 @@
   {
     "supporter_id": 8,
     "cutoff": "2025-10-01",
-    "lapse_probability": 0.7236178517341614,
+    "lapse_probability": 0.7236177921295166,
     "risk_tier": "Medium",
     "display_name": "Isla Hernandez"
   },
   {
     "supporter_id": 14,
     "cutoff": "2025-06-01",
-    "lapse_probability": 0.7232946753501892,
+    "lapse_probability": 0.7232946157455444,
     "risk_tier": "Medium",
     "display_name": "Owen Nguyen"
   },
   {
     "supporter_id": 60,
     "cutoff": "2025-07-01",
-    "lapse_probability": 0.7206357717514038,
+    "lapse_probability": 0.7206358313560486,
     "risk_tier": "Medium",
     "display_name": "Tess Khan"
   },
@@ -1325,14 +1325,14 @@
   {
     "supporter_id": 36,
     "cutoff": "2025-12-01",
-    "lapse_probability": 0.7144735455513,
+    "lapse_probability": 0.7144734859466553,
     "risk_tier": "Medium",
     "display_name": "Lara Johnson"
   },
   {
     "supporter_id": 27,
     "cutoff": "2025-06-01",
-    "lapse_probability": 0.7115530967712402,
+    "lapse_probability": 0.7115530371665955,
     "risk_tier": "Medium",
     "display_name": "Jules Abe"
   },
@@ -1346,21 +1346,21 @@
   {
     "supporter_id": 33,
     "cutoff": "2025-07-01",
-    "lapse_probability": 0.7075924873352051,
+    "lapse_probability": 0.7075924277305603,
     "risk_tier": "Medium",
     "display_name": "Tara Green"
   },
   {
     "supporter_id": 8,
     "cutoff": "2025-06-01",
-    "lapse_probability": 0.7053106427192688,
+    "lapse_probability": 0.705310583114624,
     "risk_tier": "Medium",
     "display_name": "Isla Hernandez"
   },
   {
     "supporter_id": 2,
     "cutoff": "2025-11-01",
-    "lapse_probability": 0.7046559453010559,
+    "lapse_probability": 0.7046558260917664,
     "risk_tier": "Medium",
     "display_name": "Aria Brown"
   },
@@ -1374,7 +1374,7 @@
   {
     "supporter_id": 36,
     "cutoff": "2025-11-01",
-    "lapse_probability": 0.6974762678146362,
+    "lapse_probability": 0.6974762082099915,
     "risk_tier": "Medium",
     "display_name": "Lara Johnson"
   },
@@ -1388,14 +1388,14 @@
   {
     "supporter_id": 41,
     "cutoff": "2025-12-01",
-    "lapse_probability": 0.6835154891014099,
+    "lapse_probability": 0.6835154294967651,
     "risk_tier": "Medium",
     "display_name": "Cleo Owens"
   },
   {
     "supporter_id": 27,
     "cutoff": "2025-11-01",
-    "lapse_probability": 0.6714004874229431,
+    "lapse_probability": 0.6714004278182983,
     "risk_tier": "Medium",
     "display_name": "Jules Abe"
   },
@@ -1409,7 +1409,7 @@
   {
     "supporter_id": 27,
     "cutoff": "2025-12-01",
-    "lapse_probability": 0.6386895179748535,
+    "lapse_probability": 0.638689398765564,
     "risk_tier": "Medium",
     "display_name": "Jules Abe"
   },
@@ -1437,14 +1437,14 @@
   {
     "supporter_id": 29,
     "cutoff": "2025-12-01",
-    "lapse_probability": 0.6158869862556458,
+    "lapse_probability": 0.6158870458602905,
     "risk_tier": "Medium",
     "display_name": "Seth Clark"
   },
   {
     "supporter_id": 41,
     "cutoff": "2025-11-01",
-    "lapse_probability": 0.615228533744812,
+    "lapse_probability": 0.6152284741401672,
     "risk_tier": "Medium",
     "display_name": "Cleo Owens"
   },
@@ -1479,7 +1479,7 @@
   {
     "supporter_id": 6,
     "cutoff": "2025-10-01",
-    "lapse_probability": 0.5776374340057373,
+    "lapse_probability": 0.5776374936103821,
     "risk_tier": "Medium",
     "display_name": "Olivia Ford"
   },
@@ -1507,14 +1507,14 @@
   {
     "supporter_id": 5,
     "cutoff": "2025-09-01",
-    "lapse_probability": 0.5650917291641235,
+    "lapse_probability": 0.5650917887687683,
     "risk_tier": "Medium",
     "display_name": "Emma Evans"
   },
   {
     "supporter_id": 27,
     "cutoff": "2025-08-01",
-    "lapse_probability": 0.5641307234764099,
+    "lapse_probability": 0.5641307830810547,
     "risk_tier": "Medium",
     "display_name": "Jules Abe"
   },
@@ -1556,14 +1556,14 @@
   {
     "supporter_id": 60,
     "cutoff": "2025-09-01",
-    "lapse_probability": 0.5137379765510559,
+    "lapse_probability": 0.5137379169464111,
     "risk_tier": "Medium",
     "display_name": "Tess Khan"
   },
   {
     "supporter_id": 12,
     "cutoff": "2025-08-01",
-    "lapse_probability": 0.5105782747268677,
+    "lapse_probability": 0.5105782151222229,
     "risk_tier": "Medium",
     "display_name": "Ella Lopez"
   },
@@ -1577,7 +1577,7 @@
   {
     "supporter_id": 29,
     "cutoff": "2025-11-01",
-    "lapse_probability": 0.49027779698371887,
+    "lapse_probability": 0.4902776777744293,
     "risk_tier": "Medium",
     "display_name": "Seth Clark"
   },
@@ -1598,7 +1598,7 @@
   {
     "supporter_id": 33,
     "cutoff": "2025-09-01",
-    "lapse_probability": 0.48380619287490845,
+    "lapse_probability": 0.48380613327026367,
     "risk_tier": "Medium",
     "display_name": "Tara Green"
   },
@@ -1633,14 +1633,14 @@
   {
     "supporter_id": 7,
     "cutoff": "2025-10-01",
-    "lapse_probability": 0.46869638562202454,
+    "lapse_probability": 0.4686962962150574,
     "risk_tier": "Medium",
     "display_name": "Ethan Garcia"
   },
   {
     "supporter_id": 48,
     "cutoff": "2025-06-01",
-    "lapse_probability": 0.4682314991950989,
+    "lapse_probability": 0.46823155879974365,
     "risk_tier": "Medium",
     "display_name": "Ian Xu"
   },
@@ -1661,7 +1661,7 @@
   {
     "supporter_id": 50,
     "cutoff": "2025-12-01",
-    "lapse_probability": 0.4473040997982025,
+    "lapse_probability": 0.4473040699958801,
     "risk_tier": "Medium",
     "display_name": "Bright Foundation"
   },
@@ -1682,14 +1682,14 @@
   {
     "supporter_id": 26,
     "cutoff": "2025-10-01",
-    "lapse_probability": 0.4390762448310852,
+    "lapse_probability": 0.43907630443573,
     "risk_tier": "Medium",
     "display_name": "Margo Zhang"
   },
   {
     "supporter_id": 7,
     "cutoff": "2025-07-01",
-    "lapse_probability": 0.43598246574401855,
+    "lapse_probability": 0.43598243594169617,
     "risk_tier": "Medium",
     "display_name": "Ethan Garcia"
   },
@@ -1703,14 +1703,14 @@
   {
     "supporter_id": 8,
     "cutoff": "2025-08-01",
-    "lapse_probability": 0.4284304678440094,
+    "lapse_probability": 0.428430438041687,
     "risk_tier": "Medium",
     "display_name": "Isla Hernandez"
   },
   {
     "supporter_id": 56,
     "cutoff": "2025-11-01",
-    "lapse_probability": 0.425350159406662,
+    "lapse_probability": 0.4253500699996948,
     "risk_tier": "Medium",
     "display_name": "Lyle Gomez"
   },
@@ -1724,7 +1724,7 @@
   {
     "supporter_id": 1,
     "cutoff": "2025-09-01",
-    "lapse_probability": 0.419990211725235,
+    "lapse_probability": 0.4199901521205902,
     "risk_tier": "Medium",
     "display_name": "Mila Alvarez"
   },
@@ -1738,14 +1738,14 @@
   {
     "supporter_id": 41,
     "cutoff": "2025-09-01",
-    "lapse_probability": 0.4052127003669739,
+    "lapse_probability": 0.4052126109600067,
     "risk_tier": "Medium",
     "display_name": "Cleo Owens"
   },
   {
     "supporter_id": 11,
     "cutoff": "2025-09-01",
-    "lapse_probability": 0.388256698846817,
+    "lapse_probability": 0.3882567286491394,
     "risk_tier": "Medium",
     "display_name": "Maya Kim"
   },
@@ -1766,21 +1766,21 @@
   {
     "supporter_id": 56,
     "cutoff": "2025-10-01",
-    "lapse_probability": 0.3445099890232086,
+    "lapse_probability": 0.34450992941856384,
     "risk_tier": "Medium",
     "display_name": "Lyle Gomez"
   },
   {
     "supporter_id": 32,
     "cutoff": "2025-11-01",
-    "lapse_probability": 0.3402820825576782,
+    "lapse_probability": 0.34028202295303345,
     "risk_tier": "Medium",
     "display_name": "Luz Fisher"
   },
   {
     "supporter_id": 46,
     "cutoff": "2025-07-01",
-    "lapse_probability": 0.34026989340782166,
+    "lapse_probability": 0.3402698338031769,
     "risk_tier": "Medium",
     "display_name": "Faith Alliance"
   },
@@ -1794,21 +1794,21 @@
   {
     "supporter_id": 54,
     "cutoff": "2025-07-01",
-    "lapse_probability": 0.3351837396621704,
+    "lapse_probability": 0.335183709859848,
     "risk_tier": "Medium",
     "display_name": "Sara Escobar"
   },
   {
     "supporter_id": 9,
     "cutoff": "2025-09-01",
-    "lapse_probability": 0.33215540647506714,
+    "lapse_probability": 0.3321554362773895,
     "risk_tier": "Medium",
     "display_name": "Sophia Ibrahim"
   },
   {
     "supporter_id": 32,
     "cutoff": "2025-07-01",
-    "lapse_probability": 0.32214611768722534,
+    "lapse_probability": 0.32214605808258057,
     "risk_tier": "Medium",
     "display_name": "Luz Fisher"
   },
@@ -1822,28 +1822,28 @@
   {
     "supporter_id": 56,
     "cutoff": "2025-08-01",
-    "lapse_probability": 0.30091866850852966,
+    "lapse_probability": 0.3009186089038849,
     "risk_tier": "Medium",
     "display_name": "Lyle Gomez"
   },
   {
     "supporter_id": 19,
     "cutoff": "2025-11-01",
-    "lapse_probability": 0.29758358001708984,
+    "lapse_probability": 0.29758355021476746,
     "risk_tier": "Medium",
     "display_name": "Nora Singh"
   },
   {
     "supporter_id": 45,
     "cutoff": "2025-06-01",
-    "lapse_probability": 0.2957424819469452,
+    "lapse_probability": 0.29574254155158997,
     "risk_tier": "Medium",
     "display_name": "Noel Turner"
   },
   {
     "supporter_id": 52,
     "cutoff": "2025-08-01",
-    "lapse_probability": 0.29311102628707886,
+    "lapse_probability": 0.29311105608940125,
     "risk_tier": "Medium",
     "display_name": "Cole Cruz"
   },
@@ -1871,21 +1871,21 @@
   {
     "supporter_id": 33,
     "cutoff": "2025-10-01",
-    "lapse_probability": 0.28716954588890076,
+    "lapse_probability": 0.28716951608657837,
     "risk_tier": "Medium",
     "display_name": "Tara Green"
   },
   {
     "supporter_id": 29,
     "cutoff": "2025-06-01",
-    "lapse_probability": 0.28260907530784607,
+    "lapse_probability": 0.28260913491249084,
     "risk_tier": "Medium",
     "display_name": "Seth Clark"
   },
   {
     "supporter_id": 32,
     "cutoff": "2025-06-01",
-    "lapse_probability": 0.2773109972476959,
+    "lapse_probability": 0.27731096744537354,
     "risk_tier": "Medium",
     "display_name": "Luz Fisher"
   },
@@ -1899,35 +1899,35 @@
   {
     "supporter_id": 56,
     "cutoff": "2025-09-01",
-    "lapse_probability": 0.2607881724834442,
+    "lapse_probability": 0.26078808307647705,
     "risk_tier": "Medium",
     "display_name": "Lyle Gomez"
   },
   {
     "supporter_id": 45,
     "cutoff": "2025-07-01",
-    "lapse_probability": 0.2585112452507019,
+    "lapse_probability": 0.2585113048553467,
     "risk_tier": "Medium",
     "display_name": "Noel Turner"
   },
   {
     "supporter_id": 5,
     "cutoff": "2025-10-01",
-    "lapse_probability": 0.2545143961906433,
+    "lapse_probability": 0.2545144557952881,
     "risk_tier": "Medium",
     "display_name": "Emma Evans"
   },
   {
     "supporter_id": 18,
     "cutoff": "2025-07-01",
-    "lapse_probability": 0.25371167063713074,
+    "lapse_probability": 0.25371164083480835,
     "risk_tier": "Medium",
     "display_name": "Theo Reed"
   },
   {
     "supporter_id": 45,
     "cutoff": "2025-09-01",
-    "lapse_probability": 0.23650656640529633,
+    "lapse_probability": 0.2365065962076187,
     "risk_tier": "Low",
     "display_name": "Noel Turner"
   },
@@ -1955,21 +1955,21 @@
   {
     "supporter_id": 34,
     "cutoff": "2025-09-01",
-    "lapse_probability": 0.22189116477966309,
+    "lapse_probability": 0.22189120948314667,
     "risk_tier": "Low",
     "display_name": "Mia Hill"
   },
   {
     "supporter_id": 39,
     "cutoff": "2025-06-01",
-    "lapse_probability": 0.21952277421951294,
+    "lapse_probability": 0.21952272951602936,
     "risk_tier": "Low",
     "display_name": "Ben Morris"
   },
   {
     "supporter_id": 7,
     "cutoff": "2025-09-01",
-    "lapse_probability": 0.21362803876399994,
+    "lapse_probability": 0.21362809836864471,
     "risk_tier": "Low",
     "display_name": "Ethan Garcia"
   },
@@ -1983,56 +1983,56 @@
   {
     "supporter_id": 33,
     "cutoff": "2025-12-01",
-    "lapse_probability": 0.21104171872138977,
+    "lapse_probability": 0.21104176342487335,
     "risk_tier": "Low",
     "display_name": "Tara Green"
   },
   {
     "supporter_id": 44,
     "cutoff": "2025-10-01",
-    "lapse_probability": 0.20158512890338898,
+    "lapse_probability": 0.2015850991010666,
     "risk_tier": "Low",
     "display_name": "Vera Stone"
   },
   {
     "supporter_id": 37,
     "cutoff": "2025-12-01",
-    "lapse_probability": 0.20146334171295166,
+    "lapse_probability": 0.20146338641643524,
     "risk_tier": "Low",
     "display_name": "Rae Klein"
   },
   {
     "supporter_id": 25,
     "cutoff": "2025-08-01",
-    "lapse_probability": 0.2011389583349228,
+    "lapse_probability": 0.20113897323608398,
     "risk_tier": "Low",
     "display_name": "Tina Young"
   },
   {
     "supporter_id": 1,
     "cutoff": "2025-10-01",
-    "lapse_probability": 0.19892215728759766,
+    "lapse_probability": 0.19892212748527527,
     "risk_tier": "Low",
     "display_name": "Mila Alvarez"
   },
   {
     "supporter_id": 20,
     "cutoff": "2025-06-01",
-    "lapse_probability": 0.1956843137741089,
+    "lapse_probability": 0.19568434357643127,
     "risk_tier": "Low",
     "display_name": "Ezra Taylor"
   },
   {
     "supporter_id": 26,
     "cutoff": "2025-11-01",
-    "lapse_probability": 0.1940629482269287,
+    "lapse_probability": 0.1940629780292511,
     "risk_tier": "Low",
     "display_name": "Margo Zhang"
   },
   {
     "supporter_id": 45,
     "cutoff": "2025-12-01",
-    "lapse_probability": 0.1878131926059723,
+    "lapse_probability": 0.18781328201293945,
     "risk_tier": "Low",
     "display_name": "Noel Turner"
   },
@@ -2053,91 +2053,91 @@
   {
     "supporter_id": 33,
     "cutoff": "2025-11-01",
-    "lapse_probability": 0.17461179196834564,
+    "lapse_probability": 0.17461177706718445,
     "risk_tier": "Low",
     "display_name": "Tara Green"
   },
   {
     "supporter_id": 44,
     "cutoff": "2025-09-01",
-    "lapse_probability": 0.17068496346473694,
+    "lapse_probability": 0.17068491876125336,
     "risk_tier": "Low",
     "display_name": "Vera Stone"
   },
   {
     "supporter_id": 45,
     "cutoff": "2025-08-01",
-    "lapse_probability": 0.16671866178512573,
+    "lapse_probability": 0.16671867668628693,
     "risk_tier": "Low",
     "display_name": "Noel Turner"
   },
   {
     "supporter_id": 9,
     "cutoff": "2025-10-01",
-    "lapse_probability": 0.16529247164726257,
+    "lapse_probability": 0.16529250144958496,
     "risk_tier": "Low",
     "display_name": "Sophia Ibrahim"
   },
   {
     "supporter_id": 45,
     "cutoff": "2025-11-01",
-    "lapse_probability": 0.16120323538780212,
+    "lapse_probability": 0.16120325028896332,
     "risk_tier": "Low",
     "display_name": "Noel Turner"
   },
   {
     "supporter_id": 10,
     "cutoff": "2025-10-01",
-    "lapse_probability": 0.16023476421833038,
+    "lapse_probability": 0.1602347493171692,
     "risk_tier": "Low",
     "display_name": "Lucas Jones"
   },
   {
     "supporter_id": 42,
     "cutoff": "2025-09-01",
-    "lapse_probability": 0.15933763980865479,
+    "lapse_probability": 0.15933765470981598,
     "risk_tier": "Low",
     "display_name": "Finn Price"
   },
   {
     "supporter_id": 1,
     "cutoff": "2025-12-01",
-    "lapse_probability": 0.155576691031456,
+    "lapse_probability": 0.15557672083377838,
     "risk_tier": "Low",
     "display_name": "Mila Alvarez"
   },
   {
     "supporter_id": 8,
     "cutoff": "2025-12-01",
-    "lapse_probability": 0.14989708364009857,
+    "lapse_probability": 0.1498970091342926,
     "risk_tier": "Low",
     "display_name": "Isla Hernandez"
   },
   {
     "supporter_id": 11,
     "cutoff": "2025-10-01",
-    "lapse_probability": 0.1483161896467209,
+    "lapse_probability": 0.1483161598443985,
     "risk_tier": "Low",
     "display_name": "Maya Kim"
   },
   {
     "supporter_id": 1,
     "cutoff": "2025-11-01",
-    "lapse_probability": 0.14543519914150238,
+    "lapse_probability": 0.14543527364730835,
     "risk_tier": "Low",
     "display_name": "Mila Alvarez"
   },
   {
     "supporter_id": 31,
     "cutoff": "2025-10-01",
-    "lapse_probability": 0.1448000967502594,
+    "lapse_probability": 0.14480015635490417,
     "risk_tier": "Low",
     "display_name": "Jon Edwards"
   },
   {
     "supporter_id": 30,
     "cutoff": "2025-08-01",
-    "lapse_probability": 0.13782617449760437,
+    "lapse_probability": 0.13782620429992676,
     "risk_tier": "Low",
     "display_name": "Rina Davis"
   },
@@ -2151,21 +2151,21 @@
   {
     "supporter_id": 31,
     "cutoff": "2025-09-01",
-    "lapse_probability": 0.1326647251844406,
+    "lapse_probability": 0.1326647698879242,
     "risk_tier": "Low",
     "display_name": "Jon Edwards"
   },
   {
     "supporter_id": 15,
     "cutoff": "2025-10-01",
-    "lapse_probability": 0.1291942000389099,
+    "lapse_probability": 0.12919417023658752,
     "risk_tier": "Low",
     "display_name": "Zoe Ortiz"
   },
   {
     "supporter_id": 25,
     "cutoff": "2025-09-01",
-    "lapse_probability": 0.12666815519332886,
+    "lapse_probability": 0.12666819989681244,
     "risk_tier": "Low",
     "display_name": "Tina Young"
   },
@@ -2186,14 +2186,14 @@
   {
     "supporter_id": 31,
     "cutoff": "2025-11-01",
-    "lapse_probability": 0.11629005521535873,
+    "lapse_probability": 0.11629009991884232,
     "risk_tier": "Low",
     "display_name": "Jon Edwards"
   },
   {
     "supporter_id": 52,
     "cutoff": "2025-09-01",
-    "lapse_probability": 0.11489341408014297,
+    "lapse_probability": 0.11489339172840118,
     "risk_tier": "Low",
     "display_name": "Cole Cruz"
   },
@@ -2207,28 +2207,28 @@
   {
     "supporter_id": 11,
     "cutoff": "2025-12-01",
-    "lapse_probability": 0.10735371708869934,
+    "lapse_probability": 0.10735373198986053,
     "risk_tier": "Low",
     "display_name": "Maya Kim"
   },
   {
     "supporter_id": 13,
     "cutoff": "2025-08-01",
-    "lapse_probability": 0.10666201263666153,
+    "lapse_probability": 0.10666199028491974,
     "risk_tier": "Low",
     "display_name": "Hope Group"
   },
   {
     "supporter_id": 3,
     "cutoff": "2025-10-01",
-    "lapse_probability": 0.10535117238759995,
+    "lapse_probability": 0.10535115003585815,
     "risk_tier": "Low",
     "display_name": "Noah Chen"
   },
   {
     "supporter_id": 3,
     "cutoff": "2025-07-01",
-    "lapse_probability": 0.1039089560508728,
+    "lapse_probability": 0.10390893369913101,
     "risk_tier": "Low",
     "display_name": "Noah Chen"
   },
@@ -2242,21 +2242,21 @@
   {
     "supporter_id": 21,
     "cutoff": "2025-12-01",
-    "lapse_probability": 0.10034862160682678,
+    "lapse_probability": 0.10034859925508499,
     "risk_tier": "Low",
     "display_name": "June Usman"
   },
   {
     "supporter_id": 9,
     "cutoff": "2025-07-01",
-    "lapse_probability": 0.09902377426624298,
+    "lapse_probability": 0.09902375191450119,
     "risk_tier": "Low",
     "display_name": "Sophia Ibrahim"
   },
   {
     "supporter_id": 9,
     "cutoff": "2025-11-01",
-    "lapse_probability": 0.09544122219085693,
+    "lapse_probability": 0.09544118493795395,
     "risk_tier": "Low",
     "display_name": "Sophia Ibrahim"
   },
@@ -2270,28 +2270,28 @@
   {
     "supporter_id": 31,
     "cutoff": "2025-12-01",
-    "lapse_probability": 0.09320671111345291,
+    "lapse_probability": 0.09320669621229172,
     "risk_tier": "Low",
     "display_name": "Jon Edwards"
   },
   {
     "supporter_id": 54,
     "cutoff": "2025-08-01",
-    "lapse_probability": 0.0860530212521553,
+    "lapse_probability": 0.08605299890041351,
     "risk_tier": "Low",
     "display_name": "Sara Escobar"
   },
   {
     "supporter_id": 44,
     "cutoff": "2025-08-01",
-    "lapse_probability": 0.08239825814962387,
+    "lapse_probability": 0.08239828050136566,
     "risk_tier": "Low",
     "display_name": "Vera Stone"
   },
   {
     "supporter_id": 31,
     "cutoff": "2025-06-01",
-    "lapse_probability": 0.08103100210428238,
+    "lapse_probability": 0.08103097230195999,
     "risk_tier": "Low",
     "display_name": "Jon Edwards"
   },
@@ -2312,14 +2312,14 @@
   {
     "supporter_id": 54,
     "cutoff": "2025-11-01",
-    "lapse_probability": 0.07382731139659882,
+    "lapse_probability": 0.07382729649543762,
     "risk_tier": "Low",
     "display_name": "Sara Escobar"
   },
   {
     "supporter_id": 20,
     "cutoff": "2025-07-01",
-    "lapse_probability": 0.07050430774688721,
+    "lapse_probability": 0.07050428539514542,
     "risk_tier": "Low",
     "display_name": "Ezra Taylor"
   },
@@ -2340,35 +2340,35 @@
   {
     "supporter_id": 25,
     "cutoff": "2025-12-01",
-    "lapse_probability": 0.0691165179014206,
+    "lapse_probability": 0.06911647319793701,
     "risk_tier": "Low",
     "display_name": "Tina Young"
   },
   {
     "supporter_id": 10,
     "cutoff": "2025-11-01",
-    "lapse_probability": 0.06521589308977127,
+    "lapse_probability": 0.06521586328744888,
     "risk_tier": "Low",
     "display_name": "Lucas Jones"
   },
   {
     "supporter_id": 48,
     "cutoff": "2025-08-01",
-    "lapse_probability": 0.06421764940023422,
+    "lapse_probability": 0.0642176941037178,
     "risk_tier": "Low",
     "display_name": "Ian Xu"
   },
   {
     "supporter_id": 3,
     "cutoff": "2025-11-01",
-    "lapse_probability": 0.06370159983634949,
+    "lapse_probability": 0.0637015700340271,
     "risk_tier": "Low",
     "display_name": "Noah Chen"
   },
   {
     "supporter_id": 24,
     "cutoff": "2025-10-01",
-    "lapse_probability": 0.06329671293497086,
+    "lapse_probability": 0.06329669803380966,
     "risk_tier": "Low",
     "display_name": "Sean Xu"
   },
@@ -2382,7 +2382,7 @@
   {
     "supporter_id": 31,
     "cutoff": "2025-08-01",
-    "lapse_probability": 0.059214912354946136,
+    "lapse_probability": 0.05921489745378494,
     "risk_tier": "Low",
     "display_name": "Jon Edwards"
   },
@@ -2396,35 +2396,35 @@
   {
     "supporter_id": 9,
     "cutoff": "2025-12-01",
-    "lapse_probability": 0.055700622498989105,
+    "lapse_probability": 0.05570063367486,
     "risk_tier": "Low",
     "display_name": "Sophia Ibrahim"
   },
   {
     "supporter_id": 22,
     "cutoff": "2025-11-01",
-    "lapse_probability": 0.054439619183540344,
+    "lapse_probability": 0.05443959683179855,
     "risk_tier": "Low",
     "display_name": "Nico Vasquez"
   },
   {
     "supporter_id": 24,
     "cutoff": "2025-11-01",
-    "lapse_probability": 0.05402714014053345,
+    "lapse_probability": 0.05402711033821106,
     "risk_tier": "Low",
     "display_name": "Sean Xu"
   },
   {
     "supporter_id": 55,
     "cutoff": "2025-07-01",
-    "lapse_probability": 0.05379260331392288,
+    "lapse_probability": 0.05379259213805199,
     "risk_tier": "Low",
     "display_name": "Kian Farah"
   },
   {
     "supporter_id": 25,
     "cutoff": "2025-06-01",
-    "lapse_probability": 0.050846029072999954,
+    "lapse_probability": 0.05084604024887085,
     "risk_tier": "Low",
     "display_name": "Tina Young"
   },
@@ -2438,14 +2438,14 @@
   {
     "supporter_id": 3,
     "cutoff": "2025-06-01",
-    "lapse_probability": 0.047882329672575,
+    "lapse_probability": 0.0478823222219944,
     "risk_tier": "Low",
     "display_name": "Noah Chen"
   },
   {
     "supporter_id": 54,
     "cutoff": "2025-09-01",
-    "lapse_probability": 0.04688578099012375,
+    "lapse_probability": 0.046885766088962555,
     "risk_tier": "Low",
     "display_name": "Sara Escobar"
   },
@@ -2459,14 +2459,14 @@
   {
     "supporter_id": 42,
     "cutoff": "2025-10-01",
-    "lapse_probability": 0.045878034085035324,
+    "lapse_probability": 0.04587801173329353,
     "risk_tier": "Low",
     "display_name": "Finn Price"
   },
   {
     "supporter_id": 15,
     "cutoff": "2025-07-01",
-    "lapse_probability": 0.04405321553349495,
+    "lapse_probability": 0.044053222984075546,
     "risk_tier": "Low",
     "display_name": "Zoe Ortiz"
   },
@@ -2480,42 +2480,42 @@
   {
     "supporter_id": 45,
     "cutoff": "2025-10-01",
-    "lapse_probability": 0.0393216498196125,
+    "lapse_probability": 0.0393216572701931,
     "risk_tier": "Low",
     "display_name": "Noel Turner"
   },
   {
     "supporter_id": 3,
     "cutoff": "2025-08-01",
-    "lapse_probability": 0.03909799084067345,
+    "lapse_probability": 0.03909796476364136,
     "risk_tier": "Low",
     "display_name": "Noah Chen"
   },
   {
     "supporter_id": 55,
     "cutoff": "2025-08-01",
-    "lapse_probability": 0.03760572150349617,
+    "lapse_probability": 0.037605710327625275,
     "risk_tier": "Low",
     "display_name": "Kian Farah"
   },
   {
     "supporter_id": 31,
     "cutoff": "2025-07-01",
-    "lapse_probability": 0.0373711958527565,
+    "lapse_probability": 0.03737117722630501,
     "risk_tier": "Low",
     "display_name": "Jon Edwards"
   },
   {
     "supporter_id": 24,
     "cutoff": "2025-06-01",
-    "lapse_probability": 0.03648556023836136,
+    "lapse_probability": 0.036485567688941956,
     "risk_tier": "Low",
     "display_name": "Sean Xu"
   },
   {
     "supporter_id": 38,
     "cutoff": "2025-11-01",
-    "lapse_probability": 0.034225430339574814,
+    "lapse_probability": 0.03422542288899422,
     "risk_tier": "Low",
     "display_name": "Faith Partners"
   },
@@ -2529,14 +2529,14 @@
   {
     "supporter_id": 24,
     "cutoff": "2025-09-01",
-    "lapse_probability": 0.0339171439409256,
+    "lapse_probability": 0.033917151391506195,
     "risk_tier": "Low",
     "display_name": "Sean Xu"
   },
   {
     "supporter_id": 34,
     "cutoff": "2025-12-01",
-    "lapse_probability": 0.03326874226331711,
+    "lapse_probability": 0.0332687646150589,
     "risk_tier": "Low",
     "display_name": "Mia Hill"
   },
@@ -2557,63 +2557,63 @@
   {
     "supporter_id": 25,
     "cutoff": "2025-11-01",
-    "lapse_probability": 0.031293075531721115,
+    "lapse_probability": 0.031293049454689026,
     "risk_tier": "Low",
     "display_name": "Tina Young"
   },
   {
     "supporter_id": 51,
     "cutoff": "2025-12-01",
-    "lapse_probability": 0.030443472787737846,
+    "lapse_probability": 0.030443480238318443,
     "risk_tier": "Low",
     "display_name": "Mira Bello"
   },
   {
     "supporter_id": 24,
     "cutoff": "2025-08-01",
-    "lapse_probability": 0.030241888016462326,
+    "lapse_probability": 0.03024188056588173,
     "risk_tier": "Low",
     "display_name": "Sean Xu"
   },
   {
     "supporter_id": 34,
     "cutoff": "2025-10-01",
-    "lapse_probability": 0.029928114265203476,
+    "lapse_probability": 0.029928134754300117,
     "risk_tier": "Low",
     "display_name": "Mia Hill"
   },
   {
     "supporter_id": 55,
     "cutoff": "2025-09-01",
-    "lapse_probability": 0.026932023465633392,
+    "lapse_probability": 0.02693202905356884,
     "risk_tier": "Low",
     "display_name": "Kian Farah"
   },
   {
     "supporter_id": 3,
     "cutoff": "2025-09-01",
-    "lapse_probability": 0.025737112388014793,
+    "lapse_probability": 0.025737090036273003,
     "risk_tier": "Low",
     "display_name": "Noah Chen"
   },
   {
     "supporter_id": 51,
     "cutoff": "2025-11-01",
-    "lapse_probability": 0.023243889212608337,
+    "lapse_probability": 0.023243894800543785,
     "risk_tier": "Low",
     "display_name": "Mira Bello"
   },
   {
     "supporter_id": 55,
     "cutoff": "2025-06-01",
-    "lapse_probability": 0.022975748404860497,
+    "lapse_probability": 0.022975744679570198,
     "risk_tier": "Low",
     "display_name": "Kian Farah"
   },
   {
     "supporter_id": 20,
     "cutoff": "2025-12-01",
-    "lapse_probability": 0.02074025571346283,
+    "lapse_probability": 0.020740246400237083,
     "risk_tier": "Low",
     "display_name": "Ezra Taylor"
   },
@@ -2627,14 +2627,14 @@
   {
     "supporter_id": 20,
     "cutoff": "2025-09-01",
-    "lapse_probability": 0.01959201693534851,
+    "lapse_probability": 0.01959199458360672,
     "risk_tier": "Low",
     "display_name": "Ezra Taylor"
   },
   {
     "supporter_id": 30,
     "cutoff": "2025-06-01",
-    "lapse_probability": 0.019244978204369545,
+    "lapse_probability": 0.019244970753788948,
     "risk_tier": "Low",
     "display_name": "Rina Davis"
   },
@@ -2648,35 +2648,35 @@
   {
     "supporter_id": 25,
     "cutoff": "2025-10-01",
-    "lapse_probability": 0.017681289464235306,
+    "lapse_probability": 0.01768128201365471,
     "risk_tier": "Low",
     "display_name": "Tina Young"
   },
   {
     "supporter_id": 20,
     "cutoff": "2025-10-01",
-    "lapse_probability": 0.01755412295460701,
+    "lapse_probability": 0.017554106190800667,
     "risk_tier": "Low",
     "display_name": "Ezra Taylor"
   },
   {
     "supporter_id": 20,
     "cutoff": "2025-08-01",
-    "lapse_probability": 0.017542151734232903,
+    "lapse_probability": 0.017542144283652306,
     "risk_tier": "Low",
     "display_name": "Ezra Taylor"
   },
   {
     "supporter_id": 55,
     "cutoff": "2025-12-01",
-    "lapse_probability": 0.017465438693761826,
+    "lapse_probability": 0.01746542379260063,
     "risk_tier": "Low",
     "display_name": "Kian Farah"
   },
   {
     "supporter_id": 55,
     "cutoff": "2025-10-01",
-    "lapse_probability": 0.01617100089788437,
+    "lapse_probability": 0.016170993447303772,
     "risk_tier": "Low",
     "display_name": "Kian Farah"
   },
@@ -2690,63 +2690,63 @@
   {
     "supporter_id": 24,
     "cutoff": "2025-12-01",
-    "lapse_probability": 0.015128809958696365,
+    "lapse_probability": 0.015128816477954388,
     "risk_tier": "Low",
     "display_name": "Sean Xu"
   },
   {
     "supporter_id": 38,
     "cutoff": "2025-09-01",
-    "lapse_probability": 0.01496187224984169,
+    "lapse_probability": 0.014961856417357922,
     "risk_tier": "Low",
     "display_name": "Faith Partners"
   },
   {
     "supporter_id": 48,
     "cutoff": "2025-11-01",
-    "lapse_probability": 0.014430460520088673,
+    "lapse_probability": 0.01443045400083065,
     "risk_tier": "Low",
     "display_name": "Ian Xu"
   },
   {
     "supporter_id": 57,
     "cutoff": "2025-11-01",
-    "lapse_probability": 0.014261280186474323,
+    "lapse_probability": 0.014261273667216301,
     "risk_tier": "Low",
     "display_name": "Paz Hale"
   },
   {
     "supporter_id": 29,
     "cutoff": "2025-09-01",
-    "lapse_probability": 0.014105507172644138,
+    "lapse_probability": 0.01410550158470869,
     "risk_tier": "Low",
     "display_name": "Seth Clark"
   },
   {
     "supporter_id": 57,
     "cutoff": "2025-12-01",
-    "lapse_probability": 0.013619170524179935,
+    "lapse_probability": 0.013619163073599339,
     "risk_tier": "Low",
     "display_name": "Paz Hale"
   },
   {
     "supporter_id": 15,
     "cutoff": "2025-09-01",
-    "lapse_probability": 0.013159510679543018,
+    "lapse_probability": 0.013159515336155891,
     "risk_tier": "Low",
     "display_name": "Zoe Ortiz"
   },
   {
     "supporter_id": 49,
     "cutoff": "2025-12-01",
-    "lapse_probability": 0.012559790164232254,
+    "lapse_probability": 0.012559796683490276,
     "risk_tier": "Low",
     "display_name": "Faye Yu"
   },
   {
     "supporter_id": 55,
     "cutoff": "2025-11-01",
-    "lapse_probability": 0.012457440607249737,
+    "lapse_probability": 0.012457429431378841,
     "risk_tier": "Low",
     "display_name": "Kian Farah"
   },
@@ -2760,14 +2760,14 @@
   {
     "supporter_id": 57,
     "cutoff": "2025-10-01",
-    "lapse_probability": 0.011920260265469551,
+    "lapse_probability": 0.011920254677534103,
     "risk_tier": "Low",
     "display_name": "Paz Hale"
   },
   {
     "supporter_id": 29,
     "cutoff": "2025-10-01",
-    "lapse_probability": 0.011919574812054634,
+    "lapse_probability": 0.011919564567506313,
     "risk_tier": "Low",
     "display_name": "Seth Clark"
   },
@@ -2781,7 +2781,7 @@
   {
     "supporter_id": 34,
     "cutoff": "2025-11-01",
-    "lapse_probability": 0.011320759542286396,
+    "lapse_probability": 0.0113207483664155,
     "risk_tier": "Low",
     "display_name": "Mia Hill"
   },
@@ -2795,14 +2795,14 @@
   {
     "supporter_id": 20,
     "cutoff": "2025-11-01",
-    "lapse_probability": 0.010718747973442078,
+    "lapse_probability": 0.010718737728893757,
     "risk_tier": "Low",
     "display_name": "Ezra Taylor"
   },
   {
     "supporter_id": 49,
     "cutoff": "2025-11-01",
-    "lapse_probability": 0.0077064149081707,
+    "lapse_probability": 0.0077064186334609985,
     "risk_tier": "Low",
     "display_name": "Faye Yu"
   },
@@ -2823,35 +2823,35 @@
   {
     "supporter_id": 42,
     "cutoff": "2025-12-01",
-    "lapse_probability": 0.005786261986941099,
+    "lapse_probability": 0.005786258727312088,
     "risk_tier": "Low",
     "display_name": "Finn Price"
   },
   {
     "supporter_id": 38,
     "cutoff": "2025-10-01",
-    "lapse_probability": 0.005469173192977905,
+    "lapse_probability": 0.005469168536365032,
     "risk_tier": "Low",
     "display_name": "Faith Partners"
   },
   {
     "supporter_id": 16,
     "cutoff": "2025-06-01",
-    "lapse_probability": 0.005285225808620453,
+    "lapse_probability": 0.005285228136926889,
     "risk_tier": "Low",
     "display_name": "Iris Patel"
   },
   {
     "supporter_id": 47,
     "cutoff": "2025-08-01",
-    "lapse_probability": 0.00506575545296073,
+    "lapse_probability": 0.0050657507963478565,
     "risk_tier": "Low",
     "display_name": "Kaya Ward"
   },
   {
     "supporter_id": 47,
     "cutoff": "2025-09-01",
-    "lapse_probability": 0.004678650293499231,
+    "lapse_probability": 0.004678646102547646,
     "risk_tier": "Low",
     "display_name": "Kaya Ward"
   },
@@ -2865,21 +2865,21 @@
   {
     "supporter_id": 47,
     "cutoff": "2025-10-01",
-    "lapse_probability": 0.0017176101682707667,
+    "lapse_probability": 0.0017176085384562612,
     "risk_tier": "Low",
     "display_name": "Kaya Ward"
   },
   {
     "supporter_id": 16,
     "cutoff": "2025-07-01",
-    "lapse_probability": 0.0016975176986306906,
+    "lapse_probability": 0.0016975186299532652,
     "risk_tier": "Low",
     "display_name": "Iris Patel"
   },
   {
     "supporter_id": 29,
     "cutoff": "2025-07-01",
-    "lapse_probability": 0.0005443100235424936,
+    "lapse_probability": 0.000544309732504189,
     "risk_tier": "Low",
     "display_name": "Seth Clark"
   },

@@ -125,6 +125,7 @@ export default function ReportsPage() {
   const [mlHighDonors, setMlHighDonors] = useState<MlDonorRiskDto[]>([]);
   const [mlHighResidents, setMlHighResidents] = useState<MlResidentRiskDto[]>([]);
   const [mlEngagementDrivers, setMlEngagementDrivers] = useState<MlSocialEngagementDriverDto[]>([]);
+  const [mlEngagementDriversDT, setMlEngagementDriversDT] = useState<MlSocialEngagementDriverDto[]>([]);
 
   // Derived values — recomputed whenever monthlyDonations changes
   const BAR_MAX = monthlyDonations.length > 0 ? Math.max(...monthlyDonations.map(m => m.monetary)) : 1;
@@ -143,7 +144,8 @@ export default function ReportsPage() {
       getMlDonorRisk('High').catch(() => [] as MlDonorRiskDto[]),
       getMlResidentRisk('High').catch(() => [] as MlResidentRiskDto[]),
       getMlSocialEngagement('OLS').catch(() => [] as MlSocialEngagementDriverDto[]),
-    ]).then(([donations, residents, safehouses, metrics, recordings, posts, mlDonors, mlResidents, mlDrivers]) => {
+      getMlSocialEngagement('DecisionTree').catch(() => [] as MlSocialEngagementDriverDto[]),
+    ]).then(([donations, residents, safehouses, metrics, recordings, posts, mlDonors, mlResidents, mlDrivers, mlDriversDT]) => {
       const now = new Date();
       const thisYear = now.getFullYear();
       const lastYear = thisYear - 1;
@@ -303,7 +305,8 @@ export default function ReportsPage() {
       // ---- ML data ----
       setMlHighDonors((mlDonors as MlDonorRiskDto[]).slice(0, 5));
       setMlHighResidents((mlResidents as MlResidentRiskDto[]).sort((a, b) => b.riskProbability - a.riskProbability).slice(0, 8));
-      setMlEngagementDrivers((mlDrivers as MlSocialEngagementDriverDto[]).slice(0, 5));
+      setMlEngagementDrivers((mlDrivers as MlSocialEngagementDriverDto[]).slice(0, 10));
+      setMlEngagementDriversDT((mlDriversDT as MlSocialEngagementDriverDto[]).slice(0, 10));
     });
   }, []);
 
@@ -548,57 +551,66 @@ export default function ReportsPage() {
             </div>
           </div>
 
-          {/* ML — Top Engagement Drivers */}
-          <div className="bg-white rounded-xl border border-stone-200 shadow-sm overflow-hidden">
-            <div className="px-6 py-4 border-b border-stone-200 flex items-center justify-between">
-              <h3 className="text-base font-semibold text-stone-900">Top Engagement Drivers (OLS Model)</h3>
-              <span className="text-[10px] font-semibold uppercase tracking-wider text-haven-teal-700
-                bg-haven-teal-50 border border-haven-teal-200 rounded-full px-2 py-0.5">ML Model</span>
-            </div>
-            {mlEngagementDrivers.length === 0 ? (
-              <p className="text-sm text-stone-400 py-8 text-center">
-                No engagement drivers scored yet — model runs nightly.
-              </p>
-            ) : (
-              <div className="overflow-x-auto">
-                <table className="w-full text-sm">
-                  <thead>
-                    <tr className="bg-stone-50 border-b border-stone-200">
-                      {['Rank', 'Feature', 'Direction', 'Weight'].map(h => (
-                        <th key={h} className="text-left text-xs font-semibold uppercase tracking-wider
-                          text-stone-500 px-4 py-3 whitespace-nowrap">{h}</th>
-                      ))}
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-stone-100">
-                    {mlEngagementDrivers.map(d => (
-                      <tr key={d.rank} className="hover:bg-stone-50 transition-colors duration-100">
-                        <td className="px-4 py-3 tabular-nums font-semibold text-stone-400 w-12">
-                          #{d.rank}
-                        </td>
-                        <td className="px-4 py-3 font-mono text-xs text-stone-800">
-                          {d.featureName}
-                        </td>
-                        <td className="px-4 py-3">
-                          {d.direction === 'positive' && (
-                            <span className="text-emerald-600 font-bold text-base">↑</span>
-                          )}
-                          {d.direction === 'negative' && (
-                            <span className="text-rose-600 font-bold text-base">↓</span>
-                          )}
-                          {!d.direction && (
-                            <span className="text-stone-300">—</span>
-                          )}
-                        </td>
-                        <td className="px-4 py-3 tabular-nums text-stone-700">
-                          {d.importance.toFixed(3)}
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+          {/* ML — Top Engagement Drivers (two models side by side) */}
+          <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
+            {(
+              [
+                { label: 'OLS Model', drivers: mlEngagementDrivers },
+                { label: 'Decision Tree Model', drivers: mlEngagementDriversDT },
+              ] as { label: string; drivers: MlSocialEngagementDriverDto[] }[]
+            ).map(({ label, drivers }) => (
+              <div key={label} className="bg-white rounded-xl border border-stone-200 shadow-sm overflow-hidden">
+                <div className="px-6 py-4 border-b border-stone-200 flex items-center justify-between">
+                  <h3 className="text-base font-semibold text-stone-900">Top Engagement Drivers — {label}</h3>
+                  <span className="text-[10px] font-semibold uppercase tracking-wider text-haven-teal-700
+                    bg-haven-teal-50 border border-haven-teal-200 rounded-full px-2 py-0.5">ML Model</span>
+                </div>
+                {drivers.length === 0 ? (
+                  <p className="text-sm text-stone-400 py-8 text-center">
+                    No engagement drivers scored yet — model runs nightly.
+                  </p>
+                ) : (
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-sm">
+                      <thead>
+                        <tr className="bg-stone-50 border-b border-stone-200">
+                          {['Rank', 'Feature', 'Direction', 'Weight'].map(h => (
+                            <th key={h} className="text-left text-xs font-semibold uppercase tracking-wider
+                              text-stone-500 px-4 py-3 whitespace-nowrap">{h}</th>
+                          ))}
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-stone-100">
+                        {drivers.map(d => (
+                          <tr key={d.rank} className="hover:bg-stone-50 transition-colors duration-100">
+                            <td className="px-4 py-3 tabular-nums font-semibold text-stone-400 w-12">
+                              #{d.rank}
+                            </td>
+                            <td className="px-4 py-3 font-mono text-xs text-stone-800">
+                              {d.featureName}
+                            </td>
+                            <td className="px-4 py-3">
+                              {d.direction === 'positive' && (
+                                <span className="text-emerald-600 font-bold text-base">↑</span>
+                              )}
+                              {d.direction === 'negative' && (
+                                <span className="text-rose-600 font-bold text-base">↓</span>
+                              )}
+                              {!d.direction && (
+                                <span className="text-stone-300">—</span>
+                              )}
+                            </td>
+                            <td className="px-4 py-3 tabular-nums text-stone-700">
+                              {d.importance.toFixed(3)}
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
               </div>
-            )}
+            ))}
           </div>
         </div>
       )}

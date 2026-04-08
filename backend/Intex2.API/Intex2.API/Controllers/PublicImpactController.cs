@@ -23,12 +23,10 @@ public class PublicImpactController : ControllerBase
         var activeResidents = await _context.Residents
             .CountAsync(r => r.CaseStatus == "Active");
 
-        var closedCases = await _context.Residents
-            .CountAsync(r => r.CaseStatus == "Closed");
-        var successfulReintegrations = await _context.Residents
-            .CountAsync(r => r.ReintegrationStatus == "Successful");
-        var reintegrationRate = closedCases > 0
-            ? (int)Math.Round((double)successfulReintegrations / closedCases * 100)
+        var reintegrated = await _context.Residents
+            .CountAsync(r => r.ReintegrationStatus == "Completed" || r.ReintegrationStatus == "In Progress");
+        var reintegrationRate = totalGirls > 0
+            ? (int)Math.Round((double)reintegrated / totalGirls * 100)
             : 0;
 
         var activeSafehouses = await _context.Safehouses
@@ -76,10 +74,10 @@ public class PublicImpactController : ControllerBase
                 .Where(r => r.SafehouseId == s.SafehouseId)
                 .ToList();
 
-            var closedCount = shResidents.Count(r => r.CaseStatus == "Closed");
-            var reintegratedCount = shResidents.Count(r => r.ReintegrationStatus == "Successful");
-            var reintegrationRate = closedCount > 0
-                ? (int)Math.Round((double)reintegratedCount / closedCount * 100)
+            var totalCount = shResidents.Count;
+            var reintegratedCount = shResidents.Count(r => r.ReintegrationStatus == "Completed" || r.ReintegrationStatus == "In Progress");
+            var reintegrationRate = totalCount > 0
+                ? (int)Math.Round((double)reintegratedCount / totalCount * 100)
                 : 0;
 
             var residentIds = shResidents.Select(r => r.ResidentId).ToHashSet();
@@ -119,7 +117,7 @@ public class PublicImpactController : ControllerBase
             .ToDictionary(g => g.Key, g => g.Count());
 
         var reintegrationsByYear = residents
-            .Where(r => r.ReintegrationStatus == "Successful"
+            .Where(r => (r.ReintegrationStatus == "Completed" || r.ReintegrationStatus == "In Progress")
                         && r.DateClosed != null
                         && DateTime.TryParse(r.DateClosed, out _))
             .GroupBy(r => DateTime.Parse(r.DateClosed!).Year)
@@ -209,10 +207,10 @@ public class PublicImpactController : ControllerBase
             : 0;
 
         var residents = await _context.Residents.ToListAsync();
-        var closedCases = residents.Count(r => r.CaseStatus == "Closed");
-        var successfulReintegrations = residents.Count(r => r.ReintegrationStatus == "Successful");
-        var reintegrationRate = closedCases > 0
-            ? (int)Math.Round((double)successfulReintegrations / closedCases * 100)
+        var totalResidents = residents.Count;
+        var reintegrated = residents.Count(r => r.ReintegrationStatus == "Completed" || r.ReintegrationStatus == "In Progress");
+        var reintegrationRate = totalResidents > 0
+            ? (int)Math.Round((double)reintegrated / totalResidents * 100)
             : 0;
 
         var result = new List<ProgramOutcomeMetricDto>
