@@ -5,6 +5,7 @@ import { getMlResidentRisk } from '../../api/mlApi';
 import { isTruthy } from '../../types/resident';
 import type { ResidentDto } from '../../types/resident';
 import type { SafehouseDto } from '../../types/safehouse';
+import PaginationBar from '../../components/PaginationBar';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -200,6 +201,9 @@ export default function CaseloadPage() {
   const [safeFilter, setSafeFilter]   = useState('All');
   const [catFilter, setCatFilter]     = useState<CaseCategory | 'All'>('All');
   const [riskFilter, setRiskFilter]   = useState<string>('All');
+  const [page, setPage]               = useState(1);
+
+  const PAGE_SIZE = 20;
 
   // Modal / detail
   const [modal, setModal]             = useState<'add' | 'edit' | 'delete' | null>(null);
@@ -240,6 +244,10 @@ export default function CaseloadPage() {
     const matchR = riskFilter === 'All' || r.mlRiskLevel === riskFilter;
     return matchQ && matchS && matchSh && matchC && matchR;
   });
+
+  useEffect(() => { setPage(1); }, [search, statusFilter, safeFilter, catFilter, riskFilter]);
+
+  const paginated = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
 
   // -------------------------------------------------------------------------
   // CRUD
@@ -398,7 +406,7 @@ export default function CaseloadPage() {
             <tbody className="divide-y divide-stone-100">
               {filtered.length === 0 ? (
                 <tr><td colSpan={9} className="px-4 py-12 text-center text-sm text-stone-400">No residents match the current filters.</td></tr>
-              ) : filtered.map(r => (
+              ) : paginated.map(r => (
                 <tr key={r.id}
                   className="hover:bg-stone-50 transition-colors duration-100 cursor-pointer"
                   onClick={() => handleRowClick(r)}>
@@ -446,6 +454,7 @@ export default function CaseloadPage() {
             </tbody>
           </table>
         </div>
+        <PaginationBar page={page} pageSize={PAGE_SIZE} total={filtered.length} onChange={setPage} />
       </div>
 
       {/* ================================================================== */}

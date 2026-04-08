@@ -3,6 +3,7 @@ import { getResidents } from '../../api/residentsApi';
 import { getSafehouses, buildSafehouseNameMap } from '../../api/safehousesApi';
 import { getRecordings, createRecording, deleteRecording } from '../../api/processRecordingsApi';
 import { isTruthy } from '../../types/resident';
+import PaginationBar from '../../components/PaginationBar';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -113,6 +114,9 @@ export default function ProcessRecordingPage() {
 
   const [residentSearch, setResidentSearch] = useState('');
   const [selectedResident, setSelectedResident] = useState<ResidentSummary | null>(null);
+  const [page, setPage] = useState(1);
+
+  const PAGE_SIZE = 20;
 
   useEffect(() => {
     Promise.all([getResidents(), getSafehouses()])
@@ -145,6 +149,10 @@ export default function ProcessRecordingPage() {
     const q = residentSearch.toLowerCase();
     return q === '' || r.caseId.toLowerCase().includes(q) || r.safehouse.toLowerCase().includes(q) || r.assignedSocialWorker.toLowerCase().includes(q);
   });
+
+  useEffect(() => { setPage(1); }, [residentSearch]);
+
+  const paginatedResidents = filteredResidents.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
 
   const residentRecordings = selectedResident
     ? [...recordings].sort((a, b) => b.sessionDate.localeCompare(a.sessionDate))
@@ -261,7 +269,7 @@ export default function ProcessRecordingPage() {
         </div>
 
         <div className="space-y-2 lg:max-h-[70vh] overflow-y-auto pr-1">
-          {filteredResidents.map(r => (
+          {paginatedResidents.map(r => (
             <button key={r.caseId} type="button"
               onClick={() => selectResident(r)}
               className={`w-full text-left bg-white rounded-xl border p-4
@@ -276,6 +284,7 @@ export default function ProcessRecordingPage() {
             </button>
           ))}
         </div>
+        <PaginationBar page={page} pageSize={PAGE_SIZE} total={filteredResidents.length} onChange={setPage} />
       </div>
 
       {/* ------------------------------------------------------------------ */}
