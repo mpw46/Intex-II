@@ -1,5 +1,5 @@
 import { useState, type ReactElement } from 'react';
-import { NavLink, Outlet, useLocation } from 'react-router-dom';
+import { NavLink, Navigate, Outlet, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
 // ---------------------------------------------------------------------------
@@ -124,8 +124,12 @@ export default function AdminLayout() {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const location = useLocation();
   const pageTitle = pageTitles[location.pathname] ?? 'Admin';
-  const { authSession } = useAuth();
+  const { authSession, isAuthenticated, isLoading } = useAuth();
   const displayName = authSession.userName ?? authSession.email ?? 'Staff';
+
+  if (!isLoading && (!isAuthenticated || !authSession.roles.includes('Admin'))) {
+    return <Navigate to="/login" replace />;
+  }
   const avatarLetter = displayName.charAt(0).toUpperCase();
 
   const Sidebar = (

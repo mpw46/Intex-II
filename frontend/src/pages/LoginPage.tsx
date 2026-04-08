@@ -152,8 +152,8 @@ export default function LoginPage() {
       setError('Passwords do not match.');
       return;
     }
-    if (register.password.length < 12) {
-      setError('Password must be at least 12 characters.');
+    if (register.password.length < 14) {
+      setError('Password must be at least 14 characters.');
       return;
     }
 
