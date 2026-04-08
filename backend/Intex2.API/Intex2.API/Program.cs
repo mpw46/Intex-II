@@ -27,7 +27,8 @@ builder.Services.AddDbContext<AuthIdentityDbContext>(options =>
 
 builder.Services.AddIdentityApiEndpoints<DonorUser>()
     .AddRoles<IdentityRole>()
-    .AddEntityFrameworkStores<AuthIdentityDbContext>();
+    .AddEntityFrameworkStores<AuthIdentityDbContext>()
+    .AddClaimsPrincipalFactory<UserClaimsPrincipalFactory<DonorUser, IdentityRole>>();
 
 if (!string.IsNullOrEmpty(googleClientId) && !string.IsNullOrEmpty(googleClientSecret))
 {

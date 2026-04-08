@@ -96,7 +96,7 @@ public class DonationsController : ControllerBase
         });
     }
 
-    [Authorize]
+    [AllowAnonymous]
     [HttpPost]
     public async Task<ActionResult<DonationDto>> Create([FromBody] DonationCreateDto dto)
     {
