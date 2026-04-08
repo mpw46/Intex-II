@@ -4,6 +4,7 @@ import { getDonations, createDonationRecord, deleteDonation, getAllocations } fr
 import { getSafehouses, buildSafehouseNameMap } from '../../api/safehousesApi';
 import { getMlDonorRisk } from '../../api/mlApi';
 import PaginationBar from '../../components/PaginationBar';
+import type { DonationAllocationDto } from '../../types/donation';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -167,6 +168,28 @@ function StatusPill({ status }: { status: SupporterStatus }) {
 }
 
 // ---------------------------------------------------------------------------
+// AllocBar — horizontal percentage bar for the Allocations tab
+// ---------------------------------------------------------------------------
+
+function AllocBar({ label, pct, amount }: { label: string; pct: number; amount: number }) {
+  return (
+    <div className="flex items-start gap-4">
+      <div className="w-10 shrink-0 text-right">
+        <span className="text-base font-bold tabular-nums text-stone-900">{pct}%</span>
+      </div>
+      <div className="flex-1 min-w-0">
+        <span className="text-sm font-semibold text-stone-800 block mb-1.5">{label}</span>
+        <svg className="w-full mb-1.5" height="8" aria-label={`${label}: ${pct}%`}>
+          <rect x="0" y="0" width="100%" height="8" rx="4" className="fill-stone-200" />
+          <rect x="0" y="0" width={`${pct}%`} height="8" rx="4" className="fill-haven-teal-600" />
+        </svg>
+        <p className="text-xs text-stone-500">₱{amount.toLocaleString()} allocated</p>
+      </div>
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
 // Main component
 // ---------------------------------------------------------------------------
 
@@ -180,6 +203,9 @@ export default function DonorsContributionsPage() {
   const [typeFilter, setTypeFilter]       = useState<SupporterType | 'All'>('All');
   const [statusFilter, setStatusFilter]   = useState<SupporterStatus | 'All'>('All');
   const [page, setPage]                   = useState(1);
+  const [pageTab, setPageTab]             = useState<'supporters' | 'allocations'>('supporters');
+  const [allAllocations, setAllAllocations] = useState<DonationAllocationDto[]>([]);
+  const [allocYear, setAllocYear]         = useState<number | 'All'>('All');
 
   const PAGE_SIZE = 20;
 
@@ -199,8 +225,9 @@ export default function DonorsContributionsPage() {
   const [selectedDonation, setSelectedDonation] = useState<Donation | null>(null);
 
   useEffect(() => {
-    Promise.all([getSupporters(), getSafehouses(), getMlDonorRisk().catch(() => [])])
-      .then(([rawSupporters, safehouses, mlScores]) => {
+    Promise.all([getSupporters(), getSafehouses(), getMlDonorRisk().catch(() => []), getAllocations()])
+      .then(([rawSupporters, safehouses, mlScores, rawAllocs]) => {
+        setAllAllocations(rawAllocs);
         setShMap(buildSafehouseNameMap(safehouses));
         // Build ML risk lookup: supporterId → 'High' | 'Medium' | 'Low'
         const mlMap = new Map<number, string>(
@@ -392,9 +419,62 @@ export default function DonorsContributionsPage() {
     </div>
   );
 
+  // ---------------------------------------------------------------------------
+  // Allocations tab derived data
+  // ---------------------------------------------------------------------------
+
+  const availableYears = Array.from(
+    new Set(allAllocations
+      .map(a => a.allocationDate ? new Date(a.allocationDate).getFullYear() : null)
+      .filter((y): y is number => y != null))
+  ).sort((a, b) => b - a);
+
+  const filteredAllocs = allocYear === 'All'
+    ? allAllocations
+    : allAllocations.filter(a => a.allocationDate && new Date(a.allocationDate).getFullYear() === allocYear);
+
+  // By safehouse
+  const safehouseTotals = new Map<number, number>();
+  for (const a of filteredAllocs) {
+    if (a.safehouseId != null && a.amountAllocated != null)
+      safehouseTotals.set(a.safehouseId, (safehouseTotals.get(a.safehouseId) ?? 0) + a.amountAllocated);
+  }
+  const safeTotal = [...safehouseTotals.values()].reduce((s, v) => s + v, 0);
+  const safehouseRows = [...safehouseTotals.entries()]
+    .map(([id, amt]) => ({ label: shMap.get(id) ?? 'Unknown', amount: amt, pct: safeTotal > 0 ? Math.round(amt / safeTotal * 100) : 0 }))
+    .sort((a, b) => b.amount - a.amount);
+
+  // By program area
+  const areaTotals = new Map<string, number>();
+  for (const a of filteredAllocs) {
+    if (a.programArea && a.amountAllocated != null)
+      areaTotals.set(a.programArea, (areaTotals.get(a.programArea) ?? 0) + a.amountAllocated);
+  }
+  const areaTotal = [...areaTotals.values()].reduce((s, v) => s + v, 0);
+  const areaRows = [...areaTotals.entries()]
+    .map(([label, amt]) => ({ label, amount: amt, pct: areaTotal > 0 ? Math.round(amt / areaTotal * 100) : 0 }))
+    .sort((a, b) => b.amount - a.amount);
+
   return (
     <div className="px-4 sm:px-6 py-6 max-w-7xl mx-auto">
 
+      {/* In-page tab bar */}
+      <div className="border-b border-stone-200 mb-6 flex gap-0">
+        {([['supporters', 'Supporters'], ['allocations', 'Allocations']] as const).map(([id, label]) => (
+          <button key={id} type="button" onClick={() => setPageTab(id)}
+            className={`px-4 py-3 text-sm font-medium border-b-2 transition-colors duration-150
+              ${pageTab === id
+                ? 'border-haven-teal-600 text-haven-teal-700'
+                : 'border-transparent text-stone-500 hover:text-stone-800 hover:border-stone-300'}`}>
+            {label}
+          </button>
+        ))}
+      </div>
+
+      {/* ================================================================== */}
+      {/* Supporters tab                                                       */}
+      {/* ================================================================== */}
+      {pageTab === 'supporters' && (
       <div className="flex flex-col lg:flex-row gap-6">
         {/* ---------------------------------------------------------------- */}
         {/* Left: Supporter list (hidden on mobile when detail is open)      */}
@@ -661,7 +741,64 @@ export default function DonorsContributionsPage() {
           </div>
         )}
       </div>
-      </div>{/* closes flex flex-col lg:flex-row */}
+      </div>
+      )}{/* end supporters tab */}
+
+      {/* ================================================================== */}
+      {/* Allocations tab                                                      */}
+      {/* ================================================================== */}
+      {pageTab === 'allocations' && (
+        <div>
+          {/* Year filter */}
+          <div className="flex items-center gap-3 mb-6">
+            <label htmlFor="alloc-year" className="text-sm font-medium text-stone-700">Year</label>
+            <select id="alloc-year" value={String(allocYear)}
+              onChange={e => setAllocYear(e.target.value === 'All' ? 'All' : Number(e.target.value))}
+              className={selectCls}>
+              <option value="All">All Years</option>
+              {availableYears.map(y => <option key={y} value={y}>{y}</option>)}
+            </select>
+            {filteredAllocs.length > 0 && (
+              <span className="text-xs text-stone-400">{filteredAllocs.length} allocation{filteredAllocs.length !== 1 ? 's' : ''}</span>
+            )}
+          </div>
+
+          {/* Two-column breakdown grid */}
+          <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
+            {/* By Program Area */}
+            <div className="bg-white rounded-xl border border-stone-200 shadow-sm p-6">
+              <h3 className="text-base font-semibold text-stone-900 mb-1">By Program Area</h3>
+              <p className="text-xs text-stone-400 mb-5">How donations are distributed across programs</p>
+              {areaRows.length === 0 ? (
+                <p className="text-sm text-stone-400 py-8 text-center">No program area data available.</p>
+              ) : (
+                <div className="space-y-5">
+                  {areaRows.map(r => <AllocBar key={r.label} label={r.label} pct={r.pct} amount={r.amount} />)}
+                  <p className="text-xs text-stone-400 pt-3 border-t border-stone-100">
+                    Total: <span className="font-semibold text-stone-600">₱{areaTotal.toLocaleString()}</span>
+                  </p>
+                </div>
+              )}
+            </div>
+
+            {/* By Safehouse */}
+            <div className="bg-white rounded-xl border border-stone-200 shadow-sm p-6">
+              <h3 className="text-base font-semibold text-stone-900 mb-1">By Safehouse</h3>
+              <p className="text-xs text-stone-400 mb-5">How donations are distributed across safehouses</p>
+              {safehouseRows.length === 0 ? (
+                <p className="text-sm text-stone-400 py-8 text-center">No safehouse allocation data available.</p>
+              ) : (
+                <div className="space-y-5">
+                  {safehouseRows.map(r => <AllocBar key={r.label} label={r.label} pct={r.pct} amount={r.amount} />)}
+                  <p className="text-xs text-stone-400 pt-3 border-t border-stone-100">
+                    Total: <span className="font-semibold text-stone-600">₱{safeTotal.toLocaleString()}</span>
+                  </p>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}{/* closes pageTab === 'allocations' */}
 
       {/* ================================================================== */}
       {/* MODAL: Add / Edit Supporter                                         */}
