@@ -17,7 +17,14 @@ builder.Services.AddDbContext<Intex2104Context>(options =>
 builder.Services.AddDbContext<AuthIdentityDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("AuthConnection")));
 
-builder.Services.AddIdentityApiEndpoints<DonorUser>().AddEntityFrameworkStores<AuthIdentityDbContext>();
+builder.Services.AddIdentityApiEndpoints<DonorUser>()
+    .AddRoles<IdentityRole>()
+    .AddEntityFrameworkStores<AuthIdentityDbContext>();
+
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy(AuthPolicies.AdminOnly, policy => policy.RequireRole(AuthRoles.Admin));
+});
 
 builder.Services.AddCors(options =>
 {
@@ -36,18 +43,12 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
+
+
 // Apply Identity migrations automatically on startup
 using (var scope = app.Services.CreateScope())
 {
-    try
-    {
-        var identityDb = scope.ServiceProvider.GetRequiredService<AuthIdentityDbContext>();
-        identityDb.Database.Migrate();
-    }
-    catch (Exception ex)
-    {
-        Console.WriteLine($"Identity DB migration failed: {ex.Message}");
-    }
+    await AuthIdentityGenerator.GenerateDefaultIdentityAsync(scope.ServiceProvider, app.Configuration);
 }
 
 // Configure the HTTP request pipeline.
