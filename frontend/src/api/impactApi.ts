@@ -1,4 +1,4 @@
-import apiClient from './apiClient';
+const apiBaseUrl = import.meta.env.VITE_API_URL ?? '';
 
 export interface ImpactSnapshot {
   totalGirlsServed: number;
@@ -42,26 +42,31 @@ export interface ProgramOutcomeMetric {
 }
 
 export async function getImpactSnapshot(): Promise<ImpactSnapshot> {
-  const res = await apiClient.get<ImpactSnapshot>('/PublicImpact/snapshot');
-  return res.data;
+  const response = await fetch(`${apiBaseUrl}/PublicImpact/snapshot`);
+  if (!response.ok) throw new Error('Unable to load impact snapshot.');
+  return response.json();
 }
 
 export async function getImpactSafehouses(): Promise<SafehouseCard[]> {
-  const res = await apiClient.get<SafehouseCard[]>('/PublicImpact/safehouses');
-  return res.data;
+  const response = await fetch(`${apiBaseUrl}/PublicImpact/safehouses`);
+  if (!response.ok) throw new Error('Unable to load safehouse impact data.');
+  return response.json();
 }
 
 export async function getYearlyOutcomes(): Promise<YearlyOutcome[]> {
-  const res = await apiClient.get<YearlyOutcome[]>('/PublicImpact/yearly-outcomes');
-  return res.data;
+  const response = await fetch(`${apiBaseUrl}/PublicImpact/yearly-outcomes`);
+  if (!response.ok) throw new Error('Unable to load yearly outcomes.');
+  return response.json();
 }
 
 export async function getAllocations(): Promise<DonationAllocationSummary[]> {
-  const res = await apiClient.get<DonationAllocationSummary[]>('/PublicImpact/allocations');
-  return res.data;
+  const response = await fetch(`${apiBaseUrl}/PublicImpact/allocations`);
+  if (!response.ok) throw new Error('Unable to load donation allocations.');
+  return response.json();
 }
 
 export async function getProgramOutcomes(): Promise<ProgramOutcomeMetric[]> {
-  const res = await apiClient.get<ProgramOutcomeMetric[]>('/PublicImpact/program-outcomes');
-  return res.data;
+  const response = await fetch(`${apiBaseUrl}/PublicImpact/program-outcomes`);
+  if (!response.ok) throw new Error('Unable to load program outcomes.');
+  return response.json();
 }

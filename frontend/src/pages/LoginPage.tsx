@@ -1,13 +1,11 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import {
-  buildExternalLoginUrl,
   getAuthSession,
-  getExternalProviders,
   loginUser,
   registerUser,
-  type ExternalAuthProvider,
 } from '../api/authAPI';
+
 import { useAuth } from '../context/AuthContext';
 import { getImpactSnapshot, type ImpactSnapshot } from '../api/impactApi';
 
@@ -23,7 +21,6 @@ interface SignInForm {
 }
 
 interface RegisterForm {
-  displayName: string;
   email: string;
   password: string;
   confirmPassword: string;
@@ -90,11 +87,9 @@ export default function LoginPage() {
   const [twoFactorCode, setTwoFactorCode] = useState('');
   const [recoveryCode, setRecoveryCode] = useState('');
   const [rememberMe, setRememberMe] = useState(true);
-  const [externalProviders, setExternalProviders] = useState<ExternalAuthProvider[]>([]);
 
   // Register state
   const [register, setRegister] = useState<RegisterForm>({
-    displayName: '',
     email: '',
     password: '',
     confirmPassword: '',
@@ -159,10 +154,6 @@ export default function LoginPage() {
     }
   }
 
-  function handleExternalLogin(providerName: string) {
-    window.location.assign(buildExternalLoginUrl(providerName, '/impact'));
-  }
-
   async function handleRegister(e: { preventDefault(): void }) {
     e.preventDefault();
     setError(null);
@@ -179,7 +170,9 @@ export default function LoginPage() {
     setLoading(true);
     try {
       await registerUser(register.email, register.password);
-      void navigate('/impact');
+      await loginUser(register.email, register.password, true);
+      const [session] = await Promise.all([getAuthSession(), refreshAuthState()]);
+      void navigate(session.roles.includes('Admin') ? '/admin' : '/impact');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Registration failed. Please try again.');
     } finally {
@@ -395,32 +388,6 @@ export default function LoginPage() {
                 {loading ? 'Signing in…' : 'Sign In'}
               </button>
 
-              {/* External providers */}
-              {externalProviders.length > 0 && (
-                <>
-                  <div className="flex items-center gap-3">
-                    <div className="flex-1 h-px bg-stone-200" />
-                    <span className="text-xs text-stone-400">or</span>
-                    <div className="flex-1 h-px bg-stone-200" />
-                  </div>
-                  <div className="space-y-2">
-                    {externalProviders.map(provider => (
-                      <button
-                        key={provider.name}
-                        type="button"
-                        onClick={() => handleExternalLogin(provider.name)}
-                        className="w-full inline-flex items-center justify-center px-5 py-2.5
-                          border border-stone-300 rounded-lg text-sm font-medium text-stone-700
-                          hover:bg-stone-50 transition-colors duration-150
-                          focus-visible:outline-none focus-visible:ring-2
-                          focus-visible:ring-haven-teal-500 focus-visible:ring-offset-2"
-                      >
-                        Continue with {provider.displayName}
-                      </button>
-                    ))}
-                  </div>
-                </>
-              )}
             </form>
           )}
 
@@ -429,27 +396,6 @@ export default function LoginPage() {
           {/* ---------------------------------------------------------------- */}
           {mode === 'register' && (
             <form onSubmit={handleRegister} noValidate className="space-y-5">
-              {/* Display name */}
-              <div>
-                <label htmlFor="reg-name"
-                  className="block text-xs font-semibold text-stone-700 uppercase tracking-wide mb-1.5">
-                  Full Name
-                </label>
-                <input
-                  id="reg-name"
-                  type="text"
-                  autoComplete="name"
-                  required
-                  value={register.displayName}
-                  onChange={e => setRegister(s => ({ ...s, displayName: e.target.value }))}
-                  className="w-full px-4 py-2.5 bg-white border border-stone-300 rounded-lg
-                    text-sm text-stone-900 placeholder:text-stone-400
-                    hover:border-stone-400
-                    focus:outline-none focus:ring-2 focus:ring-haven-teal-500 focus:border-transparent"
-                  placeholder="Maria Santos"
-                />
-              </div>
-
               {/* Email */}
               <div>
                 <label htmlFor="reg-email"
