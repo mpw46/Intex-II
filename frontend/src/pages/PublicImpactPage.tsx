@@ -202,8 +202,8 @@ function PublicImpactPage() {
         setYearlyOutcomes(yearly);
         setAllocations(allocs);
         setProgramOutcomes(outcomes);
-      } catch (err) {
-        console.error('Failed to load impact data:', err);
+      } catch {
+        // silently handled — UI shows whatever data loaded successfully
       } finally {
         setLoading(false);
       }
