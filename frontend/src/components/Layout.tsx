@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { NavLink, Outlet, useLocation } from 'react-router-dom';
 import { useCookieConsent } from '../context/CookieConsentContext';
 import { useAuth } from '../context/AuthContext';
+import { getMyProfile } from '../api/authAPI';
 import transparentLogo from '../assets/transparent-logo.png';
 import DonateModal from './DonateModal';
 
@@ -25,6 +26,19 @@ function Layout() {
   const isAdmin = authSession.roles.includes('Admin');
   const isDonor = isAuthenticated && !isAdmin;
   const [donateOpen, setDonateOpen] = useState(false);
+  const [donorDisplayName, setDonorDisplayName] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!isDonor) { setDonorDisplayName(null); return; }
+    getMyProfile().then((p) => {
+      const name =
+        p.displayName?.trim() ||
+        [p.firstName, p.lastName].filter(Boolean).join(' ') ||
+        p.organizationName?.trim() ||
+        null;
+      setDonorDisplayName(name);
+    }).catch(() => {});
+  }, [isDonor]);
 
 
   return (
@@ -144,7 +158,7 @@ function Layout() {
           {isAuthenticated ? (
             <span className={`text-sm transition-colors duration-300
                               ${navSolid ? 'text-stone-500' : 'text-white/70'}`}>
-              {authSession.userName ?? authSession.email}
+              {donorDisplayName ?? authSession.email}
             </span>
           ) : null}
 
