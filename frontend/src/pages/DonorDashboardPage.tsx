@@ -304,8 +304,38 @@ function DonorDashboardPage() {
           </div>
         ) : (
           <div className="bg-white rounded-xl border border-stone-200 overflow-hidden">
-            <div className="px-6 py-4 border-b border-stone-100">
+            <div className="px-6 py-4 border-b border-stone-100 flex items-center justify-between">
               <p className="text-sm font-semibold text-stone-700">Donation History</p>
+              <button
+                type="button"
+                onClick={() => {
+                  const headers = ['Donation ID','Date','Type','Amount (PHP)','Recurring','Campaign','Channel','Impact Unit','Notes'];
+                  const rows = donations.map(d => [
+                    d.donationId ?? '',
+                    d.donationDate ?? '',
+                    d.donationType ?? '',
+                    d.amount ?? '',
+                    d.isRecurring === 'True' ? 'Yes' : 'No',
+                    d.campaignName ?? '',
+                    d.channelSource ?? '',
+                    d.impactUnit ?? '',
+                    `"${(d.notes ?? '').replace(/"/g, '""')}"`,
+                  ]);
+                  const csv = [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
+                  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+                  const url = URL.createObjectURL(blob);
+                  const a = document.createElement('a');
+                  a.href = url;
+                  a.download = `haven-donation-history-${new Date().toISOString().slice(0, 10)}.csv`;
+                  a.click();
+                  URL.revokeObjectURL(url);
+                }}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg
+                  border border-haven-teal-600 text-haven-teal-700 bg-white hover:bg-haven-teal-50
+                  transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-haven-teal-500"
+              >
+                ↓ Export CSV
+              </button>
             </div>
             <table className="w-full text-sm">
               <thead>
