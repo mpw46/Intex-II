@@ -1,7 +1,9 @@
 using System.Security.Claims;
+using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.WebUtilities;
 using Intex2.API.Data;
 
 namespace Intex2.API.Controllers;
@@ -10,8 +12,128 @@ public record RegisterRequest(string Email, string Password);
 
 [ApiController]
 [Route("api/auth")]
-public class AuthController(UserManager<DonorUser> userManager, SignInManager<DonorUser> signInManager) : ControllerBase
+public class AuthController(
+    UserManager<DonorUser> userManager,
+    SignInManager<DonorUser> signInManager,
+    IConfiguration configuration) : ControllerBase
 {
+    private const string DefaultFrontendUrl = "http://localhost:5173";
+    private const string DefaultExternalReturnPath = "/impact";
+
+    [HttpGet("providers")]
+    public IActionResult GetExternalProviders()
+    {
+        var providers = new List<object>();
+
+        if (IsGoogleConfigured())
+        {
+            providers.Add(new
+            {
+                name = GoogleDefaults.AuthenticationScheme,
+                displayName = "Google"
+            });
+        }
+
+        return Ok(providers);
+    }
+
+    [HttpGet("external-login")]
+    public IActionResult ExternalLogin(
+        [FromQuery] string provider,
+        [FromQuery] string? returnPath = null)
+    {
+        if (!string.Equals(provider, GoogleDefaults.AuthenticationScheme, StringComparison.OrdinalIgnoreCase) ||
+            !IsGoogleConfigured())
+        {
+            return BadRequest(new { message = "The requested external login provider is not available." });
+        }
+
+        var callbackUrl = Url.Action(nameof(ExternalLoginCallback), new
+        {
+            returnPath = NormalizeReturnPath(returnPath)
+        });
+
+        if (string.IsNullOrWhiteSpace(callbackUrl))
+        {
+            return Problem("Unable to create the external login callback URL.");
+        }
+
+        var properties = signInManager.ConfigureExternalAuthenticationProperties(
+            GoogleDefaults.AuthenticationScheme,
+            callbackUrl);
+
+        return Challenge(properties, GoogleDefaults.AuthenticationScheme);
+    }
+
+    [HttpGet("external-callback")]
+    public async Task<IActionResult> ExternalLoginCallback(
+        [FromQuery] string? returnPath = null,
+        [FromQuery] string? remoteError = null)
+    {
+        if (!string.IsNullOrWhiteSpace(remoteError))
+        {
+            return Redirect(BuildFrontendErrorUrl("External login failed."));
+        }
+
+        var info = await signInManager.GetExternalLoginInfoAsync();
+
+        if (info is null)
+        {
+            return Redirect(BuildFrontendErrorUrl("External login information was unavailable."));
+        }
+
+        var signInResult = await signInManager.ExternalLoginSignInAsync(
+            info.LoginProvider,
+            info.ProviderKey,
+            isPersistent: false,
+            bypassTwoFactor: true);
+
+        if (signInResult.Succeeded)
+        {
+            return Redirect(BuildFrontendSuccessUrl(returnPath));
+        }
+
+        var email = info.Principal.FindFirstValue(ClaimTypes.Email) ??
+            info.Principal.FindFirstValue("email");
+
+        if (string.IsNullOrWhiteSpace(email))
+        {
+            return Redirect(BuildFrontendErrorUrl("The external provider did not return an email address."));
+        }
+
+        var user = await userManager.FindByEmailAsync(email);
+
+        if (user is null)
+        {
+            user = new DonorUser
+            {
+                UserName = email,
+                Email = email,
+                EmailConfirmed = true
+            };
+
+            var createUserResult = await userManager.CreateAsync(user);
+
+            if (!createUserResult.Succeeded)
+            {
+                return Redirect(BuildFrontendErrorUrl("Unable to create a local account for the external login."));
+            }
+
+            await userManager.AddToRoleAsync(user, AuthRoles.Donor);
+        }
+
+        var addLoginResult = await userManager.AddLoginAsync(user, info);
+
+        if (!addLoginResult.Succeeded && !addLoginResult.Errors.All(e => e.Code == "LoginAlreadyAssociated"))
+        {
+            return Redirect(BuildFrontendErrorUrl("Unable to associate the external login with the local account."));
+        }
+
+        await signInManager.SignInAsync(user, isPersistent: false, info.LoginProvider);
+        return Redirect(BuildFrontendSuccessUrl(returnPath));
+    }
+
+
     [HttpPost("register")]
     public async Task<IActionResult> Register([FromBody] RegisterRequest request)
     {
@@ -70,5 +192,34 @@ public class AuthController(UserManager<DonorUser> userManager, SignInManager<Do
             email = user?.Email,
             roles
         });
+    }
+
+    private bool IsGoogleConfigured()
+    {
+        return !string.IsNullOrWhiteSpace(configuration["Authentication:Google:ClientId"]) &&
+            !string.IsNullOrWhiteSpace(configuration["Authentication:Google:ClientSecret"]);
+    }
+
+    private static string NormalizeReturnPath(string? returnPath)
+    {
+        if (string.IsNullOrWhiteSpace(returnPath) || !returnPath.StartsWith('/'))
+        {
+            return DefaultExternalReturnPath;
+        }
+
+        return returnPath;
+    }
+
+    private string BuildFrontendSuccessUrl(string? returnPath)
+    {
+        var frontendUrl = configuration["FrontendUrl"] ?? DefaultFrontendUrl;
+        return $"{frontendUrl.TrimEnd('/')}{NormalizeReturnPath(returnPath)}";
+    }
+
+    private string BuildFrontendErrorUrl(string errorMessage)
+    {
+        var frontendUrl = configuration["FrontendUrl"] ?? DefaultFrontendUrl;
+        var loginUrl = $"{frontendUrl.TrimEnd('/')}/login";
+        return QueryHelpers.AddQueryString(loginUrl, "externalError", errorMessage);
     }
 }

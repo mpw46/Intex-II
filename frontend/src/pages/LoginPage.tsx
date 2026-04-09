@@ -4,6 +4,9 @@ import {
   getAuthSession,
   loginUser,
   registerUser,
+  getExternalProviders,
+  buildExternalLoginUrl,
+  type ExternalAuthProvider
 } from '../api/authAPI';
 
 import { useAuth } from '../context/AuthContext';
@@ -84,9 +87,10 @@ export default function LoginPage() {
   // Sign-in state
   const [signIn, setSignIn] = useState<SignInForm>({ email: '', password: '' });
   const [showSignInPw, setShowSignInPw] = useState(false);
-  const [twoFactorCode, setTwoFactorCode] = useState('');
-  const [recoveryCode, setRecoveryCode] = useState('');
   const [rememberMe, setRememberMe] = useState(true);
+  const [externalProviders, setExternalProviders] = useState<
+    ExternalAuthProvider[]
+  >([]);
 
   // Register state
   const [register, setRegister] = useState<RegisterForm>({
@@ -122,6 +126,19 @@ export default function LoginPage() {
     setError(null);
   }
 
+  useEffect(() => {
+    void loadExternalProviders();
+  }, []);
+
+  async function loadExternalProviders() {
+    try {
+      const providers = await getExternalProviders();
+      setExternalProviders(providers);
+    } catch {
+      setExternalProviders([]);
+    }
+  }
+
   async function handleSignIn(e: { preventDefault(): void }) {
     e.preventDefault();
     setError(null);
@@ -131,9 +148,7 @@ export default function LoginPage() {
       await loginUser(
         signIn.email,
         signIn.password,
-        rememberMe,
-        twoFactorCode || undefined,
-        recoveryCode || undefined,
+        rememberMe
       );
       const [session] = await Promise.all([getAuthSession(), refreshAuthState()]);
       void navigate(session.roles.includes('Admin') ? '/admin' : '/impact');
@@ -168,6 +183,10 @@ export default function LoginPage() {
     } finally {
       setLoading(false);
     }
+  }
+
+  function handleExternalLogin(providerName: string) {
+    window.location.assign(buildExternalLoginUrl(providerName, '/impact'));
   }
 
   // -------------------------------------------------------------------------
@@ -309,49 +328,6 @@ export default function LoginPage() {
                 </div>
               </div>
 
-              {/* Authenticator code */}
-              <div>
-                <label htmlFor="signin-totp"
-                  className="block text-xs font-semibold text-stone-700 uppercase tracking-wide mb-1.5">
-                  Authenticator Code
-                  <span className="ml-1 font-normal normal-case text-stone-400">(if MFA enabled)</span>
-                </label>
-                <input
-                  id="signin-totp"
-                  type="text"
-                  inputMode="numeric"
-                  autoComplete="one-time-code"
-                  value={twoFactorCode}
-                  onChange={e => setTwoFactorCode(e.target.value)}
-                  className="w-full px-4 py-2.5 bg-white border border-stone-300 rounded-lg
-                    text-sm text-stone-900 placeholder:text-stone-400
-                    hover:border-stone-400
-                    focus:outline-none focus:ring-2 focus:ring-haven-teal-500 focus:border-transparent"
-                  placeholder="123456"
-                />
-              </div>
-
-              {/* Recovery code */}
-              <div>
-                <label htmlFor="signin-recovery"
-                  className="block text-xs font-semibold text-stone-700 uppercase tracking-wide mb-1.5">
-                  Recovery Code
-                  <span className="ml-1 font-normal normal-case text-stone-400">(instead of authenticator)</span>
-                </label>
-                <input
-                  id="signin-recovery"
-                  type="text"
-                  autoComplete="off"
-                  value={recoveryCode}
-                  onChange={e => setRecoveryCode(e.target.value)}
-                  className="w-full px-4 py-2.5 bg-white border border-stone-300 rounded-lg
-                    text-sm text-stone-900 placeholder:text-stone-400
-                    hover:border-stone-400
-                    focus:outline-none focus:ring-2 focus:ring-haven-teal-500 focus:border-transparent"
-                  placeholder="xxxxxxxx-xxxxxxxx"
-                />
-              </div>
-
               {/* Remember me */}
               <label className="flex items-center gap-3 cursor-pointer select-none">
                 <input
@@ -363,6 +339,32 @@ export default function LoginPage() {
                 />
                 <span className="text-sm text-stone-600">Keep me signed in across browser restarts</span>
               </label>
+
+              {externalProviders.length > 0 ? (
+                <>
+                  <div className="relative flex items-center gap-3">
+                    <div className="flex-1 h-px bg-stone-200" />
+                    <span className="text-xs text-stone-400">or</span>
+                    <div className="flex-1 h-px bg-stone-200" />
+                  </div>
+                  <div className="flex flex-col gap-2">
+                    {externalProviders.map((provider) => (
+                      <button
+                        key={provider.name}
+                        type="button"
+                        onClick={() => handleExternalLogin(provider.name)}
+                        className="w-full inline-flex items-center justify-center gap-2 px-5 py-2.5
+                          bg-white text-stone-700 text-sm font-semibold rounded-lg border border-stone-300
+                          transition-colors duration-150 hover:bg-stone-50 hover:border-stone-400
+                          focus-visible:outline-none focus-visible:ring-2
+                          focus-visible:ring-haven-teal-500 focus-visible:ring-offset-2"
+                      >
+                        Continue with {provider.displayName}
+                      </button>
+                    ))}
+                  </div>
+                </>
+              ) : null}
 
               {/* Submit */}
               <button
@@ -413,7 +415,7 @@ export default function LoginPage() {
                   className="block text-xs font-semibold text-stone-700 uppercase tracking-wide mb-1.5">
                   Password
                   <span className="ml-1 font-normal normal-case text-stone-400">
-                    (min. 12 characters)
+                    (min. 14 characters)
                   </span>
                 </label>
                 <div className="relative">
@@ -422,7 +424,7 @@ export default function LoginPage() {
                     type={showRegPw ? 'text' : 'password'}
                     autoComplete="new-password"
                     required
-                    minLength={12}
+                    minLength={14}
                     value={register.password}
                     onChange={e => setRegister(s => ({ ...s, password: e.target.value }))}
                     className="w-full px-4 py-2.5 pr-10 bg-white border border-stone-300 rounded-lg

@@ -2,8 +2,11 @@ using Intex2.API.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using Intex2.API.Infrastructure;
+using Microsoft.AspNetCore.Authentication.Google;
 
 var builder = WebApplication.CreateBuilder(args);
+var googleClientId = builder.Configuration["Authentication:Google:ClientId"];
+var googleClientSecret = builder.Configuration["Authentication:Google:ClientSecret"];
 
 // Add services to the container.
 
@@ -21,6 +24,18 @@ builder.Services.AddDbContext<AuthIdentityDbContext>(options =>
 builder.Services.AddIdentityApiEndpoints<DonorUser>()
     .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<AuthIdentityDbContext>();
+
+if (!string.IsNullOrEmpty(googleClientId) && !string.IsNullOrEmpty(googleClientSecret))
+{
+    builder.Services.AddAuthentication()
+        .AddGoogle(options =>
+        {
+            options.ClientId = googleClientId;
+            options.ClientSecret = googleClientSecret;
+            options.SignInScheme = IdentityConstants.ExternalScheme;
+            options.CallbackPath = "/signin-google";
+        });
+}
 
 builder.Services.AddAuthorization(options =>
 {
