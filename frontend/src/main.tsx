@@ -21,6 +21,7 @@ import CaseloadPage from './pages/admin/CaseloadPage'
 import ProcessRecordingPage from './pages/admin/ProcessRecordingPage'
 import HomeVisitationPage from './pages/admin/HomeVisitationPage'
 import ReportsPage from './pages/admin/ReportsPage'
+import LoginsPage from './pages/admin/LoginsPage'
 
 const router = createBrowserRouter([
   {
@@ -45,6 +46,7 @@ const router = createBrowserRouter([
       { path: 'caseload', element: <CaseloadPage /> },
       { path: 'process-recording', element: <ProcessRecordingPage /> },
       { path: 'home-visitation', element: <HomeVisitationPage /> },
+      { path: 'logins', element: <LoginsPage /> },
       { path: 'reports', element: <ReportsPage /> },
       { path: 'logout', element: <LogoutPage /> }
     ],

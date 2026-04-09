@@ -171,6 +171,7 @@ public class AuthController(
             return Ok(new
             {
                 isAuthenticated = false,
+                userId = (string?)null,
                 userName = (string?)null,
                 email = (string?)null,
                 roles = Array.Empty<string>()
@@ -188,6 +189,7 @@ public class AuthController(
         return Ok(new
         {
             isAuthenticated = true,
+            userId = user?.Id,
             userName = user?.UserName ?? User.Identity?.Name,
             email = user?.Email,
             roles

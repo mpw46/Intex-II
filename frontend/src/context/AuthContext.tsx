@@ -18,6 +18,7 @@ interface AuthContextValue {
 
 const anonymousSession: AuthSession = {
   isAuthenticated: false,
+  userId: null,
   userName: null,
   email: null,
   roles: [],

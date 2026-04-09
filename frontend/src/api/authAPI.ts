@@ -13,7 +13,8 @@ export async function readApiError(
 ): Promise<string> {
   const contentType = response.headers.get('content-type') ?? '';
 
-  if (!contentType.includes('application/json')) {
+  // ASP.NET ProblemDetails uses application/problem+json, which does not include "application/json".
+  if (!contentType.includes('json')) {
     return fallbackMessage;
   }
 
@@ -86,7 +87,27 @@ export async function getAuthSession(): Promise<AuthSession> {
     throw new Error('Unable to load auth session.');
   }
 
-  return response.json();
+  const data: unknown = await response.json();
+  if (!data || typeof data !== 'object') {
+    return {
+      isAuthenticated: false,
+      userId: null,
+      userName: null,
+      email: null,
+      roles: [],
+    };
+  }
+
+  const o = data as Record<string, unknown>;
+  return {
+    isAuthenticated: Boolean(o.isAuthenticated),
+    userId: typeof o.userId === 'string' ? o.userId : null,
+    userName: typeof o.userName === 'string' ? o.userName : null,
+    email: typeof o.email === 'string' ? o.email : null,
+    roles: Array.isArray(o.roles)
+      ? o.roles.filter((r): r is string => typeof r === 'string')
+      : [],
+  };
 }
 
 export async function registerUser(

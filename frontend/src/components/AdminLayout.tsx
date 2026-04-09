@@ -67,6 +67,15 @@ function ChartIcon() {
   );
 }
 
+function KeyIcon() {
+  return (
+    <svg className="h-4 w-4 shrink-0" viewBox="0 0 24 24" fill="none"
+      stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4" />
+    </svg>
+  );
+}
+
 function MenuIcon() {
   return (
     <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none"
@@ -104,6 +113,7 @@ const navItems: NavItemConfig[] = [
   { to: '/admin/caseload',          label: 'Caseload',                         Icon: FolderIcon },
   { to: '/admin/process-recording', label: 'Process Recording',                Icon: ClipboardIcon },
   { to: '/admin/home-visitation',   label: 'Home Visitation',                  Icon: HomeIcon },
+  { to: '/admin/logins',            label: 'Logins',                           Icon: KeyIcon },
   { to: '/admin/reports',           label: 'Reports & Analytics',              Icon: ChartIcon },
 ];
 
@@ -113,6 +123,7 @@ const pageTitles: Record<string, string> = {
   '/admin/caseload':          'Caseload',
   '/admin/process-recording': 'Process Recording',
   '/admin/home-visitation':   'Home Visitation',
+  '/admin/logins':            'Logins',
   '/admin/reports':           'Reports & Analytics',
 };
 
