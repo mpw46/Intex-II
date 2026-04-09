@@ -1,17 +1,29 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, Navigate } from 'react-router-dom';
 import { createDonation } from '../api/donationApi';
+import { useAuth } from '../context/AuthContext';
 
 function DonatePage() {
+  const { isAuthenticated, isLoading } = useAuth();
   const [amount, setAmount] = useState('');
   const [isRecurring, setIsRecurring] = useState(false);
   const [notes, setNotes] = useState('');
-  const [donorName, setDonorName] = useState('');
-  const [donorEmail, setDonorEmail] = useState('');
 
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState('');
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-stone-50 flex items-center justify-center">
+        <div className="h-8 w-8 border-4 border-haven-teal-600 border-t-transparent rounded-full animate-spin" />
+      </div>
+    );
+  }
+
+  if (!isAuthenticated) {
+    return <Navigate to="/login" state={{ returnTo: '/donate' }} replace />;
+  }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -26,11 +38,7 @@ function DonatePage() {
         channelSource: 'Website',
         currencyCode: 'PHP',
         amount,
-        notes: [
-          donorName ? `Donor: ${donorName}` : '',
-          donorEmail ? `Email: ${donorEmail}` : '',
-          notes,
-        ].filter(Boolean).join(' | ') || undefined,
+        notes: notes || undefined,
       });
 
       setSubmitted(true);
@@ -57,12 +65,12 @@ function DonatePage() {
           </p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <Link
-              to="/impact"
+              to="/donor"
               className="inline-flex items-center justify-center px-6 py-3
                          bg-haven-teal-600 text-white font-semibold rounded-lg
                          hover:bg-haven-teal-700 transition-colors"
             >
-              View Our Impact
+              View My Donations
             </Link>
             <button
               onClick={() => {
@@ -166,41 +174,6 @@ function DonatePage() {
               <span className="text-sm text-stone-700">
                 {isRecurring ? 'Monthly recurring donation' : 'One-time donation'}
               </span>
-            </div>
-
-            {/* Donor info */}
-            <div className="border-t border-stone-200 pt-8">
-              <p className="text-sm font-semibold text-stone-700 mb-4">Your Information</p>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label htmlFor="donorName" className="block text-xs font-medium text-stone-500 mb-1.5">
-                    Name
-                  </label>
-                  <input
-                    id="donorName"
-                    type="text"
-                    value={donorName}
-                    onChange={(e) => setDonorName(e.target.value)}
-                    placeholder="Your name"
-                    className="w-full px-4 py-3 rounded-lg border border-stone-300 text-stone-900
-                               focus:outline-none focus:ring-2 focus:ring-haven-teal-500 focus:border-haven-teal-500"
-                  />
-                </div>
-                <div>
-                  <label htmlFor="donorEmail" className="block text-xs font-medium text-stone-500 mb-1.5">
-                    Email
-                  </label>
-                  <input
-                    id="donorEmail"
-                    type="email"
-                    value={donorEmail}
-                    onChange={(e) => setDonorEmail(e.target.value)}
-                    placeholder="you@example.com"
-                    className="w-full px-4 py-3 rounded-lg border border-stone-300 text-stone-900
-                               focus:outline-none focus:ring-2 focus:ring-haven-teal-500 focus:border-haven-teal-500"
-                  />
-                </div>
-              </div>
             </div>
 
             {/* Notes */}
