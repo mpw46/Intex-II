@@ -3,77 +3,6 @@ import { NavLink, Outlet, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import transparentLogo from '../assets/transparent-logo.png';
 
-// ---------------------------------------------------------------------------
-// Cookie consent banner
-// ---------------------------------------------------------------------------
-
-const CONSENT_KEY = 'haven-cookie-consent';
-
-function CookieConsent() {
-  const [visible, setVisible] = useState(false);
-
-  useEffect(() => {
-    if (!localStorage.getItem(CONSENT_KEY)) setVisible(true);
-  }, []);
-
-  function accept() {
-    localStorage.setItem(CONSENT_KEY, 'accepted');
-    setVisible(false);
-  }
-
-  function decline() {
-    localStorage.setItem(CONSENT_KEY, 'declined');
-    setVisible(false);
-  }
-
-  if (!visible) return null;
-
-  return (
-    <div
-      role="dialog"
-      aria-live="polite"
-      aria-label="Cookie consent"
-      className="fixed bottom-0 inset-x-0 z-50 bg-stone-900 border-t border-stone-700
-                 px-6 py-5 sm:flex sm:items-center sm:justify-between sm:gap-8"
-    >
-      <p className="text-sm text-stone-300 mb-4 sm:mb-0">
-        We use cookies to improve your experience and understand how our site is used.
-        Non-essential analytics cookies are only set with your consent.{' '}
-        <NavLink to="/privacy" className="text-haven-teal-400 underline underline-offset-2
-          hover:text-haven-teal-300 transition-colors duration-150">
-          Privacy Policy
-        </NavLink>
-      </p>
-      <div className="flex items-center gap-3 shrink-0">
-        <button
-          type="button"
-          onClick={decline}
-          className="inline-flex items-center justify-center px-4 py-2
-            bg-transparent text-stone-400 text-sm font-medium rounded-lg
-            border border-stone-600 transition-colors duration-150
-            hover:bg-stone-800 hover:text-stone-200
-            focus-visible:outline-none focus-visible:ring-2
-            focus-visible:ring-haven-teal-500 focus-visible:ring-offset-2
-            focus-visible:ring-offset-stone-900"
-        >
-          Decline
-        </button>
-        <button
-          type="button"
-          onClick={accept}
-          className="inline-flex items-center justify-center px-4 py-2
-            bg-haven-teal-600 text-white text-sm font-semibold rounded-lg
-            transition-colors duration-150 hover:bg-haven-teal-700
-            focus-visible:outline-none focus-visible:ring-2
-            focus-visible:ring-haven-teal-500 focus-visible:ring-offset-2
-            focus-visible:ring-offset-stone-900"
-        >
-          Accept
-        </button>
-      </div>
-    </div>
-  );
-}
 
 function Layout() {
   const location = useLocation();
@@ -189,9 +118,6 @@ function Layout() {
       <main id="main-content" className="flex-1">
         <Outlet />
       </main>
-
-      {/* Cookie consent banner */}
-      <CookieConsent />
 
       {/* Footer */}
       <footer className="bg-stone-900 text-white">
