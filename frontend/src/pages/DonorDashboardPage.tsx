@@ -5,10 +5,10 @@ import {
 } from 'recharts';
 import { useAuth } from '../context/AuthContext';
 import { getDonations } from '../api/donationsApi';
-import { getImpactSnapshot, getImpactAllocations } from '../api/publicImpactApi';
+import { getImpactSnapshot } from '../api/publicImpactApi';
 import { getMlDonorImpact } from '../api/mlApi';
 import type { DonationDto } from '../types/donation';
-import type { ImpactSnapshotDto, AllocationSummaryDto } from '../types/publicImpact';
+import type { ImpactSnapshotDto } from '../types/publicImpact';
 import type { MlDonorImpactDto } from '../types/ml';
 
 const TIERS = [
@@ -24,12 +24,10 @@ function DonorDashboardPage() {
   const [fetching, setFetching] = useState(true);
   const [fetchError, setFetchError] = useState('');
   const [snapshot, setSnapshot] = useState<ImpactSnapshotDto | null>(null);
-  const [allocations, setAllocations] = useState<AllocationSummaryDto[]>([]);
   const [donorImpact, setDonorImpact] = useState<MlDonorImpactDto[]>([]);
 
   useEffect(() => {
     getImpactSnapshot().then(setSnapshot).catch(() => {});
-    getImpactAllocations().then(setAllocations).catch(() => {});
   }, []);
 
   useEffect(() => {
@@ -193,44 +191,6 @@ function DonorDashboardPage() {
           </div>
         )}
 
-        {/* ── Where Your Money Goes ───────────────────────────────────── */}
-        {allocations.length > 0 && (
-          <div className="bg-white rounded-xl border border-stone-200 p-6">
-            <p className="text-xs font-semibold uppercase tracking-widest text-stone-400 mb-1">
-              Fund Allocation
-            </p>
-            <p className="text-lg font-bold text-stone-900 mb-6">Where your money goes</p>
-            <div className="space-y-5">
-              {allocations.map((a) => {
-                const donorShare = (a.percentOfFunds / 100) * totalDonated;
-                return (
-                  <div key={a.programArea}>
-                    <div className="flex items-center justify-between mb-1.5">
-                      <div className="flex items-center gap-2">
-                        <span className="text-sm font-semibold text-stone-800">{a.programArea}</span>
-                        <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-haven-teal-50 text-haven-teal-700">
-                          {a.percentOfFunds}%
-                        </span>
-                      </div>
-                      {totalDonated > 0 && (
-                        <span className="text-xs text-stone-500">
-                          ≈ ₱{donorShare.toLocaleString('en-PH', { minimumFractionDigits: 0 })}
-                        </span>
-                      )}
-                    </div>
-                    <div className="w-full bg-stone-100 rounded-full h-2 mb-1">
-                      <div
-                        className="bg-haven-teal-500 h-2 rounded-full"
-                        style={{ width: `${a.percentOfFunds}%` }}
-                      />
-                    </div>
-                    <p className="text-xs text-stone-400">{a.description}</p>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        )}
 
         {/* ── ML — Predicted Program Impact ───────────────────────────── */}
         <div className="bg-white rounded-xl border border-stone-200 p-6">
