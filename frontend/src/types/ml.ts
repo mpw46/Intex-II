@@ -38,3 +38,10 @@ export interface MlReintegrationDriverDto {
   scoredAt: string;
   modelVersion: string;
 }
+
+export interface MlDonorImpactDto {
+  programArea: string;         // 'Resident_programs' | 'Operations_and_facilities' | 'Outreach_and_growth'
+  predictedPct: number;
+  modelVersion: string;
+  scoredAt: string;
+}

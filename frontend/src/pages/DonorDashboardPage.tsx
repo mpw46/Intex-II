@@ -5,9 +5,11 @@ import {
 } from 'recharts';
 import { useAuth } from '../context/AuthContext';
 import { getDonations } from '../api/donationsApi';
-import { getImpactSnapshot, getImpactAllocations } from '../api/publicImpactApi';
+import { getImpactSnapshot } from '../api/publicImpactApi';
+import { getMlDonorImpact } from '../api/mlApi';
 import type { DonationDto } from '../types/donation';
-import type { ImpactSnapshotDto, AllocationSummaryDto } from '../types/publicImpact';
+import type { ImpactSnapshotDto } from '../types/publicImpact';
+import type { MlDonorImpactDto } from '../types/ml';
 
 const TIERS = [
   { name: 'Friend',   min: 0,     next: 5000   },
@@ -22,17 +24,22 @@ function DonorDashboardPage() {
   const [fetching, setFetching] = useState(true);
   const [fetchError, setFetchError] = useState('');
   const [snapshot, setSnapshot] = useState<ImpactSnapshotDto | null>(null);
-  const [allocations, setAllocations] = useState<AllocationSummaryDto[]>([]);
+  const [donorImpact, setDonorImpact] = useState<MlDonorImpactDto[]>([]);
 
   useEffect(() => {
     getImpactSnapshot().then(setSnapshot).catch(() => {});
-    getImpactAllocations().then(setAllocations).catch(() => {});
   }, []);
 
   useEffect(() => {
     if (!isAuthenticated) return;
-    getDonations()
-      .then(setDonations)
+    Promise.all([
+      getDonations().catch(() => [] as DonationDto[]),
+      getMlDonorImpact().catch(() => [] as MlDonorImpactDto[]),
+    ])
+      .then(([donationData, impactData]) => {
+        setDonations(donationData);
+        setDonorImpact(impactData);
+      })
       .catch(() => setFetchError('Unable to load your donation history.'))
       .finally(() => setFetching(false));
   }, [isAuthenticated]);
@@ -184,44 +191,39 @@ function DonorDashboardPage() {
           </div>
         )}
 
-        {/* ── Where Your Money Goes ───────────────────────────────────── */}
-        {allocations.length > 0 && (
-          <div className="bg-white rounded-xl border border-stone-200 p-6">
-            <p className="text-xs font-semibold uppercase tracking-widest text-stone-400 mb-1">
-              Fund Allocation
-            </p>
-            <p className="text-lg font-bold text-stone-900 mb-6">Where your money goes</p>
-            <div className="space-y-5">
-              {allocations.map((a) => {
-                const donorShare = (a.percentOfFunds / 100) * totalDonated;
-                return (
-                  <div key={a.programArea}>
-                    <div className="flex items-center justify-between mb-1.5">
-                      <div className="flex items-center gap-2">
-                        <span className="text-sm font-semibold text-stone-800">{a.programArea}</span>
-                        <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-haven-teal-50 text-haven-teal-700">
-                          {a.percentOfFunds}%
-                        </span>
-                      </div>
-                      {totalDonated > 0 && (
-                        <span className="text-xs text-stone-500">
-                          ≈ ₱{donorShare.toLocaleString('en-PH', { minimumFractionDigits: 0 })}
-                        </span>
-                      )}
-                    </div>
-                    <div className="w-full bg-stone-100 rounded-full h-2 mb-1">
-                      <div
-                        className="bg-haven-teal-500 h-2 rounded-full"
-                        style={{ width: `${a.percentOfFunds}%` }}
-                      />
-                    </div>
-                    <p className="text-xs text-stone-400">{a.description}</p>
-                  </div>
-                );
-              })}
-            </div>
+
+        {/* ── ML — Predicted Program Impact ───────────────────────────── */}
+        <div className="bg-white rounded-xl border border-stone-200 p-6">
+          <div className="flex items-center justify-between mb-1">
+            <p className="text-lg font-bold text-stone-900">Predicted Program Impact</p>
+            <span className="text-xs font-medium px-2 py-0.5 rounded-full border text-haven-teal-700 bg-haven-teal-50 border-haven-teal-200">
+              ML Model
+            </span>
           </div>
-        )}
+          <p className="text-xs text-stone-400 mb-5">
+            Based on your giving history, here is how contributions like yours are typically allocated across programs.
+          </p>
+          {donorImpact.length === 0 ? (
+            <p className="text-sm text-stone-400">No prediction available yet — model runs nightly.</p>
+          ) : (
+            <div className="space-y-4">
+              {donorImpact.map(d => (
+                <div key={d.programArea}>
+                  <div className="flex justify-between text-xs text-stone-600 mb-1">
+                    <span className="font-medium">{d.programArea.replace(/_/g, ' ')}</span>
+                    <span className="font-semibold text-haven-teal-700">{d.predictedPct.toFixed(1)}%</span>
+                  </div>
+                  <div className="w-full bg-stone-100 rounded-full h-2">
+                    <div
+                      className="bg-haven-teal-500 h-2 rounded-full"
+                      style={{ width: `${d.predictedPct}%` }}
+                    />
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
 
         {/* ── Your Impact in Numbers ──────────────────────────────────── */}
         {snapshot && (
@@ -302,8 +304,38 @@ function DonorDashboardPage() {
           </div>
         ) : (
           <div className="bg-white rounded-xl border border-stone-200 overflow-hidden">
-            <div className="px-6 py-4 border-b border-stone-100">
+            <div className="px-6 py-4 border-b border-stone-100 flex items-center justify-between">
               <p className="text-sm font-semibold text-stone-700">Donation History</p>
+              <button
+                type="button"
+                onClick={() => {
+                  const headers = ['Donation ID','Date','Type','Amount (PHP)','Recurring','Campaign','Channel','Impact Unit','Notes'];
+                  const rows = donations.map(d => [
+                    d.donationId ?? '',
+                    d.donationDate ?? '',
+                    d.donationType ?? '',
+                    d.amount ?? '',
+                    d.isRecurring === 'True' ? 'Yes' : 'No',
+                    d.campaignName ?? '',
+                    d.channelSource ?? '',
+                    d.impactUnit ?? '',
+                    `"${(d.notes ?? '').replace(/"/g, '""')}"`,
+                  ]);
+                  const csv = [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
+                  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+                  const url = URL.createObjectURL(blob);
+                  const a = document.createElement('a');
+                  a.href = url;
+                  a.download = `haven-donation-history-${new Date().toISOString().slice(0, 10)}.csv`;
+                  a.click();
+                  URL.revokeObjectURL(url);
+                }}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg
+                  border border-haven-teal-600 text-haven-teal-700 bg-white hover:bg-haven-teal-50
+                  transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-haven-teal-500"
+              >
+                ↓ Export CSV
+              </button>
             </div>
             <table className="w-full text-sm">
               <thead>

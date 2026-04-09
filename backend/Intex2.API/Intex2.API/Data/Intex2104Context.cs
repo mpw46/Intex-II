@@ -54,6 +54,7 @@ public partial class Intex2104Context : DbContext
     public DbSet<MlDonorRiskScore> MlDonorRiskScores { get; set; }
     public DbSet<MlSocialEngagementDriver> MlSocialEngagementDrivers { get; set; }
     public DbSet<MlReintegrationDriver> MlReintegrationDrivers { get; set; }
+    public DbSet<MlDonorImpactPrediction> MlDonorImpactPredictions { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -525,6 +526,19 @@ public partial class Intex2104Context : DbContext
             entity.Property(e => e.FeatureName).HasColumnName("feature_name");
             entity.Property(e => e.Importance).HasColumnName("importance");
             entity.Property(e => e.Direction).HasColumnName("direction");
+            entity.Property(e => e.ModelVersion).HasColumnName("model_version");
+            entity.Property(e => e.IsCurrent).HasColumnName("is_current");
+        });
+
+        modelBuilder.Entity<MlDonorImpactPrediction>(entity =>
+        {
+            entity.HasKey(e => e.PredictionId);
+            entity.ToTable("ml_donor_impact_predictions");
+            entity.Property(e => e.PredictionId).HasColumnName("prediction_id").ValueGeneratedOnAdd();
+            entity.Property(e => e.SupporterId).HasColumnName("supporter_id");
+            entity.Property(e => e.ProgramArea).HasColumnName("program_area");
+            entity.Property(e => e.PredictedPct).HasColumnName("predicted_pct");
+            entity.Property(e => e.ScoredAt).HasColumnName("scored_at");
             entity.Property(e => e.ModelVersion).HasColumnName("model_version");
             entity.Property(e => e.IsCurrent).HasColumnName("is_current");
         });
