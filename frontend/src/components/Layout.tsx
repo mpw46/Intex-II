@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { NavLink, Outlet, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import transparentLogo from '../assets/transparent-logo.png';
 
 // ---------------------------------------------------------------------------
 // Cookie consent banner
@@ -114,12 +115,12 @@ function Layout() {
                     }`}
         aria-label="Main navigation"
       >
-        <NavLink
-          to="/"
-          className={`text-xl font-bold tracking-tight transition-colors duration-300
-                      ${navSolid ? 'text-stone-900' : 'text-white'}`}
-        >
-          Haven
+        <NavLink to="/" className="flex items-center shrink-0">
+          <img
+            src={transparentLogo}
+            alt="Haven"
+            className="h-10 w-auto shrink-0"
+          />
         </NavLink>
 
         <div className="flex items-center gap-6 md:gap-8">
