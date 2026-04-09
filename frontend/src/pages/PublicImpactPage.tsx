@@ -179,7 +179,7 @@ function LoadingSkeleton() {
 
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
-function DonorDashboardPage() {
+function PublicImpactPage() {
   const [snapshot, setSnapshot] = useState<ImpactSnapshot>(FALLBACK_SNAPSHOT);
   const [safehouses, setSafehouses] = useState<SafehouseCard[]>([]);
   const [yearlyOutcomes, setYearlyOutcomes] = useState<YearlyOutcome[]>([]);
@@ -545,4 +545,4 @@ function DonorDashboardPage() {
   );
 }
 
-export default DonorDashboardPage;
+export default PublicImpactPage;

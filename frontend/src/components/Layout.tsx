@@ -134,7 +134,7 @@ function Layout() {
                }`
             }
           >
-            Impact
+            Our Impact
           </NavLink>
 
           {isAdmin && (
@@ -206,7 +206,7 @@ function Layout() {
             </div>
             <div className="flex flex-col sm:flex-row gap-4 sm:gap-8 text-sm text-stone-400">
               <NavLink to="/impact" className="hover:text-white transition-colors duration-150">
-                Impact
+                Our Impact
               </NavLink>
               <NavLink to="/privacy" className="hover:text-white transition-colors duration-150">
                 Privacy Policy

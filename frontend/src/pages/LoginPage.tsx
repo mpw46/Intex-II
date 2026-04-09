@@ -186,7 +186,7 @@ export default function LoginPage() {
   }
 
   function handleExternalLogin(providerName: string) {
-    window.location.assign(buildExternalLoginUrl(providerName, '/impact'));
+    window.location.assign(buildExternalLoginUrl(providerName, '/donor'));
   }
 
   // -------------------------------------------------------------------------
