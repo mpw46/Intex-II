@@ -30,6 +30,7 @@ export interface ProcessRecordingCreate {
   progressNoted?: string;
   concernsFlagged?: string;
   referralMade?: string;
+  notesRestricted?: string;
 }
 
 export interface RecordingFilters {

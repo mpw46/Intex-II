@@ -27,6 +27,11 @@ type ContributionTab = 'profile' | 'donations' | 'allocations';
 interface Supporter {
   id: string;
   displayName: string;
+  organizationName: string;
+  firstName: string;
+  lastName: string;
+  region: string;
+  country: string;
   supporterType: SupporterType;
   email: string;
   phone: string;
@@ -59,6 +64,11 @@ interface DonationAllocation {
 
 interface SupporterFormDraft {
   displayName: string;
+  organizationName: string;
+  firstName: string;
+  lastName: string;
+  region: string;
+  country: string;
   supporterType: SupporterType;
   email: string;
   phone: string;
@@ -116,7 +126,9 @@ const ACQUISITION_CHANNELS = ['Website', 'Referral', 'Event', 'Social Media', 'D
 // const SAFEHOUSES = ['Haven House Manila', 'Light of Hope Cebu', 'New Dawn Davao', 'Safe Harbor Iloilo'];
 
 const emptySupporterForm: SupporterFormDraft = {
-  displayName: '', supporterType: 'MonetaryDonor', email: '', phone: '',
+  displayName: '', organizationName: '', firstName: '', lastName: '',
+  region: '', country: 'Philippines',
+  supporterType: 'MonetaryDonor', email: '', phone: '',
   relationshipType: '', acquisitionChannel: 'Website', status: 'Active', notes: '',
 };
 
@@ -236,6 +248,11 @@ export default function DonorsContributionsPage() {
         setSupporters(rawSupporters.map(s => ({
           id: String(s.supporterId ?? 0),
           displayName: s.displayName ?? s.organizationName ?? `${s.firstName ?? ''} ${s.lastName ?? ''}`.trim(),
+          organizationName: s.organizationName ?? '',
+          firstName: s.firstName ?? '',
+          lastName: s.lastName ?? '',
+          region: s.region ?? '',
+          country: s.country ?? '',
           supporterType: (s.supporterType as SupporterType) ?? 'MonetaryDonor',
           email: s.email ?? '',
           phone: s.phone ?? '',
@@ -308,13 +325,18 @@ export default function DonorsContributionsPage() {
   // -------------------------------------------------------------------------
 
   function openAdd() { setSupporterForm(emptySupporterForm); setSupporterModal('add'); }
-  function openEdit(s: Supporter) { setSupporterForm({ displayName: s.displayName, supporterType: s.supporterType, email: s.email, phone: s.phone, relationshipType: s.relationshipType, acquisitionChannel: s.acquisitionChannel, status: s.status, notes: s.notes }); setSupporterModal('edit'); }
+  function openEdit(s: Supporter) { setSupporterForm({ displayName: s.displayName, organizationName: s.organizationName, firstName: s.firstName, lastName: s.lastName, region: s.region, country: s.country, supporterType: s.supporterType, email: s.email, phone: s.phone, relationshipType: s.relationshipType, acquisitionChannel: s.acquisitionChannel, status: s.status, notes: s.notes }); setSupporterModal('edit'); }
   function openDeleteSupporter(s: Supporter) { setSelected(s); setSupporterModal('delete'); }
 
   function saveSupporterForm(e: { preventDefault(): void }) {
     e.preventDefault();
     const payload = {
       displayName: supporterForm.displayName,
+      organizationName: supporterForm.organizationName || undefined,
+      firstName: supporterForm.firstName || undefined,
+      lastName: supporterForm.lastName || undefined,
+      region: supporterForm.region || undefined,
+      country: supporterForm.country || undefined,
       supporterType: supporterForm.supporterType,
       email: supporterForm.email,
       phone: supporterForm.phone,
@@ -623,6 +645,10 @@ export default function DonorsContributionsPage() {
                 <dl className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-5">
                   {[
                     { label: 'Supporter ID',      value: selected.id },
+                    ...(selected.firstName || selected.lastName ? [{ label: 'Name', value: `${selected.firstName} ${selected.lastName}`.trim() }] : []),
+                    ...(selected.organizationName ? [{ label: 'Organization', value: selected.organizationName }] : []),
+                    ...(selected.region ? [{ label: 'Region', value: selected.region }] : []),
+                    ...(selected.country ? [{ label: 'Country', value: selected.country }] : []),
                     { label: 'Relationship Type', value: selected.relationshipType || '—' },
                     { label: 'Acquisition Channel', value: selected.acquisitionChannel },
                     { label: 'Status',            value: selected.status },
@@ -817,9 +843,34 @@ export default function DonorsContributionsPage() {
                   className="p-1.5 rounded-lg text-stone-400 hover:bg-stone-100 transition-colors
                     focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-haven-teal-500"><XIcon /></button>
               </div>
-              <div className="px-6 py-5 space-y-4 max-h-[60vh] overflow-y-auto">
+              <div className="px-6 py-5 space-y-4 max-h-[70vh] overflow-y-auto">
+                <div>
+                  <label htmlFor="sf-name" className="block text-xs font-semibold text-stone-700 uppercase tracking-wide mb-1.5">Display Name <span className="text-rose-500">*</span></label>
+                  <input id="sf-name" type="text" required placeholder="Organisation or full name"
+                    value={supporterForm.displayName} onChange={e => setSupporterForm(p => ({ ...p, displayName: e.target.value }))}
+                    className={inputCls} />
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label htmlFor="sf-first" className="block text-xs font-semibold text-stone-700 uppercase tracking-wide mb-1.5">First Name</label>
+                    <input id="sf-first" type="text" placeholder="Given name"
+                      value={supporterForm.firstName} onChange={e => setSupporterForm(p => ({ ...p, firstName: e.target.value }))}
+                      className={inputCls} />
+                  </div>
+                  <div>
+                    <label htmlFor="sf-last" className="block text-xs font-semibold text-stone-700 uppercase tracking-wide mb-1.5">Last Name</label>
+                    <input id="sf-last" type="text" placeholder="Surname"
+                      value={supporterForm.lastName} onChange={e => setSupporterForm(p => ({ ...p, lastName: e.target.value }))}
+                      className={inputCls} />
+                  </div>
+                </div>
+                <div>
+                  <label htmlFor="sf-org" className="block text-xs font-semibold text-stone-700 uppercase tracking-wide mb-1.5">Organization Name</label>
+                  <input id="sf-org" type="text" placeholder="Company or organization (if applicable)"
+                    value={supporterForm.organizationName} onChange={e => setSupporterForm(p => ({ ...p, organizationName: e.target.value }))}
+                    className={inputCls} />
+                </div>
                 {[
-                  { id: 'sf-name', label: 'Display Name *', type: 'text', field: 'displayName' as const, required: true, placeholder: 'Organisation or full name' },
                   { id: 'sf-email', label: 'Email', type: 'email', field: 'email' as const, required: false, placeholder: 'contact@example.com' },
                   { id: 'sf-phone', label: 'Phone', type: 'tel', field: 'phone' as const, required: false, placeholder: '+63 9XX XXX XXXX' },
                   { id: 'sf-rel', label: 'Relationship Type', type: 'text', field: 'relationshipType' as const, required: false, placeholder: 'e.g. Individual, Foundation' },
@@ -831,6 +882,20 @@ export default function DonorsContributionsPage() {
                       className={inputCls} />
                   </div>
                 ))}
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label htmlFor="sf-region" className="block text-xs font-semibold text-stone-700 uppercase tracking-wide mb-1.5">Region</label>
+                    <input id="sf-region" type="text" placeholder="e.g. NCR, Cebu"
+                      value={supporterForm.region} onChange={e => setSupporterForm(p => ({ ...p, region: e.target.value }))}
+                      className={inputCls} />
+                  </div>
+                  <div>
+                    <label htmlFor="sf-country" className="block text-xs font-semibold text-stone-700 uppercase tracking-wide mb-1.5">Country</label>
+                    <input id="sf-country" type="text" placeholder="e.g. Philippines"
+                      value={supporterForm.country} onChange={e => setSupporterForm(p => ({ ...p, country: e.target.value }))}
+                      className={inputCls} />
+                  </div>
+                </div>
                 <div>
                   <label htmlFor="sf-type" className="block text-xs font-semibold text-stone-700 uppercase tracking-wide mb-1.5">Supporter Type</label>
                   <select id="sf-type" value={supporterForm.supporterType}

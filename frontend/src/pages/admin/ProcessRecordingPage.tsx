@@ -18,6 +18,7 @@ interface ProcessRecording {
   sessionDate: string;
   socialWorker: string;
   sessionType: SessionType;
+  sessionDurationMinutes: number | null;
   emotionalStateObserved: EmotionalState;
   emotionalStateEnd: EmotionalState;
   sessionNarrative: string;
@@ -25,12 +26,14 @@ interface ProcessRecording {
   followUpActions: string;
   progressNoted: string;
   concernsFlagged: boolean;
+  referralMade: boolean;
 }
 
 interface ProcessRecordingFormDraft {
   sessionDate: string;
   socialWorker: string;
   sessionType: SessionType;
+  sessionDurationMinutes: string;
   emotionalStateObserved: EmotionalState;
   emotionalStateEnd: EmotionalState;
   sessionNarrative: string;
@@ -38,6 +41,8 @@ interface ProcessRecordingFormDraft {
   followUpActions: string;
   progressNoted: string;
   concernsFlagged: boolean;
+  referralMade: boolean;
+  notesRestricted: boolean;
 }
 
 // Minimal resident shape for the search panel
@@ -71,6 +76,7 @@ const emptyForm: ProcessRecordingFormDraft = {
   sessionDate: new Date().toISOString().substring(0, 10),
   socialWorker: SOCIAL_WORKERS[0],
   sessionType: 'Individual',
+  sessionDurationMinutes: '',
   emotionalStateObserved: 'Anxious',
   emotionalStateEnd: 'Calm',
   sessionNarrative: '',
@@ -78,6 +84,8 @@ const emptyForm: ProcessRecordingFormDraft = {
   followUpActions: '',
   progressNoted: '',
   concernsFlagged: false,
+  referralMade: false,
+  notesRestricted: false,
 };
 
 // ---------------------------------------------------------------------------
@@ -174,6 +182,7 @@ export default function ProcessRecordingPage() {
         sessionDate: rec.sessionDate ?? '',
         socialWorker: rec.socialWorker ?? '',
         sessionType: (rec.sessionType as SessionType) ?? 'Individual',
+        sessionDurationMinutes: rec.sessionDurationMinutes ?? null,
         emotionalStateObserved: (rec.emotionalStateObserved as EmotionalState) ?? 'Calm',
         emotionalStateEnd: (rec.emotionalStateEnd as EmotionalState) ?? 'Calm',
         sessionNarrative: rec.sessionNarrative ?? '',
@@ -181,6 +190,7 @@ export default function ProcessRecordingPage() {
         followUpActions: rec.followUpActions ?? '',
         progressNoted: rec.progressNoted ?? '',
         concernsFlagged: isTruthy(rec.concernsFlagged),
+        referralMade: isTruthy(rec.referralMade),
       }))))
       .finally(() => setLoadingRecordings(false));
   }
@@ -202,6 +212,7 @@ export default function ProcessRecordingPage() {
       sessionDate: form.sessionDate,
       socialWorker: form.socialWorker,
       sessionType: form.sessionType,
+      sessionDurationMinutes: form.sessionDurationMinutes ? Number(form.sessionDurationMinutes) : undefined,
       emotionalStateObserved: form.emotionalStateObserved,
       emotionalStateEnd: form.emotionalStateEnd,
       sessionNarrative: form.sessionNarrative,
@@ -209,6 +220,8 @@ export default function ProcessRecordingPage() {
       followUpActions: form.followUpActions,
       progressNoted: form.progressNoted,
       concernsFlagged: form.concernsFlagged ? 'True' : 'False',
+      referralMade: form.referralMade ? 'True' : 'False',
+      notesRestricted: form.notesRestricted ? 'True' : 'False',
     }).then(saved => {
       setRecordings(p => [{
         id: String(saved.recordingId ?? 0),
@@ -216,6 +229,7 @@ export default function ProcessRecordingPage() {
         sessionDate: saved.sessionDate ?? form.sessionDate,
         socialWorker: saved.socialWorker ?? form.socialWorker,
         sessionType: (saved.sessionType as SessionType) ?? form.sessionType,
+        sessionDurationMinutes: saved.sessionDurationMinutes ?? null,
         emotionalStateObserved: (saved.emotionalStateObserved as EmotionalState) ?? form.emotionalStateObserved,
         emotionalStateEnd: (saved.emotionalStateEnd as EmotionalState) ?? form.emotionalStateEnd,
         sessionNarrative: saved.sessionNarrative ?? form.sessionNarrative,
@@ -223,6 +237,7 @@ export default function ProcessRecordingPage() {
         followUpActions: saved.followUpActions ?? form.followUpActions,
         progressNoted: saved.progressNoted ?? form.progressNoted,
         concernsFlagged: isTruthy(saved.concernsFlagged),
+        referralMade: isTruthy(saved.referralMade),
       }, ...p]);
       setModal(null);
     });
@@ -428,6 +443,10 @@ export default function ProcessRecordingPage() {
                 {[
                   { label: 'Social Worker', value: selectedRec.socialWorker },
                   { label: 'Session Type',  value: selectedRec.sessionType },
+                  ...(selectedRec.sessionDurationMinutes != null
+                    ? [{ label: 'Duration', value: `${selectedRec.sessionDurationMinutes} min` }]
+                    : []),
+                  ...(selectedRec.referralMade ? [{ label: 'Referral', value: 'Made this session' }] : []),
                 ].map(r => (
                   <div key={r.label}>
                     <p className="text-xs font-semibold text-stone-400 uppercase tracking-wide mb-1">{r.label}</p>
@@ -519,6 +538,13 @@ export default function ProcessRecordingPage() {
                     </select>
                   </div>
                   <div>
+                    <label htmlFor="pr-duration" className="block text-xs font-semibold text-stone-700 uppercase tracking-wide mb-1.5">Duration (min)</label>
+                    <input id="pr-duration" type="number" min="1" max="480" value={form.sessionDurationMinutes}
+                      onChange={e => setForm(f => ({ ...f, sessionDurationMinutes: e.target.value }))}
+                      className={inputCls} placeholder="e.g. 60" />
+                  </div>
+                  <div></div>
+                  <div>
                     <label htmlFor="pr-estart" className="block text-xs font-semibold text-stone-700 uppercase tracking-wide mb-1.5">State at Start</label>
                     <select id="pr-estart" value={form.emotionalStateObserved}
                       onChange={e => setForm(f => ({ ...f, emotionalStateObserved: e.target.value as EmotionalState }))}
@@ -568,13 +594,27 @@ export default function ProcessRecordingPage() {
                     className={inputCls} placeholder="Any observable progress this session…" />
                 </div>
 
-                {/* Flag concern */}
-                <label className="flex items-center gap-2.5 cursor-pointer p-3 rounded-lg border border-rose-200 bg-rose-50">
-                  <input type="checkbox" checked={form.concernsFlagged}
-                    onChange={e => setForm(f => ({ ...f, concernsFlagged: e.target.checked }))}
-                    className="h-4 w-4 rounded border-stone-300 text-rose-600 focus:ring-rose-500 focus:ring-offset-0" />
-                  <span className="text-sm font-medium text-rose-800">Flag a concern requiring follow-up attention</span>
-                </label>
+                {/* Flags */}
+                <div className="space-y-2">
+                  <label className="flex items-center gap-2.5 cursor-pointer p-3 rounded-lg border border-rose-200 bg-rose-50">
+                    <input type="checkbox" checked={form.concernsFlagged}
+                      onChange={e => setForm(f => ({ ...f, concernsFlagged: e.target.checked }))}
+                      className="h-4 w-4 rounded border-stone-300 text-rose-600 focus:ring-rose-500 focus:ring-offset-0" />
+                    <span className="text-sm font-medium text-rose-800">Flag a concern requiring follow-up attention</span>
+                  </label>
+                  <label className="flex items-center gap-2.5 cursor-pointer p-3 rounded-lg border border-stone-200 bg-stone-50">
+                    <input type="checkbox" checked={form.referralMade}
+                      onChange={e => setForm(f => ({ ...f, referralMade: e.target.checked }))}
+                      className="h-4 w-4 rounded border-stone-300 text-haven-teal-600 focus:ring-haven-teal-500 focus:ring-offset-0" />
+                    <span className="text-sm font-medium text-stone-700">Referral made this session</span>
+                  </label>
+                  <label className="flex items-center gap-2.5 cursor-pointer p-3 rounded-lg border border-stone-200 bg-stone-50">
+                    <input type="checkbox" checked={form.notesRestricted}
+                      onChange={e => setForm(f => ({ ...f, notesRestricted: e.target.checked }))}
+                      className="h-4 w-4 rounded border-stone-300 text-haven-teal-600 focus:ring-haven-teal-500 focus:ring-offset-0" />
+                    <span className="text-sm font-medium text-stone-700">Restrict notes (sensitive content)</span>
+                  </label>
+                </div>
               </div>
 
               <div className="bg-stone-50 border-t border-stone-200 px-6 py-4 flex justify-end gap-3 shrink-0">
