@@ -8,7 +8,7 @@
 // Keep the POLICY_DATE updated whenever this document is substantively changed.
 // ---------------------------------------------------------------------------
 
-const POLICY_DATE = 'April 6, 2026';
+const POLICY_DATE = 'April 9, 2026';
 const CONTACT_EMAIL = 'privacy@haven.org'; // TODO: Replace with real privacy contact
 
 // ---------------------------------------------------------------------------
@@ -25,6 +25,7 @@ const TOC = [
   { id: 'your-rights',              label: '8. Your Rights' },
   { id: 'security',                 label: '9. Security Measures' },
   { id: 'children',                 label: '10. Children\'s Privacy' },
+  { id: 'dpia',                     label: '10A. Data Protection Impact Assessments' },
   { id: 'changes',                  label: '11. Changes to This Policy' },
   { id: 'contact',                  label: '12. Contact Us' },
 ];
@@ -135,6 +136,15 @@ export default function PrivacyPage() {
                 {CONTACT_EMAIL}
               </a>.
             </Paragraph>
+            <Paragraph>
+              <strong>EU Representation</strong>
+            </Paragraph>
+            <Paragraph>
+              Haven does not have an establishment in the European Economic Area (EEA) and
+              does not intentionally target or monitor individuals within the EEA. Where GDPR
+              applies incidentally (for example, where an EU-based individual chooses to engage
+              with our services), Haven will comply with applicable data protection obligations.
+            </Paragraph>
           </div>
 
           <div className="bg-white rounded-xl border border-stone-200 shadow-sm p-6 lg:p-8">
@@ -203,6 +213,16 @@ export default function PrivacyPage() {
                 </tbody>
               </table>
             </div>
+            <Paragraph>
+              Where we rely on <strong>legitimate interests</strong> as a lawful basis, we
+              conduct a <strong>Legitimate Interest Assessment (LIA)</strong> to ensure that
+              processing is necessary and that your fundamental rights and freedoms are not
+              overridden. You may request further information about these assessments.
+            </Paragraph>
+            <Paragraph>
+              We do not engage in automated decision-making or profiling that produces legal
+              or similarly significant effects.
+            </Paragraph>
 
             {/* 3. Resident Data Protection */}
             <SectionHeading id="resident-data">
@@ -239,25 +259,42 @@ export default function PrivacyPage() {
               rates, programme outcomes) are <strong>aggregate anonymised figures</strong> that
               cannot be traced back to any individual.
             </Paragraph>
+            <Paragraph>
+              <strong>Special Category Data (GDPR Article 9)</strong>
+            </Paragraph>
+            <Paragraph>
+              Resident data may include special category personal data, including health
+              information and highly sensitive personal history. We process this data strictly
+              for <strong>social care, safeguarding, and rehabilitation purposes</strong>.
+            </Paragraph>
+            <Paragraph>Processing is carried out under:</Paragraph>
+            <BulletList items={[
+              'Article 9(2)(c): Protection of vital interests',
+              'Article 9(2)(g): Substantial public interest, including safeguarding vulnerable individuals',
+              'Article 9(2)(h): Provision of social care and treatment',
+            ]} />
+            <Paragraph>
+              All such processing is subject to strict safeguards including role-based access
+              control, data minimisation, and confidentiality obligations.
+            </Paragraph>
 
             {/* 4. Data Sharing */}
             <SectionHeading id="data-sharing">
               4. Data Sharing &amp; Disclosure
             </SectionHeading>
             <Paragraph>
-              We do not sell, rent, or trade your personal data. We share information only
-              in the following limited circumstances:
+              We do not sell, rent, or trade personal data. We share information only in
+              limited circumstances:
             </Paragraph>
             <BulletList items={[
-              'Service providers acting as data processors on our behalf (cloud hosting, payment processing, email delivery) under strict data-processing agreements',
-              'In-country partner organisations for the purpose of safehouse coordination and programme delivery, under signed data-sharing agreements',
-              'Legal authorities when required by law, court order, or to protect the safety of a person at risk',
-              'Successor organisations in the event of a merger or acquisition, with prior notice to affected individuals',
+              'Service providers (data processors): including Microsoft Azure (cloud hosting and infrastructure), payment processors, and email delivery providers. All processors operate under binding Data Processing Agreements (DPAs) that meet GDPR requirements.',
+              'Partner organisations: in-country partners involved in safehouse coordination and programme delivery, under formal data-sharing agreements with strict safeguarding obligations',
+              'Legal requirements: where disclosure is required by law or necessary to protect the safety or vital interests of an individual',
+              'Organisational changes: such as restructuring or merger, with appropriate notice where required',
             ]} />
             <Paragraph>
-              Any third-party processors we engage are required to maintain equivalent
-              privacy and security standards. We do not use data brokers or advertising
-              networks.
+              All recipients are contractually required to implement appropriate technical
+              and organisational safeguards.
             </Paragraph>
 
             {/* 5. International Data Transfers */}
@@ -284,15 +321,33 @@ export default function PrivacyPage() {
               You may request details of the specific safeguards in place for any transfer
               by contacting our Data Privacy Officer.
             </Paragraph>
+            <Paragraph>
+              Where personal data is transferred internationally, we assess risks on a
+              case-by-case basis and implement supplementary safeguards where necessary,
+              in line with applicable data protection guidance.
+            </Paragraph>
 
             {/* 6. Cookies */}
             <SectionHeading id="cookies">
               6. Cookies &amp; Tracking
             </SectionHeading>
             <Paragraph>
-              We use a small number of cookies and browser storage items. You may accept
-              or decline non-essential cookies through the consent banner displayed on your
-              first visit.
+              We use a limited number of <strong>first-party cookies and browser storage
+              technologies</strong> to operate and improve our website.
+            </Paragraph>
+            <Paragraph>
+              Non-essential cookies (including analytics) are <strong>not placed unless you
+              provide explicit consent</strong> via the cookie banner. You may accept or
+              decline these cookies, and your choice will be respected.
+            </Paragraph>
+            <Paragraph>
+              Our analytics are <strong>first-party only</strong> and used exclusively to
+              generate <strong>aggregated, anonymised insights</strong> about website usage.
+              These analytics do not identify individual users.
+            </Paragraph>
+            <Paragraph>
+              You may withdraw or modify your consent at any time via the "Cookie Preferences"
+              link in the site footer.
             </Paragraph>
             <div className="overflow-x-auto mb-4">
               <table className="w-full text-sm">
@@ -376,6 +431,10 @@ export default function PrivacyPage() {
               </a>. We will respond within 30 days. We may ask you to verify your identity
               before fulfilling a request.
             </Paragraph>
+            <Paragraph>
+              If you are located in the European Economic Area (EEA), you may also lodge a
+              complaint with your <strong>local data protection supervisory authority</strong>.
+            </Paragraph>
 
             {/* 9. Security */}
             <SectionHeading id="security">
@@ -398,21 +457,44 @@ export default function PrivacyPage() {
               No transmission of data over the internet is 100% secure. If you believe your
               data has been compromised, please contact us immediately.
             </Paragraph>
+            <Paragraph>
+              <strong>Data Breach Notification</strong>
+            </Paragraph>
+            <Paragraph>
+              In the event of a personal data breach, we will assess the risk to individuals
+              and, where required, notify the appropriate supervisory authority within 72 hours
+              and affected individuals without undue delay.
+            </Paragraph>
 
             {/* 10. Children's Privacy */}
             <SectionHeading id="children">
               10. Children&apos;s Privacy
             </SectionHeading>
             <Paragraph>
-              Our public website is not directed at children under the age of 18, and we
-              do not knowingly collect personal data from children through this website.
-              If you believe a child has provided us with personal information without
-              parental consent, please contact us and we will delete it promptly.
+              Our public website is not directed at children under the age of 18, and we do
+              not <strong>knowingly</strong> collect personal data from children. If you
+              believe a child has provided personal information without appropriate consent,
+              please contact us and we will delete it promptly.
             </Paragraph>
             <Paragraph>
               Data relating to the minor residents in our care is handled exclusively through
               the internal staff portal under the strict protections described in Section 3.
               Residents are never identified by name or photograph on the public website.
+            </Paragraph>
+
+            {/* 10A. DPIAs */}
+            <SectionHeading id="dpia">
+              10A. Data Protection Impact Assessments
+            </SectionHeading>
+            <Paragraph>
+              Given the sensitive nature of the data we process—particularly relating to
+              vulnerable individuals—we conduct <strong>Data Protection Impact Assessments
+              (DPIAs)</strong> where processing is likely to result in a high risk to
+              individuals' rights and freedoms.
+            </Paragraph>
+            <Paragraph>
+              These assessments ensure that risks are identified and mitigated before
+              processing begins.
             </Paragraph>
 
             {/* 11. Changes */}
