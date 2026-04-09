@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import { getResidents, createResident, updateResident, deleteResident } from '../../api/residentsApi';
 import { getSafehouses, buildSafehouseNameMap } from '../../api/safehousesApi';
 import { getMlResidentRisk } from '../../api/mlApi';
@@ -6,6 +7,7 @@ import { isTruthy } from '../../types/resident';
 import type { ResidentDto } from '../../types/resident';
 import type { SafehouseDto } from '../../types/safehouse';
 import PaginationBar from '../../components/PaginationBar';
+import ScheduleSessionModal from '../../components/ScheduleSessionModal';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -232,6 +234,7 @@ function CheckBox({ label, checked, onChange }: { label: string; checked: boolea
 // ---------------------------------------------------------------------------
 
 export default function CaseloadPage() {
+  const location = useLocation();
   const [residents, setResidents]     = useState<Resident[]>([]);
   const [apiSafehouses, setApiSafehouses] = useState<SafehouseDto[]>([]);
   const [shMap, setShMap]             = useState<Map<number, string>>(new Map());
@@ -249,6 +252,7 @@ export default function CaseloadPage() {
   const [modal, setModal]             = useState<'add' | 'edit' | 'delete' | null>(null);
   const [selected, setSelected]       = useState<Resident | null>(null);
   const [detailOpen, setDetailOpen]   = useState(false);
+  const [scheduleOpen, setScheduleOpen] = useState(false);
   const [form, setForm]               = useState<ResidentFormDraft>(emptyForm);
   const [caseIdError, setCaseIdError] = useState<string>('');
 
@@ -270,6 +274,14 @@ export default function CaseloadPage() {
       })
       .finally(() => setLoading(false));
   }, []);
+
+  // Auto-open detail panel when navigating here from Reports with a caseControlNo
+  useEffect(() => {
+    const navState = location.state as { caseControlNo?: string } | null;
+    if (!navState?.caseControlNo || residents.length === 0) return;
+    const match = residents.find(r => r.caseId === navState.caseControlNo);
+    if (match) { setSelected(match); setDetailOpen(true); }
+  }, [residents, location.state]);
 
   // -------------------------------------------------------------------------
   // Derived
@@ -546,6 +558,12 @@ export default function CaseloadPage() {
                   className="px-3 py-1.5 text-xs font-semibold text-haven-teal-600 bg-haven-teal-50
                     border border-haven-teal-200 rounded-lg hover:bg-haven-teal-100 transition-colors
                     focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-haven-teal-500">Edit</button>
+                <button type="button" onClick={() => setScheduleOpen(true)}
+                  className="px-3 py-1.5 text-xs font-semibold text-white bg-haven-teal-600
+                    rounded-lg hover:bg-haven-teal-700 transition-colors
+                    focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-haven-teal-500">
+                  Schedule Session
+                </button>
                 <button type="button" onClick={() => setDetailOpen(false)} aria-label="Close"
                   className="p-1.5 rounded-lg text-stone-400 hover:bg-stone-100 transition-colors
                     focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-haven-teal-500"><XIcon /></button>
@@ -916,6 +934,15 @@ export default function CaseloadPage() {
             </div>
           </div>
         </div>
+      )}
+
+      {scheduleOpen && selected && (
+        <ScheduleSessionModal
+          residentId={parseInt(selected.id)}
+          caseId={selected.caseId}
+          assignedSocialWorker={selected.assignedSocialWorker}
+          onClose={() => setScheduleOpen(false)}
+        />
       )}
     </div>
   );
