@@ -58,9 +58,9 @@ function Layout() {
         </NavLink>
 
         <div className="flex items-center gap-6 md:gap-8">
-          {!isDonor && (
+          {isDonor && (
             <NavLink
-              to="/impact"
+              to="/"
               className={({ isActive }) =>
                 `text-sm font-medium transition-colors duration-150
                  ${navSolid
@@ -69,9 +69,22 @@ function Layout() {
                  }`
               }
             >
-              Our Impact
+              Home
             </NavLink>
           )}
+
+          <NavLink
+            to="/impact"
+            className={({ isActive }) =>
+              `text-sm font-medium transition-colors duration-150
+               ${navSolid
+                 ? (isActive ? 'text-haven-teal-700' : 'text-stone-600 hover:text-stone-900')
+                 : (isActive ? 'text-white' : 'text-white/80 hover:text-white')
+               }`
+            }
+          >
+            Our Impact
+          </NavLink>
 
           {isDonor && (
             <NavLink
@@ -85,6 +98,21 @@ function Layout() {
               }
             >
               My Donations
+            </NavLink>
+          )}
+
+          {isDonor && (
+            <NavLink
+              to="/privacy"
+              className={({ isActive }) =>
+                `text-sm font-medium transition-colors duration-150
+                 ${navSolid
+                   ? (isActive ? 'text-haven-teal-700' : 'text-stone-600 hover:text-stone-900')
+                   : (isActive ? 'text-white' : 'text-white/80 hover:text-white')
+                 }`
+              }
+            >
+              Privacy Policy
             </NavLink>
           )}
 
