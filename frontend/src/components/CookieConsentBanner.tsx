@@ -1,9 +1,9 @@
 import { useCookieConsent } from '../context/CookieConsentContext';
 
 function CookieConsentBanner() {
-  const { hasAcknowledgedConsent, acknowledgeConsent } = useCookieConsent();
+  const { hasResponded, acceptCookies, declineCookies } = useCookieConsent();
 
-  if (hasAcknowledgedConsent) return null;
+  if (hasResponded) return null;
 
   return (
     <div
@@ -15,9 +15,9 @@ function CookieConsentBanner() {
     >
       <p className="text-sm text-stone-300 mb-4 sm:mb-0">
         We use cookies to improve your experience and understand how our site is used.
-        Non-essential analytics cookies are only set with your consent.{' '}
+        Non-essential analytics cookies are only set if you choose to accept them.{' '}
         <a
-          href="/privacy"
+          href="/privacy#cookies"
           className="text-haven-teal-400 underline underline-offset-2 hover:text-haven-teal-300 transition-colors duration-150"
         >
           Privacy Policy
@@ -26,7 +26,7 @@ function CookieConsentBanner() {
       <div className="flex items-center gap-3 shrink-0">
         <button
           type="button"
-          onClick={acknowledgeConsent}
+          onClick={declineCookies}
           className="inline-flex items-center justify-center px-4 py-2
             bg-transparent text-stone-400 text-sm font-medium rounded-lg
             border border-stone-600 transition-colors duration-150
@@ -39,7 +39,7 @@ function CookieConsentBanner() {
         </button>
         <button
           type="button"
-          onClick={acknowledgeConsent}
+          onClick={acceptCookies}
           className="inline-flex items-center justify-center px-4 py-2
             bg-haven-teal-600 text-white text-sm font-semibold rounded-lg
             transition-colors duration-150 hover:bg-haven-teal-700

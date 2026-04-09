@@ -1,41 +1,54 @@
 import { createContext, useContext, useMemo, useState } from 'react';
 import type { ReactNode } from 'react';
 
-const cookieConsentStorageKey = 'rootkit-cookie-consent';
+const cookieConsentStorageKey = 'haven-cookie-consent';
+
+type ConsentChoice = 'accepted' | 'declined' | null;
 
 interface CookieConsentContextValue {
-  hasAcknowledgedConsent: boolean;
-  acknowledgeConsent: () => void;
+  consentChoice: ConsentChoice;
+  hasResponded: boolean;
+  acceptCookies: () => void;
+  declineCookies: () => void;
+  resetConsent: () => void;
 }
 
 const CookieConsentContext = createContext<
   CookieConsentContextValue | undefined
 >(undefined);
 
-function readInitialConsentValue() {
+function readInitialConsentValue(): ConsentChoice {
   if (typeof window === 'undefined') {
-    return false;
+    return null;
   }
-
-  return (
-    window.localStorage.getItem(cookieConsentStorageKey) === 'acknowledged'
-  );
+  const stored = window.localStorage.getItem(cookieConsentStorageKey);
+  if (stored === 'accepted' || stored === 'declined') return stored;
+  return null;
 }
 
 export function CookieConsentProvider({ children }: { children: ReactNode }) {
-  const [hasAcknowledgedConsent, setHasAcknowledgedConsent] = useState(
+  const [consentChoice, setConsentChoice] = useState<ConsentChoice>(
     readInitialConsentValue
   );
 
   const value = useMemo<CookieConsentContextValue>(
     () => ({
-      hasAcknowledgedConsent,
-      acknowledgeConsent() {
-        window.localStorage.setItem(cookieConsentStorageKey, 'acknowledged');
-        setHasAcknowledgedConsent(true);
+      consentChoice,
+      hasResponded: consentChoice !== null,
+      acceptCookies() {
+        window.localStorage.setItem(cookieConsentStorageKey, 'accepted');
+        setConsentChoice('accepted');
+      },
+      declineCookies() {
+        window.localStorage.setItem(cookieConsentStorageKey, 'declined');
+        setConsentChoice('declined');
+      },
+      resetConsent() {
+        window.localStorage.removeItem(cookieConsentStorageKey);
+        setConsentChoice(null);
       },
     }),
-    [hasAcknowledgedConsent]
+    [consentChoice]
   );
 
   return (

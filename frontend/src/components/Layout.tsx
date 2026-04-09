@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { NavLink, Outlet, useLocation } from 'react-router-dom';
+import { useCookieConsent } from '../context/CookieConsentContext';
 import { useAuth } from '../context/AuthContext';
 import transparentLogo from '../assets/transparent-logo.png';
 
@@ -7,6 +8,7 @@ import transparentLogo from '../assets/transparent-logo.png';
 function Layout() {
   const location = useLocation();
   const isHome = location.pathname === '/';
+  const { resetConsent } = useCookieConsent();
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
@@ -137,6 +139,13 @@ function Layout() {
               <NavLink to="/privacy" className="hover:text-white transition-colors duration-150">
                 Privacy Policy
               </NavLink>
+              <button
+                type="button"
+                onClick={resetConsent}
+                className="hover:text-white transition-colors duration-150 text-left"
+              >
+                Cookie Preferences
+              </button>
               <NavLink to="/login" className="hover:text-white transition-colors duration-150">
                 Staff Login
               </NavLink>

@@ -19,13 +19,14 @@ const TOC = [
   { id: 'how-we-use-information',   label: '2. How We Use Your Information' },
   { id: 'resident-data',            label: '3. Resident Data Protection' },
   { id: 'data-sharing',             label: '4. Data Sharing & Disclosure' },
-  { id: 'cookies',                  label: '5. Cookies & Tracking' },
-  { id: 'data-retention',           label: '6. Data Retention' },
-  { id: 'your-rights',              label: '7. Your Rights' },
-  { id: 'security',                 label: '8. Security Measures' },
-  { id: 'children',                 label: '9. Children\'s Privacy' },
-  { id: 'changes',                  label: '10. Changes to This Policy' },
-  { id: 'contact',                  label: '11. Contact Us' },
+  { id: 'international-transfers',  label: '5. International Data Transfers' },
+  { id: 'cookies',                  label: '6. Cookies & Tracking' },
+  { id: 'data-retention',           label: '7. Data Retention' },
+  { id: 'your-rights',              label: '8. Your Rights' },
+  { id: 'security',                 label: '9. Security Measures' },
+  { id: 'children',                 label: '10. Children\'s Privacy' },
+  { id: 'changes',                  label: '11. Changes to This Policy' },
+  { id: 'contact',                  label: '12. Contact Us' },
 ];
 
 // ---------------------------------------------------------------------------
@@ -125,6 +126,15 @@ export default function PrivacyPage() {
               <strong>EU General Data Protection Regulation (GDPR)</strong> and the{' '}
               <strong>Philippine Data Privacy Act of 2012 (Republic Act 10173)</strong>.
             </Paragraph>
+            <Paragraph>
+              <strong>Data Controller:</strong> Haven, a US-based 501(c)(3) nonprofit
+              organisation. For all data protection enquiries, contact our Data Privacy
+              Officer at{' '}
+              <a href={`mailto:${CONTACT_EMAIL}`}
+                className="text-haven-teal-600 hover:text-haven-teal-700 underline underline-offset-2">
+                {CONTACT_EMAIL}
+              </a>.
+            </Paragraph>
           </div>
 
           <div className="bg-white rounded-xl border border-stone-200 shadow-sm p-6 lg:p-8">
@@ -181,7 +191,7 @@ export default function PrivacyPage() {
                     ['Providing and maintaining your account', 'Contract performance'],
                     ['Processing donations and issuing receipts', 'Contract performance'],
                     ['Sending donation updates and impact reports (if opted in)', 'Consent'],
-                    ['Improving the website through anonymised analytics', 'Legitimate interest'],
+                    ['Improving the website through anonymised analytics (only if cookies accepted)', 'Consent'],
                     ['Responding to your enquiries', 'Legitimate interest / Contract'],
                     ['Complying with legal or regulatory obligations', 'Legal obligation'],
                   ].map(([purpose, basis]) => (
@@ -250,9 +260,34 @@ export default function PrivacyPage() {
               networks.
             </Paragraph>
 
-            {/* 5. Cookies */}
+            {/* 5. International Data Transfers */}
+            <SectionHeading id="international-transfers">
+              5. International Data Transfers
+            </SectionHeading>
+            <Paragraph>
+              Haven is a US-based organisation serving programmes in the Philippines. Your
+              personal data may be processed in, or transferred to, countries outside your
+              own — including the United States and the European Economic Area — where we
+              use cloud services or infrastructure providers.
+            </Paragraph>
+            <Paragraph>
+              Our primary cloud infrastructure is hosted on <strong>Microsoft Azure</strong>.
+              Where personal data is transferred outside the Philippines or the EEA, we rely
+              on one or more of the following safeguards:
+            </Paragraph>
+            <BulletList items={[
+              'Standard Contractual Clauses (SCCs) approved by the European Commission',
+              'An adequacy decision by the relevant supervisory authority',
+              'Data-processing agreements that impose equivalent data-protection obligations on the recipient',
+            ]} />
+            <Paragraph>
+              You may request details of the specific safeguards in place for any transfer
+              by contacting our Data Privacy Officer.
+            </Paragraph>
+
+            {/* 6. Cookies */}
             <SectionHeading id="cookies">
-              5. Cookies &amp; Tracking
+              6. Cookies &amp; Tracking
             </SectionHeading>
             <Paragraph>
               We use a small number of cookies and browser storage items. You may accept
@@ -271,7 +306,7 @@ export default function PrivacyPage() {
                 </thead>
                 <tbody className="divide-y divide-stone-100">
                   {[
-                    ['haven-cookie-consent', 'localStorage', 'Stores your cookie preference', 'Never (until cleared)'],
+                    ['haven-cookie-consent', 'localStorage', 'Stores your cookie consent choice (accepted / declined)', 'Never (until cleared or reset)'],
                     ['haven-session', 'Session cookie', 'Maintains your authenticated session', 'Session end'],
                     ['_analytics', 'Analytics cookie', 'Anonymised page-view statistics (only if accepted)', '13 months'],
                   ].map(([name, type, purpose, expires]) => (
@@ -286,14 +321,18 @@ export default function PrivacyPage() {
               </table>
             </div>
             <Paragraph>
-              You can withdraw cookie consent at any time by clearing your browser's local
-              storage or by contacting us. Declining analytics cookies does not affect any
-              functionality of the website.
+              You can withdraw or change your cookie consent at any time by clicking the
+              "Cookie Preferences" link in the site footer, or by clearing the{' '}
+              <code className="text-xs bg-stone-100 px-1 py-0.5 rounded font-mono">
+                haven-cookie-consent
+              </code>{' '}
+              key from your browser's local storage. Declining analytics cookies does not
+              affect any functionality of the website.
             </Paragraph>
 
-            {/* 6. Data Retention */}
+            {/* 7. Data Retention */}
             <SectionHeading id="data-retention">
-              6. Data Retention
+              7. Data Retention
             </SectionHeading>
             <Paragraph>
               We retain personal data only for as long as necessary for the purpose it was
@@ -311,9 +350,9 @@ export default function PrivacyPage() {
               it can no longer be linked to an individual.
             </Paragraph>
 
-            {/* 7. Your Rights */}
+            {/* 8. Your Rights */}
             <SectionHeading id="your-rights">
-              7. Your Rights
+              8. Your Rights
             </SectionHeading>
             <Paragraph>
               Under GDPR and the Philippine Data Privacy Act, you have the following rights
@@ -338,9 +377,9 @@ export default function PrivacyPage() {
               before fulfilling a request.
             </Paragraph>
 
-            {/* 8. Security */}
+            {/* 9. Security */}
             <SectionHeading id="security">
-              8. Security Measures
+              9. Security Measures
             </SectionHeading>
             <Paragraph>
               We implement appropriate technical and organisational measures to protect
@@ -360,9 +399,9 @@ export default function PrivacyPage() {
               data has been compromised, please contact us immediately.
             </Paragraph>
 
-            {/* 9. Children's Privacy */}
+            {/* 10. Children's Privacy */}
             <SectionHeading id="children">
-              9. Children&apos;s Privacy
+              10. Children&apos;s Privacy
             </SectionHeading>
             <Paragraph>
               Our public website is not directed at children under the age of 18, and we
@@ -376,24 +415,27 @@ export default function PrivacyPage() {
               Residents are never identified by name or photograph on the public website.
             </Paragraph>
 
-            {/* 10. Changes */}
+            {/* 11. Changes */}
             <SectionHeading id="changes">
-              10. Changes to This Policy
+              11. Changes to This Policy
             </SectionHeading>
             <Paragraph>
               We may update this privacy policy from time to time. When we make material
-              changes, we will update the effective date at the top of this page and, where
-              appropriate, notify registered users by email at least 14 days before the
-              changes take effect.
+              changes, we will update the effective date at the top of this page and notify
+              registered users by email at least 14 days before the changes take effect.
+              Where any change requires a new legal basis for processing (for example,
+              expanding the purposes for which we use your data), we will seek fresh consent
+              from affected individuals before proceeding.
             </Paragraph>
             <Paragraph>
-              Continued use of the website after the revised policy takes effect constitutes
-              your acceptance of the updated terms.
+              Continued browsing of the website does not constitute consent to changed data
+              processing. If you object to material changes, you may request deletion of your
+              account by contacting us before the revised policy takes effect.
             </Paragraph>
 
-            {/* 11. Contact */}
+            {/* 12. Contact */}
             <SectionHeading id="contact">
-              11. Contact Us
+              12. Contact Us
             </SectionHeading>
             <Paragraph>
               If you have any questions about this privacy policy, wish to exercise your
