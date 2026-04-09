@@ -132,7 +132,6 @@ export default function ReportsPage() {
   const [mlEngagementDrivers, setMlEngagementDrivers] = useState<MlSocialEngagementDriverDto[]>([]);
   const [mlEngagementDriversDT, setMlEngagementDriversDT] = useState<MlSocialEngagementDriverDto[]>([]);
   const [mlReintegrationOls, setMlReintegrationOls] = useState<MlReintegrationDriverDto[]>([]);
-  const [mlReintegrationTree, setMlReintegrationTree] = useState<MlReintegrationDriverDto[]>([]);
   const [donorEmailMap, setDonorEmailMap] = useState<Map<number, string>>(new Map());
   const [emailTarget, setEmailTarget] = useState<{ label: string; email?: string } | null>(null);
   const [toast, setToast] = useState<string | null>(null);
@@ -172,8 +171,7 @@ export default function ReportsPage() {
       getMlSocialEngagement('DecisionTree').catch(() => [] as MlSocialEngagementDriverDto[]),
       getSupporters().catch(() => []),
       getMlReintegrationDrivers('OLS').catch(() => [] as MlReintegrationDriverDto[]),
-      getMlReintegrationDrivers('DecisionTree').catch(() => [] as MlReintegrationDriverDto[]),
-    ]).then(([donations, residents, safehouses, metrics, recordings, posts, mlDonors, mlResidents, mlDrivers, mlDriversDT, rawSupporters, reintegrationOls, reintegrationTree]) => {
+    ]).then(([donations, residents, safehouses, metrics, recordings, posts, mlDonors, mlResidents, mlDrivers, mlDriversDT, rawSupporters, reintegrationOls]) => {
       const now = new Date();
       const thisYear = now.getFullYear();
       const lastYear = thisYear - 1;
@@ -345,7 +343,6 @@ export default function ReportsPage() {
       setMlEngagementDrivers((mlDrivers as MlSocialEngagementDriverDto[]).slice(0, 10));
       setMlEngagementDriversDT((mlDriversDT as MlSocialEngagementDriverDto[]).slice(0, 10));
       setMlReintegrationOls((reintegrationOls as MlReintegrationDriverDto[]).slice(0, 5));
-      setMlReintegrationTree((reintegrationTree as MlReintegrationDriverDto[]).slice(0, 5));
     });
   }, []);
 
@@ -812,82 +809,40 @@ export default function ReportsPage() {
                 border border-haven-teal-200 rounded-full px-2 py-0.5">ML Model</span>
             </div>
             <p className="text-xs text-stone-400 mb-5">
-              Factors most associated with faster or slower reintegration, based on OLS regression and Decision Tree
-              over historical closed cases. ↑ faster = fewer days to closure; ↓ slower = more days.
+              Factors most associated with faster or slower reintegration, based on OLS regression over historical
+              closed cases. ↑ faster = fewer days to closure; ↓ slower = more days.
             </p>
             {mlReintegrationOls.length === 0 ? (
               <p className="text-sm text-stone-400 py-4 text-center">
                 No reintegration factors scored yet — model runs nightly.
               </p>
             ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                {/* OLS column */}
-                <div>
-                  <p className="text-xs font-semibold text-stone-500 uppercase tracking-wider mb-3">OLS Regression</p>
-                  <table className="w-full text-sm">
-                    <thead>
-                      <tr className="bg-stone-50 border-b border-stone-200">
-                        {['#', 'Factor', 'Direction'].map(h => (
-                          <th key={h} className="text-left text-xs font-semibold uppercase tracking-wider
-                            text-stone-500 px-3 py-2 whitespace-nowrap">{h}</th>
-                        ))}
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-stone-100">
-                      {mlReintegrationOls.map(d => (
-                        <tr key={d.rank} className="hover:bg-stone-50 transition-colors duration-100">
-                          <td className="px-3 py-2 text-xs text-stone-400">#{d.rank}</td>
-                          <td className="px-3 py-2 font-mono text-xs text-stone-700 max-w-[140px] truncate"
-                            title={d.featureName}>{d.featureName}</td>
-                          <td className="px-3 py-2 text-xs font-semibold whitespace-nowrap">
-                            {d.direction === 'positive'
-                              ? <span className="text-emerald-600">↑ faster</span>
-                              : d.direction === 'negative'
-                              ? <span className="text-rose-600">↓ slower</span>
-                              : <span className="text-stone-400">—</span>}
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-                {/* Decision Tree column */}
-                <div>
-                  <p className="text-xs font-semibold text-stone-500 uppercase tracking-wider mb-3">Decision Tree</p>
-                  <table className="w-full text-sm">
-                    <thead>
-                      <tr className="bg-stone-50 border-b border-stone-200">
-                        {['#', 'Factor', 'Weight'].map(h => (
-                          <th key={h} className="text-left text-xs font-semibold uppercase tracking-wider
-                            text-stone-500 px-3 py-2 whitespace-nowrap">{h}</th>
-                        ))}
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-stone-100">
-                      {mlReintegrationTree.map(d => {
-                        const maxImp = mlReintegrationTree[0]?.importance ?? 1;
-                        return (
-                          <tr key={d.rank} className="hover:bg-stone-50 transition-colors duration-100">
-                            <td className="px-3 py-2 text-xs text-stone-400">#{d.rank}</td>
-                            <td className="px-3 py-2 font-mono text-xs text-stone-700 max-w-[140px] truncate"
-                              title={d.featureName}>{d.featureName}</td>
-                            <td className="px-3 py-2">
-                              <div className="flex items-center gap-2">
-                                <div className="w-16 h-1.5 rounded-full bg-stone-100 overflow-hidden">
-                                  <div
-                                    className="h-full rounded-full bg-haven-teal-500"
-                                    style={{ width: `${Math.round((d.importance / maxImp) * 100)}%` }}
-                                  />
-                                </div>
-                              </div>
-                            </td>
-                          </tr>
-                        );
-                      })}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="bg-stone-50 border-b border-stone-200">
+                    {['#', 'Factor', 'Direction'].map(h => (
+                      <th key={h} className="text-left text-xs font-semibold uppercase tracking-wider
+                        text-stone-500 px-3 py-2 whitespace-nowrap">{h}</th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-stone-100">
+                  {mlReintegrationOls.map(d => (
+                    <tr key={d.rank} className="hover:bg-stone-50 transition-colors duration-100">
+                      <td className="px-3 py-2 text-xs text-stone-400">#{d.rank}</td>
+                      <td className="px-3 py-2 font-mono text-xs text-stone-700 max-w-[200px] truncate"
+                        title={d.featureName}>{d.featureName}</td>
+                      <td className="px-3 py-2 text-xs font-semibold whitespace-nowrap">
+                        {d.direction === 'positive'
+                          ? <span className="text-emerald-600">↑ faster</span>
+                          : d.direction === 'negative'
+                          ? <span className="text-rose-600">↓ slower</span>
+                          : <span className="text-stone-400">—</span>}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             )}
           </div>
 
