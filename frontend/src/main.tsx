@@ -17,6 +17,7 @@ import DonatePage from './pages/DonatePage'
 import CookieConsentBanner from './components/CookieConsentBanner'
 import { CookieConsentProvider } from './context/CookieConsentContext'
 import DonorDashboardPage from './pages/DonorDashboardPage'
+import ProfilePage from './pages/ProfilePage'
 
 import AdminDashboardPage from './pages/admin/AdminDashboardPage'
 import DonorsContributionsPage from './pages/admin/DonorsContributionsPage'
@@ -39,6 +40,7 @@ const router = createBrowserRouter([
       { path: 'logout', element: <LogoutPage /> },
       { path: 'donate', element: <DonatePage /> },
       { path: 'donor', element: <DonorDashboardPage /> },
+      { path: 'profile', element: <ProfilePage /> },
     ],
   },
   {

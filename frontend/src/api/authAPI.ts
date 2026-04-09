@@ -1,4 +1,5 @@
 import type { AuthSession } from "../types/AuthSession";
+import type { DonorProfileDto } from "../types/profile";
 
 export interface ExternalAuthProvider {
   name: string;
@@ -175,6 +176,33 @@ export async function loginUser(
       )
     );
   }
+}
+
+export async function getMyProfile(): Promise<DonorProfileDto> {
+  const response = await fetch(`${apiBaseUrl}/auth/profile`, {
+    credentials: 'include',
+  });
+
+  if (!response.ok) {
+    throw new Error(await readApiError(response, 'Unable to load profile.'));
+  }
+
+  return response.json();
+}
+
+export async function updateMyProfile(data: DonorProfileDto): Promise<DonorProfileDto> {
+  const response = await fetch(`${apiBaseUrl}/auth/profile`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    credentials: 'include',
+    body: JSON.stringify(data),
+  });
+
+  if (!response.ok) {
+    throw new Error(await readApiError(response, 'Unable to save profile.'));
+  }
+
+  return response.json();
 }
 
 export async function logoutUser(): Promise<void> {

@@ -103,6 +103,21 @@ function Layout() {
 
           {isDonor && (
             <NavLink
+              to="/profile"
+              className={({ isActive }) =>
+                `text-sm font-medium transition-colors duration-150
+                 ${navSolid
+                   ? (isActive ? 'text-haven-teal-700' : 'text-stone-600 hover:text-stone-900')
+                   : (isActive ? 'text-white' : 'text-white/80 hover:text-white')
+                 }`
+              }
+            >
+              Profile
+            </NavLink>
+          )}
+
+          {isDonor && (
+            <NavLink
               to="/privacy"
               className={({ isActive }) =>
                 `text-sm font-medium transition-colors duration-150

@@ -4,7 +4,9 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.WebUtilities;
+using Microsoft.EntityFrameworkCore;
 using Intex2.API.Data;
+using Intex2.API.DTOs;
 
 namespace Intex2.API.Controllers;
 
@@ -15,7 +17,8 @@ public record RegisterRequest(string Email, string Password);
 public class AuthController(
     UserManager<DonorUser> userManager,
     SignInManager<DonorUser> signInManager,
-    IConfiguration configuration) : ControllerBase
+    IConfiguration configuration,
+    Intex2104Context db) : ControllerBase
 {
     private const string DefaultFrontendUrl = "http://localhost:5173";
     private const string DefaultExternalReturnPath = "/impact";
@@ -193,6 +196,86 @@ public class AuthController(
             userName = user?.UserName ?? User.Identity?.Name,
             email = user?.Email,
             roles
+        });
+    }
+
+    [Authorize]
+    [HttpGet("profile")]
+    public async Task<IActionResult> GetProfile()
+    {
+        var email = User.Identity?.Name;
+        if (string.IsNullOrWhiteSpace(email))
+            return Unauthorized();
+
+        var supporter = await db.Supporters
+            .FirstOrDefaultAsync(s => s.Email == email);
+
+        if (supporter is null)
+        {
+            return Ok(new DonorProfileDto { Email = email });
+        }
+
+        return Ok(new DonorProfileDto
+        {
+            Email = supporter.Email,
+            FirstName = supporter.FirstName,
+            LastName = supporter.LastName,
+            DisplayName = supporter.DisplayName,
+            OrganizationName = supporter.OrganizationName,
+            SupporterType = supporter.SupporterType,
+            RelationshipType = supporter.RelationshipType,
+            Phone = supporter.Phone,
+            Country = supporter.Country,
+            Region = supporter.Region,
+        });
+    }
+
+    [Authorize]
+    [HttpPut("profile")]
+    public async Task<IActionResult> UpdateProfile([FromBody] DonorProfileDto dto)
+    {
+        var email = User.Identity?.Name;
+        if (string.IsNullOrWhiteSpace(email))
+            return Unauthorized();
+
+        var supporter = await db.Supporters
+            .FirstOrDefaultAsync(s => s.Email == email);
+
+        if (supporter is null)
+        {
+            supporter = new Supporter
+            {
+                Email = email,
+                CreatedAt = DateTime.UtcNow.ToString("yyyy-MM-dd"),
+                Status = "Active",
+            };
+            db.Supporters.Add(supporter);
+        }
+
+        supporter.FirstName = dto.FirstName;
+        supporter.LastName = dto.LastName;
+        supporter.DisplayName = dto.DisplayName;
+        supporter.OrganizationName = dto.OrganizationName;
+        supporter.SupporterType = dto.SupporterType ?? supporter.SupporterType ?? "MonetaryDonor";
+        supporter.RelationshipType = dto.RelationshipType;
+        supporter.Phone = dto.Phone;
+        supporter.Country = dto.Country;
+        supporter.Region = dto.Region;
+
+        await db.SaveChangesAsync();
+
+        return Ok(new DonorProfileDto
+        {
+            Email = supporter.Email,
+            FirstName = supporter.FirstName,
+            LastName = supporter.LastName,
+            DisplayName = supporter.DisplayName,
+            OrganizationName = supporter.OrganizationName,
+            SupporterType = supporter.SupporterType,
+            RelationshipType = supporter.RelationshipType,
+            Phone = supporter.Phone,
+            Country = supporter.Country,
+            Region = supporter.Region,
         });
     }
 
