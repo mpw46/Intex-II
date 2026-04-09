@@ -8,12 +8,15 @@ import Layout from './components/Layout'
 import AdminLayout from './components/AdminLayout'
 
 import HomePage from './pages/HomePage'
-import DonorDashboardPage from './pages/DonorDashboardPage'
+import PublicImpactPage from './pages/PublicImpactPage'
 import LoginPage from './pages/LoginPage'
 import PrivacyPage from './pages/PrivacyPage'
 import RegisterPage from './pages/RegisterPage'
 import LogoutPage from './pages/LogoutPage'
 import DonatePage from './pages/DonatePage'
+import CookieConsentBanner from './components/CookieConsentBanner'
+import { CookieConsentProvider } from './context/CookieConsentContext'
+import DonorDashboardPage from './pages/DonorDashboardPage'
 
 import AdminDashboardPage from './pages/admin/AdminDashboardPage'
 import DonorsContributionsPage from './pages/admin/DonorsContributionsPage'
@@ -29,12 +32,13 @@ const router = createBrowserRouter([
     element: <Layout />,
     children: [
       { index: true, element: <HomePage /> },
-      { path: 'impact', element: <DonorDashboardPage /> },
+      { path: 'impact', element: <PublicImpactPage /> },
       { path: 'login', element: <LoginPage /> },
       { path: 'privacy', element: <PrivacyPage /> },
       { path: 'register', element: <RegisterPage /> },
       { path: 'logout', element: <LogoutPage /> },
       { path: 'donate', element: <DonatePage /> },
+      { path: 'donor', element: <DonorDashboardPage /> },
     ],
   },
   {
@@ -55,8 +59,12 @@ const router = createBrowserRouter([
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <AuthProvider>
-      <RouterProvider router={router} />
-    </AuthProvider>
+    <CookieConsentProvider>
+      <AuthProvider>
+        <RouterProvider router={router} />
+        <CookieConsentBanner />
+      </AuthProvider>
+    </CookieConsentProvider>
+    
   </StrictMode>,
 )

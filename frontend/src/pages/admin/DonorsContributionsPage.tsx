@@ -4,6 +4,7 @@ import { getDonations, createDonationRecord, deleteDonation, getAllocations } fr
 import { getSafehouses, buildSafehouseNameMap } from '../../api/safehousesApi';
 import { getMlDonorRisk } from '../../api/mlApi';
 import PaginationBar from '../../components/PaginationBar';
+import EmailModal from '../../components/EmailModal';
 import type { DonationAllocationDto } from '../../types/donation';
 
 // ---------------------------------------------------------------------------
@@ -218,6 +219,8 @@ export default function DonorsContributionsPage() {
   const [pageTab, setPageTab]             = useState<'supporters' | 'allocations'>('supporters');
   const [allAllocations, setAllAllocations] = useState<DonationAllocationDto[]>([]);
   const [allocYear, setAllocYear]         = useState<number | 'All'>('All');
+  const [announcementOpen, setAnnouncementOpen] = useState(false);
+  const [toast, setToast]                 = useState<string | null>(null);
 
   const PAGE_SIZE = 20;
 
@@ -314,6 +317,7 @@ export default function DonorsContributionsPage() {
   });
 
   useEffect(() => { setPage(1); }, [search, typeFilter, statusFilter]);
+  useEffect(() => { if (toast) { const t = setTimeout(() => setToast(null), 3000); return () => clearTimeout(t); } }, [toast]);
 
   const paginated = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
 
@@ -507,13 +511,22 @@ export default function DonorsContributionsPage() {
             <h2 className="text-base font-semibold text-stone-900">
               Supporters <span className="text-stone-400 font-normal">({filtered.length})</span>
             </h2>
-            <button type="button" onClick={openAdd}
-              className="inline-flex items-center gap-1.5 px-3 py-2 bg-haven-teal-600 text-white
-                text-xs font-semibold rounded-lg transition-colors hover:bg-haven-teal-700
-                focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-haven-teal-500
-                focus-visible:ring-offset-2">
-              <PlusIcon /> Add
-            </button>
+            <div className="flex items-center gap-2">
+              <button type="button" onClick={() => setAnnouncementOpen(true)}
+                className="inline-flex items-center gap-1.5 px-3 py-2 bg-white text-haven-teal-700
+                  text-xs font-semibold rounded-lg border border-haven-teal-600 transition-colors
+                  hover:bg-haven-teal-50 focus-visible:outline-none focus-visible:ring-2
+                  focus-visible:ring-haven-teal-500 focus-visible:ring-offset-2">
+                Send Announcement
+              </button>
+              <button type="button" onClick={openAdd}
+                className="inline-flex items-center gap-1.5 px-3 py-2 bg-haven-teal-600 text-white
+                  text-xs font-semibold rounded-lg transition-colors hover:bg-haven-teal-700
+                  focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-haven-teal-500
+                  focus-visible:ring-offset-2">
+                <PlusIcon /> Add
+              </button>
+            </div>
           </div>
 
           {/* Search + filters */}
@@ -1057,6 +1070,29 @@ export default function DonorsContributionsPage() {
               </button>
             </div>
           </div>
+        </div>
+      )}
+
+      {/* Announcement email modal */}
+      {(() => {
+        const emailableCount = supporters.filter(s => s.status === 'Active' && s.email).length;
+        return (
+          <EmailModal
+            isOpen={announcementOpen}
+            onClose={() => {
+              setAnnouncementOpen(false);
+              setToast(`Announcement queued for ${emailableCount} active supporter${emailableCount !== 1 ? 's' : ''}.`);
+            }}
+            recipientLabel={`All Active Supporters (${emailableCount})`}
+          />
+        );
+      })()}
+
+      {/* Toast */}
+      {toast && (
+        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-[60] px-5 py-3 bg-haven-teal-700
+          text-white text-sm font-medium rounded-xl shadow-lg pointer-events-none">
+          {toast}
         </div>
       )}
     </div>

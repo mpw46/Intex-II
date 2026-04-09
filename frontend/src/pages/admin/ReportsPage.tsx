@@ -1,11 +1,15 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { getDonations } from '../../api/donationsApi';
 import { getResidents } from '../../api/residentsApi';
 import { getSafehouses } from '../../api/safehousesApi';
 import { getRecordings } from '../../api/processRecordingsApi';
 import { getMonthlyMetrics, getSocialMediaPosts } from '../../api/reportsApi';
-import { getMlDonorRisk, getMlResidentRisk, getMlSocialEngagement } from '../../api/mlApi';
-import type { MlDonorRiskDto, MlResidentRiskDto, MlSocialEngagementDriverDto } from '../../types/ml';
+import { getMlDonorRisk, getMlResidentRisk, getMlSocialEngagement, getMlReintegrationDrivers } from '../../api/mlApi';
+import { getSupporters } from '../../api/supportersApi';
+import type { MlDonorRiskDto, MlResidentRiskDto, MlSocialEngagementDriverDto, MlReintegrationDriverDto } from '../../types/ml';
+import EmailModal from '../../components/EmailModal';
+import ScheduleSessionModal from '../../components/ScheduleSessionModal';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -115,6 +119,7 @@ function quarterOf(dateStr: string | undefined | null): 'q1' | 'q2' | 'q3' | 'q4
 }
 
 export default function ReportsPage() {
+  const navigate = useNavigate();
   const [tab, setTab] = useState<ReportTab>('donations');
   const [monthlyDonations, setMonthlyDonations] = useState<MonthlyDonation[]>([]);
   const [safehouseOutcomes, setSafehouseOutcomes] = useState<SafehouseOutcome[]>([]);
@@ -122,16 +127,36 @@ export default function ReportsPage() {
   const [annualServiceRows, setAnnualServiceRows] = useState<AnnualServiceRow[]>([]);
   const [platformStats, setPlatformStats] = useState<PlatformStat[]>([]);
   const [socialPosts, setSocialPosts] = useState<SocialPost[]>([]);
-  const [mlHighDonors, setMlHighDonors] = useState<MlDonorRiskDto[]>([]);
+  const [mlAtRiskDonors, setMlAtRiskDonors] = useState<MlDonorRiskDto[]>([]);
   const [mlHighResidents, setMlHighResidents] = useState<MlResidentRiskDto[]>([]);
   const [mlEngagementDrivers, setMlEngagementDrivers] = useState<MlSocialEngagementDriverDto[]>([]);
   const [mlEngagementDriversDT, setMlEngagementDriversDT] = useState<MlSocialEngagementDriverDto[]>([]);
+  const [mlReintegrationOls, setMlReintegrationOls] = useState<MlReintegrationDriverDto[]>([]);
+  const [mlReintegrationTree, setMlReintegrationTree] = useState<MlReintegrationDriverDto[]>([]);
+  const [donorEmailMap, setDonorEmailMap] = useState<Map<number, string>>(new Map());
+  const [emailTarget, setEmailTarget] = useState<{ label: string; email?: string } | null>(null);
+  const [toast, setToast] = useState<string | null>(null);
+  const [scheduleOpen, setScheduleOpen] = useState(false);
+  const [schedulingResident, setSchedulingResident] = useState<MlResidentRiskDto | null>(null);
 
   // Derived values — recomputed whenever monthlyDonations changes
   const BAR_MAX = monthlyDonations.length > 0 ? Math.max(...monthlyDonations.map(m => m.monetary)) : 1;
   const totalMonetary = monthlyDonations.reduce((s, m) => s + m.monetary, 0);
   const totalAllTypes = monthlyDonations.reduce((s, m) => s + m.monetary + m.inKind + m.time + m.skills, 0);
   const avgMonthly    = Math.round(totalMonetary / (monthlyDonations.length || 1));
+
+  useEffect(() => {
+    if (!toast) return;
+    const t = setTimeout(() => setToast(null), 3000);
+    return () => clearTimeout(t);
+  }, [toast]);
+
+  function openDonorEmail(d: MlDonorRiskDto) {
+    setEmailTarget({
+      label: d.displayName ?? `Supporter #${d.supporterId}`,
+      email: d.supporterId != null ? donorEmailMap.get(d.supporterId) : undefined,
+    });
+  }
 
   useEffect(() => {
     Promise.all([
@@ -141,11 +166,14 @@ export default function ReportsPage() {
       getMonthlyMetrics(),
       getRecordings(),
       getSocialMediaPosts(),
-      getMlDonorRisk('High').catch(() => [] as MlDonorRiskDto[]),
+      getMlDonorRisk().catch(() => [] as MlDonorRiskDto[]),
       getMlResidentRisk('High').catch(() => [] as MlResidentRiskDto[]),
       getMlSocialEngagement('OLS').catch(() => [] as MlSocialEngagementDriverDto[]),
       getMlSocialEngagement('DecisionTree').catch(() => [] as MlSocialEngagementDriverDto[]),
-    ]).then(([donations, residents, safehouses, metrics, recordings, posts, mlDonors, mlResidents, mlDrivers, mlDriversDT]) => {
+      getSupporters().catch(() => []),
+      getMlReintegrationDrivers('OLS').catch(() => [] as MlReintegrationDriverDto[]),
+      getMlReintegrationDrivers('DecisionTree').catch(() => [] as MlReintegrationDriverDto[]),
+    ]).then(([donations, residents, safehouses, metrics, recordings, posts, mlDonors, mlResidents, mlDrivers, mlDriversDT, rawSupporters, reintegrationOls, reintegrationTree]) => {
       const now = new Date();
       const thisYear = now.getFullYear();
       const lastYear = thisYear - 1;
@@ -303,10 +331,21 @@ export default function ReportsPage() {
       setSocialPosts(recentPosts);
 
       // ---- ML data ----
-      setMlHighDonors((mlDonors as MlDonorRiskDto[]).slice(0, 5));
+      const emailMap = new Map<number, string>(
+        (rawSupporters as { supporterId: number | null; email: string | null }[])
+          .filter(s => s.supporterId != null && s.email)
+          .map(s => [s.supporterId as number, s.email as string])
+      );
+      setDonorEmailMap(emailMap);
+      const atRisk = (mlDonors as MlDonorRiskDto[])
+        .filter(d => d.riskTier === 'High' || d.riskTier === 'Medium')
+        .slice(0, 10);
+      setMlAtRiskDonors(atRisk);
       setMlHighResidents((mlResidents as MlResidentRiskDto[]).sort((a, b) => b.riskProbability - a.riskProbability).slice(0, 8));
       setMlEngagementDrivers((mlDrivers as MlSocialEngagementDriverDto[]).slice(0, 10));
       setMlEngagementDriversDT((mlDriversDT as MlSocialEngagementDriverDto[]).slice(0, 10));
+      setMlReintegrationOls((reintegrationOls as MlReintegrationDriverDto[]).slice(0, 5));
+      setMlReintegrationTree((reintegrationTree as MlReintegrationDriverDto[]).slice(0, 5));
     });
   }, []);
 
@@ -413,7 +452,7 @@ export default function ReportsPage() {
             </div>
           </div>
 
-          {/* ML — Contact ASAP (high lapse-risk donors) */}
+          {/* ML — Contact ASAP (high + medium lapse-risk donors) */}
           <div className="bg-white rounded-xl border border-stone-200 shadow-sm p-6">
             <div className="flex items-center justify-between mb-1">
               <h3 className="text-base font-semibold text-stone-900">Donor Retention — Contact ASAP</h3>
@@ -421,31 +460,49 @@ export default function ReportsPage() {
                 border border-rose-200 rounded-full px-2 py-0.5">ML Model</span>
             </div>
             <p className="text-xs text-stone-400 mb-5">
-              Donors flagged as high lapse-risk by the nightly retention model.
+              Donors flagged as high or medium lapse-risk by the nightly retention model.
             </p>
-            {mlHighDonors.length === 0 ? (
+            {mlAtRiskDonors.length === 0 ? (
               <p className="text-sm text-stone-400 py-4 text-center">
-                No high-risk donors scored yet — model runs nightly.
+                No at-risk donors scored yet — model runs nightly.
               </p>
             ) : (
               <div className="space-y-2">
-                {mlHighDonors.map(d => (
-                  <div key={d.supporterId}
-                    className="flex items-center justify-between px-4 py-3 rounded-lg bg-rose-50
-                      border border-rose-100">
-                    <span className="text-sm font-medium text-stone-800">
-                      {d.displayName ?? `Supporter #${d.supporterId}`}
-                    </span>
-                    <div className="flex items-center gap-3">
-                      <span className="text-xs text-stone-500">
-                        Lapse probability
-                      </span>
-                      <span className="text-sm font-bold tabular-nums text-rose-700">
-                        {Math.round(d.lapseProbability * 100)}%
-                      </span>
+                {mlAtRiskDonors.map(d => {
+                  const isHigh = d.riskTier === 'High';
+                  return (
+                    <div key={d.supporterId}
+                      className={`flex items-center justify-between px-4 py-3 rounded-lg border ${
+                        isHigh ? 'bg-rose-50 border-rose-100' : 'bg-amber-50 border-amber-100'
+                      }`}>
+                      <div className="flex items-center gap-3">
+                        <span className={`text-[10px] font-semibold uppercase tracking-wide px-1.5 py-0.5 rounded ${
+                          isHigh
+                            ? 'bg-rose-100 text-rose-700'
+                            : 'bg-amber-100 text-amber-700'
+                        }`}>{d.riskTier}</span>
+                        <span className="text-sm font-medium text-stone-800">
+                          {d.displayName ?? `Supporter #${d.supporterId}`}
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-3">
+                        <span className="text-xs text-stone-500">Lapse probability</span>
+                        <span className={`text-sm font-bold tabular-nums ${isHigh ? 'text-rose-700' : 'text-amber-700'}`}>
+                          {Math.round(d.lapseProbability * 100)}%
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => openDonorEmail(d)}
+                          className="inline-flex items-center px-3 py-1 text-xs font-medium rounded-md
+                            bg-white border border-stone-300 text-stone-700 hover:bg-stone-50 transition-colors
+                            focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-haven-teal-500"
+                        >
+                          Email
+                        </button>
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             )}
           </div>
@@ -696,15 +753,19 @@ export default function ReportsPage() {
                 <table className="w-full text-sm">
                   <thead>
                     <tr className="bg-stone-50 border-b border-stone-200">
-                      {['Case ID', 'Safehouse', 'Risk Probability'].map(h => (
-                        <th key={h} className="text-left text-xs font-semibold uppercase tracking-wider
+                      {['Case ID', 'Safehouse', 'Risk Probability', ''].map((h, i) => (
+                        <th key={i} className="text-left text-xs font-semibold uppercase tracking-wider
                           text-stone-500 px-4 py-3 whitespace-nowrap">{h}</th>
                       ))}
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-stone-100">
                     {mlHighResidents.map(r => (
-                      <tr key={r.residentId} className="hover:bg-rose-50 transition-colors duration-100">
+                      <tr
+                        key={r.residentId}
+                        className="hover:bg-rose-50 transition-colors duration-100 cursor-pointer"
+                        onClick={() => navigate('/admin/caseload', { state: { caseControlNo: r.caseControlNo } })}
+                      >
                         <td className="px-4 py-3 font-mono text-xs text-stone-700">
                           {r.caseControlNo ?? `#${r.residentId}`}
                         </td>
@@ -724,10 +785,108 @@ export default function ReportsPage() {
                             </span>
                           </div>
                         </td>
+                        <td className="px-4 py-3 text-right">
+                          <button
+                            type="button"
+                            onClick={e => { e.stopPropagation(); setSchedulingResident(r); setScheduleOpen(true); }}
+                            className="px-3 py-1 text-xs font-semibold text-haven-teal-600 bg-haven-teal-50
+                              border border-haven-teal-200 rounded-lg hover:bg-haven-teal-100 transition-colors
+                              focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-haven-teal-500 whitespace-nowrap"
+                          >
+                            Schedule Session
+                          </button>
+                        </td>
                       </tr>
                     ))}
                   </tbody>
                 </table>
+              </div>
+            )}
+          </div>
+
+          {/* ML — Reintegration Readiness */}
+          <div className="bg-white rounded-xl border border-stone-200 shadow-sm p-6 mb-8">
+            <div className="flex items-center justify-between mb-1">
+              <h3 className="text-base font-semibold text-stone-900">Reintegration Readiness — Key Factors</h3>
+              <span className="text-[10px] font-semibold uppercase tracking-wider text-haven-teal-700 bg-haven-teal-50
+                border border-haven-teal-200 rounded-full px-2 py-0.5">ML Model</span>
+            </div>
+            <p className="text-xs text-stone-400 mb-5">
+              Factors most associated with faster or slower reintegration, based on OLS regression and Decision Tree
+              over historical closed cases. ↑ faster = fewer days to closure; ↓ slower = more days.
+            </p>
+            {mlReintegrationOls.length === 0 ? (
+              <p className="text-sm text-stone-400 py-4 text-center">
+                No reintegration factors scored yet — model runs nightly.
+              </p>
+            ) : (
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                {/* OLS column */}
+                <div>
+                  <p className="text-xs font-semibold text-stone-500 uppercase tracking-wider mb-3">OLS Regression</p>
+                  <table className="w-full text-sm">
+                    <thead>
+                      <tr className="bg-stone-50 border-b border-stone-200">
+                        {['#', 'Factor', 'Direction'].map(h => (
+                          <th key={h} className="text-left text-xs font-semibold uppercase tracking-wider
+                            text-stone-500 px-3 py-2 whitespace-nowrap">{h}</th>
+                        ))}
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-stone-100">
+                      {mlReintegrationOls.map(d => (
+                        <tr key={d.rank} className="hover:bg-stone-50 transition-colors duration-100">
+                          <td className="px-3 py-2 text-xs text-stone-400">#{d.rank}</td>
+                          <td className="px-3 py-2 font-mono text-xs text-stone-700 max-w-[140px] truncate"
+                            title={d.featureName}>{d.featureName}</td>
+                          <td className="px-3 py-2 text-xs font-semibold whitespace-nowrap">
+                            {d.direction === 'positive'
+                              ? <span className="text-emerald-600">↑ faster</span>
+                              : d.direction === 'negative'
+                              ? <span className="text-rose-600">↓ slower</span>
+                              : <span className="text-stone-400">—</span>}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+                {/* Decision Tree column */}
+                <div>
+                  <p className="text-xs font-semibold text-stone-500 uppercase tracking-wider mb-3">Decision Tree</p>
+                  <table className="w-full text-sm">
+                    <thead>
+                      <tr className="bg-stone-50 border-b border-stone-200">
+                        {['#', 'Factor', 'Weight'].map(h => (
+                          <th key={h} className="text-left text-xs font-semibold uppercase tracking-wider
+                            text-stone-500 px-3 py-2 whitespace-nowrap">{h}</th>
+                        ))}
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-stone-100">
+                      {mlReintegrationTree.map(d => {
+                        const maxImp = mlReintegrationTree[0]?.importance ?? 1;
+                        return (
+                          <tr key={d.rank} className="hover:bg-stone-50 transition-colors duration-100">
+                            <td className="px-3 py-2 text-xs text-stone-400">#{d.rank}</td>
+                            <td className="px-3 py-2 font-mono text-xs text-stone-700 max-w-[140px] truncate"
+                              title={d.featureName}>{d.featureName}</td>
+                            <td className="px-3 py-2">
+                              <div className="flex items-center gap-2">
+                                <div className="w-16 h-1.5 rounded-full bg-stone-100 overflow-hidden">
+                                  <div
+                                    className="h-full rounded-full bg-haven-teal-500"
+                                    style={{ width: `${Math.round((d.importance / maxImp) * 100)}%` }}
+                                  />
+                                </div>
+                              </div>
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
               </div>
             )}
           </div>
@@ -878,6 +1037,36 @@ export default function ReportsPage() {
               );
             })}
           </div>
+        </div>
+      )}
+
+      {/* Email modal — per-donor outreach */}
+      <EmailModal
+        isOpen={emailTarget !== null}
+        onClose={() => {
+          const name = emailTarget?.label ?? 'donor';
+          setEmailTarget(null);
+          setToast(`Email queued for ${name}.`);
+        }}
+        recipientLabel={emailTarget?.label ?? ''}
+        recipientEmail={emailTarget?.email}
+        defaultSubject="We miss you — an update from Haven"
+        defaultBody={`Hi ${emailTarget?.label ?? 'there'},\n\nWe wanted to reach out and share an update from Haven and let you know how much your past support has meant to the girls in our care.\n\nThank you for your continued generosity.\n\nWith gratitude,\nThe Haven Team`}
+      />
+
+      {scheduleOpen && schedulingResident && (
+        <ScheduleSessionModal
+          residentId={schedulingResident.residentId}
+          caseId={schedulingResident.caseControlNo ?? `#${schedulingResident.residentId}`}
+          onClose={() => { setScheduleOpen(false); setSchedulingResident(null); }}
+        />
+      )}
+
+      {/* Toast */}
+      {toast && (
+        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 px-5 py-3 bg-stone-900 text-white
+          text-sm rounded-xl shadow-lg pointer-events-none">
+          {toast}
         </div>
       )}
     </div>
