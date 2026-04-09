@@ -6,8 +6,10 @@ import {
 import { useAuth } from '../context/AuthContext';
 import { getDonations } from '../api/donationsApi';
 import { getImpactSnapshot, getImpactAllocations } from '../api/publicImpactApi';
+import { getMlDonorImpact } from '../api/mlApi';
 import type { DonationDto } from '../types/donation';
 import type { ImpactSnapshotDto, AllocationSummaryDto } from '../types/publicImpact';
+import type { MlDonorImpactDto } from '../types/ml';
 
 const TIERS = [
   { name: 'Friend',   min: 0,     next: 5000   },
@@ -23,6 +25,7 @@ function DonorDashboardPage() {
   const [fetchError, setFetchError] = useState('');
   const [snapshot, setSnapshot] = useState<ImpactSnapshotDto | null>(null);
   const [allocations, setAllocations] = useState<AllocationSummaryDto[]>([]);
+  const [donorImpact, setDonorImpact] = useState<MlDonorImpactDto[]>([]);
 
   useEffect(() => {
     getImpactSnapshot().then(setSnapshot).catch(() => {});
@@ -31,8 +34,14 @@ function DonorDashboardPage() {
 
   useEffect(() => {
     if (!isAuthenticated) return;
-    getDonations()
-      .then(setDonations)
+    Promise.all([
+      getDonations().catch(() => [] as DonationDto[]),
+      getMlDonorImpact().catch(() => [] as MlDonorImpactDto[]),
+    ])
+      .then(([donationData, impactData]) => {
+        setDonations(donationData);
+        setDonorImpact(impactData);
+      })
       .catch(() => setFetchError('Unable to load your donation history.'))
       .finally(() => setFetching(false));
   }, [isAuthenticated]);
@@ -222,6 +231,39 @@ function DonorDashboardPage() {
             </div>
           </div>
         )}
+
+        {/* ── ML — Predicted Program Impact ───────────────────────────── */}
+        <div className="bg-white rounded-xl border border-stone-200 p-6">
+          <div className="flex items-center justify-between mb-1">
+            <p className="text-lg font-bold text-stone-900">Predicted Program Impact</p>
+            <span className="text-xs font-medium px-2 py-0.5 rounded-full border text-haven-teal-700 bg-haven-teal-50 border-haven-teal-200">
+              ML Model
+            </span>
+          </div>
+          <p className="text-xs text-stone-400 mb-5">
+            Based on your giving history, here is how contributions like yours are typically allocated across programs.
+          </p>
+          {donorImpact.length === 0 ? (
+            <p className="text-sm text-stone-400">No prediction available yet — model runs nightly.</p>
+          ) : (
+            <div className="space-y-4">
+              {donorImpact.map(d => (
+                <div key={d.programArea}>
+                  <div className="flex justify-between text-xs text-stone-600 mb-1">
+                    <span className="font-medium">{d.programArea.replace(/_/g, ' ')}</span>
+                    <span className="font-semibold text-haven-teal-700">{d.predictedPct.toFixed(1)}%</span>
+                  </div>
+                  <div className="w-full bg-stone-100 rounded-full h-2">
+                    <div
+                      className="bg-haven-teal-500 h-2 rounded-full"
+                      style={{ width: `${d.predictedPct}%` }}
+                    />
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
 
         {/* ── Your Impact in Numbers ──────────────────────────────────── */}
         {snapshot && (
