@@ -14,6 +14,8 @@ import PrivacyPage from './pages/PrivacyPage'
 import RegisterPage from './pages/RegisterPage'
 import LogoutPage from './pages/LogoutPage'
 import DonatePage from './pages/DonatePage'
+import CookieConsentBanner from './components/CookieConsentBanner'
+import { CookieConsentProvider } from './context/CookieConsentContext'
 
 import AdminDashboardPage from './pages/admin/AdminDashboardPage'
 import DonorsContributionsPage from './pages/admin/DonorsContributionsPage'
@@ -53,8 +55,12 @@ const router = createBrowserRouter([
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <AuthProvider>
-      <RouterProvider router={router} />
-    </AuthProvider>
+    <CookieConsentProvider>
+      <AuthProvider>
+        <RouterProvider router={router} />
+        <CookieConsentBanner />
+      </AuthProvider>
+    </CookieConsentProvider>
+    
   </StrictMode>,
 )
