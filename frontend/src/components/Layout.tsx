@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { NavLink, Outlet, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import transparentLogo from '../assets/transparent-logo.png';
 
 
 function Layout() {
@@ -43,12 +44,12 @@ function Layout() {
                     }`}
         aria-label="Main navigation"
       >
-        <NavLink
-          to="/"
-          className={`text-xl font-bold tracking-tight transition-colors duration-300
-                      ${navSolid ? 'text-stone-900' : 'text-white'}`}
-        >
-          Haven
+        <NavLink to="/" className="flex items-center shrink-0">
+          <img
+            src={transparentLogo}
+            alt="Haven"
+            className="h-10 w-auto shrink-0"
+          />
         </NavLink>
 
         <div className="flex items-center gap-6 md:gap-8">
@@ -62,7 +63,7 @@ function Layout() {
                }`
             }
           >
-            Impact
+            Our Impact
           </NavLink>
 
           {isAdmin && (
@@ -131,7 +132,7 @@ function Layout() {
             </div>
             <div className="flex flex-col sm:flex-row gap-4 sm:gap-8 text-sm text-stone-400">
               <NavLink to="/impact" className="hover:text-white transition-colors duration-150">
-                Impact
+                Our Impact
               </NavLink>
               <NavLink to="/privacy" className="hover:text-white transition-colors duration-150">
                 Privacy Policy

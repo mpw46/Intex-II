@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import { getResidents, createResident, updateResident, deleteResident } from '../../api/residentsApi';
 import { getSafehouses, buildSafehouseNameMap } from '../../api/safehousesApi';
 import { getMlResidentRisk } from '../../api/mlApi';
@@ -6,6 +7,7 @@ import { isTruthy } from '../../types/resident';
 import type { ResidentDto } from '../../types/resident';
 import type { SafehouseDto } from '../../types/safehouse';
 import PaginationBar from '../../components/PaginationBar';
+import ScheduleSessionModal from '../../components/ScheduleSessionModal';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -23,7 +25,14 @@ interface Resident {
   safehouse: string;
   caseStatus: CaseStatus;
   caseCategory: CaseCategory;
+  // Demographics
+  sex: string;
+  dateOfBirth: string;
+  birthStatus: string;
+  placeOfBirth: string;
+  religion: string;
   // Sub-categories
+  isOrphaned: boolean;
   isTrafficked: boolean;
   isChildLabor: boolean;
   isPhysicalAbuse: boolean;
@@ -37,26 +46,39 @@ interface Resident {
   is4ps: boolean;
   isSoloParent: boolean;
   isIndigenous: boolean;
+  isFamilyParentPwd: boolean;
   isInformalSettler: boolean;
   // Case details
   admissionDate: string;
   assignedSocialWorker: string;
   referralSource: string;
+  referringAgencyPerson: string;
+  initialCaseAssessment: string;
+  initialRiskLevel: string;
   riskLevel: RiskLevel;
   mlRiskLevel: string; // 'High' | 'Medium' | 'Low' | 'No Predictions'
   reintegrationType: ReintegrationType;
   reintegrationStatus: ReintegrationStatus;
   daysInProgram: number;
-  // Optional disability
+  // Disability / special needs
   hasDisability: boolean;
   disabilityDetails: string;
+  hasSpecialNeeds: boolean;
+  specialNeedsDiagnosis: string;
 }
 
 interface ResidentFormDraft {
   caseControlNo: string;
+  // Demographics
+  sex: string;
+  dateOfBirth: string;
+  birthStatus: string;
+  placeOfBirth: string;
+  religion: string;
   safehouse: string;
   caseStatus: CaseStatus;
   caseCategory: CaseCategory;
+  isOrphaned: boolean;
   isTrafficked: boolean;
   isChildLabor: boolean;
   isPhysicalAbuse: boolean;
@@ -69,15 +91,21 @@ interface ResidentFormDraft {
   is4ps: boolean;
   isSoloParent: boolean;
   isIndigenous: boolean;
+  isFamilyParentPwd: boolean;
   isInformalSettler: boolean;
   admissionDate: string;
   assignedSocialWorker: string;
   referralSource: string;
+  referringAgencyPerson: string;
+  initialCaseAssessment: string;
+  initialRiskLevel: string;
   riskLevel: RiskLevel;
   reintegrationType: ReintegrationType;
   reintegrationStatus: ReintegrationStatus;
   hasDisability: boolean;
   disabilityDetails: string;
+  hasSpecialNeeds: boolean;
+  specialNeedsDiagnosis: string;
 }
 
 /** Map a ResidentDto + safehouse name lookup to the local UI Resident shape.
@@ -111,6 +139,12 @@ function mapResident(
     safehouse: (r.safehouseId != null ? shMap.get(r.safehouseId) : undefined) ?? 'Unknown',
     caseStatus: (r.caseStatus as CaseStatus) ?? 'Pending',
     caseCategory: (r.caseCategory as CaseCategory) ?? 'Neglected',
+    sex: r.sex ?? '',
+    dateOfBirth: r.dateOfBirth ?? '',
+    birthStatus: r.birthStatus ?? '',
+    placeOfBirth: r.placeOfBirth ?? '',
+    religion: r.religion ?? '',
+    isOrphaned: isTruthy(r.subCatOrphaned),
     isTrafficked: isTruthy(r.subCatTrafficked),
     isChildLabor: isTruthy(r.subCatChildLabor),
     isPhysicalAbuse: isTruthy(r.subCatPhysicalAbuse),
@@ -123,10 +157,14 @@ function mapResident(
     is4ps: isTruthy(r.familyIs4ps),
     isSoloParent: isTruthy(r.familySoloParent),
     isIndigenous: isTruthy(r.familyIndigenous),
+    isFamilyParentPwd: isTruthy(r.familyParentPwd),
     isInformalSettler: isTruthy(r.familyInformalSettler),
     admissionDate: r.dateOfAdmission ?? '',
     assignedSocialWorker: r.assignedSocialWorker ?? '',
     referralSource: r.referralSource ?? '',
+    referringAgencyPerson: r.referringAgencyPerson ?? '',
+    initialCaseAssessment: r.initialCaseAssessment ?? '',
+    initialRiskLevel: r.initialRiskLevel ?? '',
     riskLevel,
     mlRiskLevel,
     reintegrationType: (r.reintegrationType as ReintegrationType) ?? 'N/A',
@@ -134,6 +172,8 @@ function mapResident(
     daysInProgram: days,
     hasDisability: isTruthy(r.isPwd),
     disabilityDetails: r.pwdType ?? '',
+    hasSpecialNeeds: isTruthy(r.hasSpecialNeeds),
+    specialNeedsDiagnosis: r.specialNeedsDiagnosis ?? '',
   };
 }
 
@@ -145,14 +185,16 @@ const STATUS_COLORS: Record<CaseStatus, string> = {
 };
 
 const emptyForm: ResidentFormDraft = {
-  caseControlNo: '', safehouse: '', caseStatus: 'Pending', caseCategory: 'Neglected',
-  isTrafficked: false, isChildLabor: false, isPhysicalAbuse: false, isSexualAbuse: false,
+  caseControlNo: '', sex: '', dateOfBirth: '', birthStatus: '', placeOfBirth: '', religion: '',
+  safehouse: '', caseStatus: 'Pending', caseCategory: 'Neglected',
+  isOrphaned: false, isTrafficked: false, isChildLabor: false, isPhysicalAbuse: false, isSexualAbuse: false,
   isOsaec: false, isCicl: false, isAtRisk: false, isStreetChild: false, isChildWithHiv: false,
-  is4ps: false, isSoloParent: false, isIndigenous: false, isInformalSettler: false,
+  is4ps: false, isSoloParent: false, isIndigenous: false, isFamilyParentPwd: false, isInformalSettler: false,
   admissionDate: new Date().toISOString().substring(0, 10),
-  assignedSocialWorker: '', referralSource: '', riskLevel: 'Standard',
+  assignedSocialWorker: '', referralSource: '', referringAgencyPerson: '',
+  initialCaseAssessment: '', initialRiskLevel: '', riskLevel: 'Standard',
   reintegrationType: 'N/A', reintegrationStatus: 'Not Started',
-  hasDisability: false, disabilityDetails: '',
+  hasDisability: false, disabilityDetails: '', hasSpecialNeeds: false, specialNeedsDiagnosis: '',
 };
 
 // ---------------------------------------------------------------------------
@@ -192,6 +234,7 @@ function CheckBox({ label, checked, onChange }: { label: string; checked: boolea
 // ---------------------------------------------------------------------------
 
 export default function CaseloadPage() {
+  const location = useLocation();
   const [residents, setResidents]     = useState<Resident[]>([]);
   const [apiSafehouses, setApiSafehouses] = useState<SafehouseDto[]>([]);
   const [shMap, setShMap]             = useState<Map<number, string>>(new Map());
@@ -209,6 +252,7 @@ export default function CaseloadPage() {
   const [modal, setModal]             = useState<'add' | 'edit' | 'delete' | null>(null);
   const [selected, setSelected]       = useState<Resident | null>(null);
   const [detailOpen, setDetailOpen]   = useState(false);
+  const [scheduleOpen, setScheduleOpen] = useState(false);
   const [form, setForm]               = useState<ResidentFormDraft>(emptyForm);
   const [caseIdError, setCaseIdError] = useState<string>('');
 
@@ -230,6 +274,14 @@ export default function CaseloadPage() {
       })
       .finally(() => setLoading(false));
   }, []);
+
+  // Auto-open detail panel when navigating here from Reports with a caseControlNo
+  useEffect(() => {
+    const navState = location.state as { caseControlNo?: string } | null;
+    if (!navState?.caseControlNo || residents.length === 0) return;
+    const match = residents.find(r => r.caseId === navState.caseControlNo);
+    if (match) { setSelected(match); setDetailOpen(true); }
+  }, [residents, location.state]);
 
   // -------------------------------------------------------------------------
   // Derived
@@ -255,7 +307,25 @@ export default function CaseloadPage() {
 
   function openAdd() { setForm(emptyForm); setCaseIdError(''); setSelected(null); setModal('add'); }
   function openEdit(r: Resident) {
-    setForm({ caseControlNo: r.caseId.startsWith('RES-') ? '' : r.caseId, safehouse: r.safehouse, caseStatus: r.caseStatus, caseCategory: r.caseCategory, isTrafficked: r.isTrafficked, isChildLabor: r.isChildLabor, isPhysicalAbuse: r.isPhysicalAbuse, isSexualAbuse: r.isSexualAbuse, isOsaec: r.isOsaec, isCicl: r.isCicl, isAtRisk: r.isAtRisk, isStreetChild: r.isStreetChild, isChildWithHiv: r.isChildWithHiv, is4ps: r.is4ps, isSoloParent: r.isSoloParent, isIndigenous: r.isIndigenous, isInformalSettler: r.isInformalSettler, admissionDate: r.admissionDate, assignedSocialWorker: r.assignedSocialWorker, referralSource: r.referralSource, riskLevel: r.riskLevel, reintegrationType: r.reintegrationType, reintegrationStatus: r.reintegrationStatus, hasDisability: r.hasDisability, disabilityDetails: r.disabilityDetails });
+    setForm({
+      caseControlNo: r.caseId.startsWith('RES-') ? '' : r.caseId,
+      sex: r.sex, dateOfBirth: r.dateOfBirth, birthStatus: r.birthStatus,
+      placeOfBirth: r.placeOfBirth, religion: r.religion,
+      safehouse: r.safehouse, caseStatus: r.caseStatus, caseCategory: r.caseCategory,
+      isOrphaned: r.isOrphaned, isTrafficked: r.isTrafficked, isChildLabor: r.isChildLabor,
+      isPhysicalAbuse: r.isPhysicalAbuse, isSexualAbuse: r.isSexualAbuse,
+      isOsaec: r.isOsaec, isCicl: r.isCicl, isAtRisk: r.isAtRisk,
+      isStreetChild: r.isStreetChild, isChildWithHiv: r.isChildWithHiv,
+      is4ps: r.is4ps, isSoloParent: r.isSoloParent, isIndigenous: r.isIndigenous,
+      isFamilyParentPwd: r.isFamilyParentPwd, isInformalSettler: r.isInformalSettler,
+      admissionDate: r.admissionDate, assignedSocialWorker: r.assignedSocialWorker,
+      referralSource: r.referralSource, referringAgencyPerson: r.referringAgencyPerson,
+      initialCaseAssessment: r.initialCaseAssessment, initialRiskLevel: r.initialRiskLevel,
+      riskLevel: r.riskLevel, reintegrationType: r.reintegrationType,
+      reintegrationStatus: r.reintegrationStatus,
+      hasDisability: r.hasDisability, disabilityDetails: r.disabilityDetails,
+      hasSpecialNeeds: r.hasSpecialNeeds, specialNeedsDiagnosis: r.specialNeedsDiagnosis,
+    });
     setCaseIdError('');
     setSelected(r);
     setModal('edit');
@@ -280,6 +350,12 @@ export default function CaseloadPage() {
       safehouseId: shEntry?.safehouseId ?? undefined,
       caseStatus: form.caseStatus,
       caseCategory: form.caseCategory,
+      sex: form.sex || undefined,
+      dateOfBirth: form.dateOfBirth || undefined,
+      birthStatus: form.birthStatus || undefined,
+      placeOfBirth: form.placeOfBirth || undefined,
+      religion: form.religion || undefined,
+      subCatOrphaned: form.isOrphaned ? 'Yes' : 'No',
       subCatTrafficked: form.isTrafficked ? 'Yes' : 'No',
       subCatChildLabor: form.isChildLabor ? 'Yes' : 'No',
       subCatPhysicalAbuse: form.isPhysicalAbuse ? 'Yes' : 'No',
@@ -292,15 +368,21 @@ export default function CaseloadPage() {
       familyIs4ps: form.is4ps ? 'Yes' : 'No',
       familySoloParent: form.isSoloParent ? 'Yes' : 'No',
       familyIndigenous: form.isIndigenous ? 'Yes' : 'No',
+      familyParentPwd: form.isFamilyParentPwd ? 'Yes' : 'No',
       familyInformalSettler: form.isInformalSettler ? 'Yes' : 'No',
       dateOfAdmission: form.admissionDate,
       assignedSocialWorker: form.assignedSocialWorker,
       referralSource: form.referralSource,
+      referringAgencyPerson: form.referringAgencyPerson || undefined,
+      initialCaseAssessment: form.initialCaseAssessment || undefined,
+      initialRiskLevel: form.initialRiskLevel || undefined,
       currentRiskLevel: form.riskLevel,
       reintegrationType: form.reintegrationType,
       reintegrationStatus: form.reintegrationStatus,
       isPwd: form.hasDisability ? 'Yes' : 'No',
-      pwdType: form.disabilityDetails,
+      pwdType: form.disabilityDetails || undefined,
+      hasSpecialNeeds: form.hasSpecialNeeds ? 'Yes' : 'No',
+      specialNeedsDiagnosis: form.specialNeedsDiagnosis || undefined,
     };
     if (modal === 'add') {
       createResident(payload).then(saved => {
@@ -476,6 +558,12 @@ export default function CaseloadPage() {
                   className="px-3 py-1.5 text-xs font-semibold text-haven-teal-600 bg-haven-teal-50
                     border border-haven-teal-200 rounded-lg hover:bg-haven-teal-100 transition-colors
                     focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-haven-teal-500">Edit</button>
+                <button type="button" onClick={() => setScheduleOpen(true)}
+                  className="px-3 py-1.5 text-xs font-semibold text-white bg-haven-teal-600
+                    rounded-lg hover:bg-haven-teal-700 transition-colors
+                    focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-haven-teal-500">
+                  Schedule Session
+                </button>
                 <button type="button" onClick={() => setDetailOpen(false)} aria-label="Close"
                   className="p-1.5 rounded-lg text-stone-400 hover:bg-stone-100 transition-colors
                     focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-haven-teal-500"><XIcon /></button>
@@ -626,6 +714,42 @@ export default function CaseloadPage() {
                   )}
                 </div>
 
+                {/* Demographics */}
+                <div>
+                  <h3 className="text-xs font-semibold uppercase tracking-widest text-stone-400 mb-3">Demographics</h3>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label htmlFor="r-sex" className="block text-xs font-semibold text-stone-700 uppercase tracking-wide mb-1.5">Sex</label>
+                      <select id="r-sex" value={form.sex} onChange={e => setForm(f => ({ ...f, sex: e.target.value }))} className={inputCls}>
+                        <option value="">— Select —</option>
+                        <option value="Male">Male</option>
+                        <option value="Female">Female</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label htmlFor="r-dob" className="block text-xs font-semibold text-stone-700 uppercase tracking-wide mb-1.5">Date of Birth</label>
+                      <input id="r-dob" type="date" value={form.dateOfBirth} onChange={e => setForm(f => ({ ...f, dateOfBirth: e.target.value }))} className={inputCls} />
+                    </div>
+                    <div>
+                      <label htmlFor="r-birth-status" className="block text-xs font-semibold text-stone-700 uppercase tracking-wide mb-1.5">Birth Status</label>
+                      <select id="r-birth-status" value={form.birthStatus} onChange={e => setForm(f => ({ ...f, birthStatus: e.target.value }))} className={inputCls}>
+                        <option value="">— Select —</option>
+                        <option value="Legitimate">Legitimate</option>
+                        <option value="Illegitimate">Illegitimate</option>
+                        <option value="Unknown">Unknown</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label htmlFor="r-pob" className="block text-xs font-semibold text-stone-700 uppercase tracking-wide mb-1.5">Place of Birth</label>
+                      <input id="r-pob" type="text" value={form.placeOfBirth} onChange={e => setForm(f => ({ ...f, placeOfBirth: e.target.value }))} className={inputCls} placeholder="City / Province" />
+                    </div>
+                    <div className="col-span-2">
+                      <label htmlFor="r-religion" className="block text-xs font-semibold text-stone-700 uppercase tracking-wide mb-1.5">Religion</label>
+                      <input id="r-religion" type="text" value={form.religion} onChange={e => setForm(f => ({ ...f, religion: e.target.value }))} className={inputCls} placeholder="Catholic, Protestant, Islam…" />
+                    </div>
+                  </div>
+                </div>
+
                 {/* Placement */}
                 <div>
                   <h3 className="text-xs font-semibold uppercase tracking-widest text-stone-400 mb-3">Placement</h3>
@@ -649,6 +773,10 @@ export default function CaseloadPage() {
                     <div>
                       <label htmlFor="r-ref" className="block text-xs font-semibold text-stone-700 uppercase tracking-wide mb-1.5">Referral Source</label>
                       <input id="r-ref" type="text" value={form.referralSource} onChange={e => setForm(f => ({ ...f, referralSource: e.target.value }))} className={inputCls} placeholder="DSWD, Police, NGO…" />
+                    </div>
+                    <div className="col-span-2">
+                      <label htmlFor="r-ref-person" className="block text-xs font-semibold text-stone-700 uppercase tracking-wide mb-1.5">Referring Agency Person</label>
+                      <input id="r-ref-person" type="text" value={form.referringAgencyPerson} onChange={e => setForm(f => ({ ...f, referringAgencyPerson: e.target.value }))} className={inputCls} placeholder="Name of person at referring agency" />
                     </div>
                   </div>
                 </div>
@@ -676,6 +804,20 @@ export default function CaseloadPage() {
                         <option value="High Risk">High Risk</option>
                       </select>
                     </div>
+                    <div>
+                      <label htmlFor="r-init-risk" className="block text-xs font-semibold text-stone-700 uppercase tracking-wide mb-1.5">Initial Risk Level</label>
+                      <select id="r-init-risk" value={form.initialRiskLevel} onChange={e => setForm(f => ({ ...f, initialRiskLevel: e.target.value }))} className={inputCls}>
+                        <option value="">— Select —</option>
+                        <option value="Low">Low</option>
+                        <option value="Medium">Medium</option>
+                        <option value="High">High</option>
+                        <option value="Critical">Critical</option>
+                      </select>
+                    </div>
+                    <div className="col-span-2">
+                      <label htmlFor="r-init-assess" className="block text-xs font-semibold text-stone-700 uppercase tracking-wide mb-1.5">Initial Case Assessment</label>
+                      <textarea id="r-init-assess" rows={3} value={form.initialCaseAssessment} onChange={e => setForm(f => ({ ...f, initialCaseAssessment: e.target.value }))} className={inputCls} placeholder="Initial assessment narrative…" />
+                    </div>
                   </div>
                 </div>
 
@@ -683,6 +825,7 @@ export default function CaseloadPage() {
                 <div>
                   <h3 className="text-xs font-semibold uppercase tracking-widest text-stone-400 mb-3">Sub-Categories</h3>
                   <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                    <CheckBox label="Orphaned"       checked={form.isOrphaned}      onChange={v => setForm(f => ({...f, isOrphaned: v}))} />
                     <CheckBox label="Trafficked"     checked={form.isTrafficked}    onChange={v => setForm(f => ({...f, isTrafficked: v}))} />
                     <CheckBox label="Child Labor"    checked={form.isChildLabor}    onChange={v => setForm(f => ({...f, isChildLabor: v}))} />
                     <CheckBox label="Physical Abuse" checked={form.isPhysicalAbuse} onChange={v => setForm(f => ({...f, isPhysicalAbuse: v}))} />
@@ -699,10 +842,11 @@ export default function CaseloadPage() {
                 <div>
                   <h3 className="text-xs font-semibold uppercase tracking-widest text-stone-400 mb-3">Family Socio-Demographic Profile</h3>
                   <div className="grid grid-cols-2 gap-2">
-                    <CheckBox label="4Ps Beneficiary"  checked={form.is4ps}           onChange={v => setForm(f => ({...f, is4ps: v}))} />
-                    <CheckBox label="Solo Parent"       checked={form.isSoloParent}    onChange={v => setForm(f => ({...f, isSoloParent: v}))} />
-                    <CheckBox label="Indigenous Group"  checked={form.isIndigenous}    onChange={v => setForm(f => ({...f, isIndigenous: v}))} />
-                    <CheckBox label="Informal Settler"  checked={form.isInformalSettler} onChange={v => setForm(f => ({...f, isInformalSettler: v}))} />
+                    <CheckBox label="4Ps Beneficiary"  checked={form.is4ps}              onChange={v => setForm(f => ({...f, is4ps: v}))} />
+                    <CheckBox label="Solo Parent"       checked={form.isSoloParent}       onChange={v => setForm(f => ({...f, isSoloParent: v}))} />
+                    <CheckBox label="Indigenous Group"  checked={form.isIndigenous}       onChange={v => setForm(f => ({...f, isIndigenous: v}))} />
+                    <CheckBox label="Parent w/ Disability" checked={form.isFamilyParentPwd} onChange={v => setForm(f => ({...f, isFamilyParentPwd: v}))} />
+                    <CheckBox label="Informal Settler"  checked={form.isInformalSettler}  onChange={v => setForm(f => ({...f, isInformalSettler: v}))} />
                   </div>
                 </div>
 
@@ -714,6 +858,18 @@ export default function CaseloadPage() {
                     <div className="mt-3">
                       <label htmlFor="r-dis" className="block text-xs font-semibold text-stone-700 uppercase tracking-wide mb-1.5">Details</label>
                       <input id="r-dis" type="text" value={form.disabilityDetails} onChange={e => setForm(f => ({...f, disabilityDetails: e.target.value}))} className={inputCls} placeholder="Describe disability…" />
+                    </div>
+                  )}
+                </div>
+
+                {/* Special needs */}
+                <div>
+                  <h3 className="text-xs font-semibold uppercase tracking-widest text-stone-400 mb-3">Special Needs</h3>
+                  <CheckBox label="Has special needs" checked={form.hasSpecialNeeds} onChange={v => setForm(f => ({...f, hasSpecialNeeds: v}))} />
+                  {form.hasSpecialNeeds && (
+                    <div className="mt-3">
+                      <label htmlFor="r-snd" className="block text-xs font-semibold text-stone-700 uppercase tracking-wide mb-1.5">Diagnosis / Details</label>
+                      <input id="r-snd" type="text" value={form.specialNeedsDiagnosis} onChange={e => setForm(f => ({...f, specialNeedsDiagnosis: e.target.value}))} className={inputCls} placeholder="Describe special needs…" />
                     </div>
                   )}
                 </div>
@@ -778,6 +934,15 @@ export default function CaseloadPage() {
             </div>
           </div>
         </div>
+      )}
+
+      {scheduleOpen && selected && (
+        <ScheduleSessionModal
+          residentId={parseInt(selected.id)}
+          caseId={selected.caseId}
+          assignedSocialWorker={selected.assignedSocialWorker}
+          onClose={() => setScheduleOpen(false)}
+        />
       )}
     </div>
   );

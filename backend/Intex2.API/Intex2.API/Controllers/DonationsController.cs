@@ -96,20 +96,43 @@ public class DonationsController : ControllerBase
         });
     }
 
-    [Authorize]
+    [AllowAnonymous]
     [HttpPost]
     public async Task<ActionResult<DonationDto>> Create([FromBody] DonationCreateDto dto)
     {
-        if (!User.IsInRole(AuthRoles.Admin))
+        int resolvedSupporterId;
+
+        if (User.IsInRole(AuthRoles.Admin))
+        {
+            if (dto.SupporterId == null)
+                return BadRequest(new { detail = "SupporterId is required for admin." });
+            resolvedSupporterId = dto.SupporterId.Value;
+        }
+        else
         {
             var email = User.Identity?.Name;
+            if (string.IsNullOrEmpty(email)) return Unauthorized();
+
             var supporter = await _context.Supporters.FirstOrDefaultAsync(s => s.Email == email);
-            if (supporter == null || dto.SupporterId != supporter.SupporterId) return Forbid();
+            if (supporter == null)
+            {
+                supporter = new Supporter
+                {
+                    Email = email,
+                    SupporterType = "MonetaryDonor",
+                    Status = "Active",
+                    AcquisitionChannel = "Website",
+                    CreatedAt = DateTime.UtcNow.ToString("yyyy-MM-dd"),
+                };
+                _context.Supporters.Add(supporter);
+                await _context.SaveChangesAsync();
+            }
+            resolvedSupporterId = supporter.SupporterId!.Value;
         }
 
         var entity = new Donation
         {
-            SupporterId = dto.SupporterId,
+            SupporterId = resolvedSupporterId,
             DonationType = dto.DonationType,
             DonationDate = dto.DonationDate,
             IsRecurring = dto.IsRecurring,

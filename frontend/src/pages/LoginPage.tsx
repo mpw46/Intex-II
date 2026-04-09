@@ -151,7 +151,7 @@ export default function LoginPage() {
         rememberMe
       );
       const [session] = await Promise.all([getAuthSession(), refreshAuthState()]);
-      void navigate(session.roles.includes('Admin') ? '/admin' : '/impact');
+      void navigate(session.roles.includes('Admin') ? '/admin' : '/donor');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Sign-in failed. Please try again.');
     } finally {
@@ -177,7 +177,7 @@ export default function LoginPage() {
       await registerUser(register.email, register.password);
       await loginUser(register.email, register.password, true);
       const [session] = await Promise.all([getAuthSession(), refreshAuthState()]);
-      void navigate(session.roles.includes('Admin') ? '/admin' : '/impact');
+      void navigate(session.roles.includes('Admin') ? '/admin' : '/donor');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Registration failed. Please try again.');
     } finally {
@@ -186,7 +186,7 @@ export default function LoginPage() {
   }
 
   function handleExternalLogin(providerName: string) {
-    window.location.assign(buildExternalLoginUrl(providerName, '/impact'));
+    window.location.assign(buildExternalLoginUrl(providerName, '/donor'));
   }
 
   // -------------------------------------------------------------------------
