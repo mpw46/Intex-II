@@ -1,14 +1,33 @@
 import { useState, useEffect } from 'react';
 import { Link, Navigate } from 'react-router-dom';
+import {
+  BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer,
+} from 'recharts';
 import { useAuth } from '../context/AuthContext';
 import { getDonations } from '../api/donationsApi';
+import { getImpactSnapshot, getImpactAllocations } from '../api/publicImpactApi';
 import type { DonationDto } from '../types/donation';
+import type { ImpactSnapshotDto, AllocationSummaryDto } from '../types/publicImpact';
+
+const TIERS = [
+  { name: 'Friend',   min: 0,     next: 5000   },
+  { name: 'Champion', min: 5000,  next: 15000  },
+  { name: 'Guardian', min: 15000, next: 50000  },
+  { name: 'Hero',     min: 50000, next: null   },
+];
 
 function DonorDashboardPage() {
   const { authSession, isAuthenticated, isLoading } = useAuth();
   const [donations, setDonations] = useState<DonationDto[]>([]);
   const [fetching, setFetching] = useState(true);
   const [fetchError, setFetchError] = useState('');
+  const [snapshot, setSnapshot] = useState<ImpactSnapshotDto | null>(null);
+  const [allocations, setAllocations] = useState<AllocationSummaryDto[]>([]);
+
+  useEffect(() => {
+    getImpactSnapshot().then(setSnapshot).catch(() => {});
+    getImpactAllocations().then(setAllocations).catch(() => {});
+  }, []);
 
   useEffect(() => {
     if (!isAuthenticated) return;
@@ -35,9 +54,33 @@ function DonorDashboardPage() {
     return sum + (isNaN(amt) ? 0 : amt);
   }, 0);
 
+  // Tier logic
+  const currentTier = [...TIERS].reverse().find(t => totalDonated >= t.min) ?? TIERS[0];
+  const tierProgress = currentTier.next
+    ? Math.min(100, ((totalDonated - currentTier.min) / (currentTier.next - currentTier.min)) * 100)
+    : 100;
+
+  // Monthly chart data
+  const monthlyData = donations
+    .filter(d => d.donationDate && d.amount)
+    .reduce((acc, d) => {
+      const month = d.donationDate!.slice(0, 7);
+      const amt = parseFloat(d.amount!) || 0;
+      const existing = acc.find(m => m.month === month);
+      if (existing) existing.amount += amt;
+      else acc.push({ month, amount: amt });
+      return acc;
+    }, [] as { month: string; amount: number }[])
+    .sort((a, b) => a.month.localeCompare(b.month))
+    .map(d => ({
+      ...d,
+      label: new Date(d.month + '-01').toLocaleDateString('en-PH', { month: 'short', year: '2-digit' }),
+    }));
+
   return (
     <div className="min-h-screen bg-stone-50">
-      {/* Header */}
+
+      {/* ── Header ─────────────────────────────────────────────────── */}
       <section className="bg-haven-teal-900 pt-24 pb-12">
         <div className="max-w-4xl mx-auto px-6 md:px-12">
           <p className="text-[11px] font-semibold uppercase tracking-widest text-haven-teal-300 mb-2">
@@ -49,7 +92,8 @@ function DonorDashboardPage() {
       </section>
 
       <section className="max-w-4xl mx-auto px-6 md:px-12 py-10 space-y-8">
-        {/* Summary card */}
+
+        {/* ── Summary cards ──────────────────────────────────────────── */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div className="bg-white rounded-xl border border-stone-200 p-6">
             <p className="text-xs font-semibold uppercase tracking-widest text-stone-400 mb-1">
@@ -67,7 +111,158 @@ function DonorDashboardPage() {
           </div>
         </div>
 
-        {/* Donate CTA */}
+        {/* ── Donor Milestone / Tier ──────────────────────────────────── */}
+        {!fetching && donations.length > 0 && (
+          <div className="bg-white rounded-xl border border-stone-200 p-6">
+            <p className="text-xs font-semibold uppercase tracking-widest text-stone-400 mb-4">
+              Donor Milestone
+            </p>
+            <div className="flex items-center gap-3 mb-4">
+              <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold bg-haven-teal-50 text-haven-teal-700">
+                {currentTier.name}
+              </span>
+              {currentTier.next && (
+                <span className="text-sm text-stone-500">
+                  ₱{(currentTier.next - totalDonated).toLocaleString('en-PH', { minimumFractionDigits: 0 })} away from{' '}
+                  <span className="font-medium text-stone-700">
+                    {TIERS[TIERS.indexOf(currentTier) + 1]?.name}
+                  </span>
+                </span>
+              )}
+              {!currentTier.next && (
+                <span className="text-sm text-stone-500">You've reached the highest tier — thank you!</span>
+              )}
+            </div>
+            <div className="w-full bg-stone-100 rounded-full h-2">
+              <div
+                className="bg-haven-teal-500 h-2 rounded-full transition-all duration-500"
+                style={{ width: `${tierProgress}%` }}
+              />
+            </div>
+            <div className="flex justify-between mt-2 text-xs text-stone-400">
+              <span>{currentTier.name} (₱{currentTier.min.toLocaleString()})</span>
+              {currentTier.next && (
+                <span>{TIERS[TIERS.indexOf(currentTier) + 1]?.name} (₱{currentTier.next.toLocaleString()})</span>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* ── Donation History Chart ──────────────────────────────────── */}
+        {!fetching && monthlyData.length > 1 && (
+          <div className="bg-white rounded-xl border border-stone-200 p-6">
+            <p className="text-xs font-semibold uppercase tracking-widest text-stone-400 mb-1">
+              Donation History
+            </p>
+            <p className="text-lg font-bold text-stone-900 mb-6">Your giving over time</p>
+            <ResponsiveContainer width="100%" height={220}>
+              <BarChart data={monthlyData} barCategoryGap="35%">
+                <XAxis
+                  dataKey="label"
+                  tick={{ fontSize: 11, fill: '#78716c' }}
+                  axisLine={false}
+                  tickLine={false}
+                />
+                <YAxis hide />
+                <Tooltip
+                  formatter={(value) => {
+                    const num = typeof value === 'number' ? value : parseFloat(String(value));
+                    return [`₱${num.toLocaleString('en-PH', { minimumFractionDigits: 2 })}`, 'Donated'];
+                  }}
+                  contentStyle={{
+                    backgroundColor: '#fff',
+                    border: '1px solid #e7e5e4',
+                    borderRadius: '8px',
+                    fontSize: '12px',
+                    fontFamily: 'Inter, sans-serif',
+                  }}
+                  cursor={{ fill: '#f5f5f4' }}
+                />
+                <Bar dataKey="amount" fill="#1a8a6e" radius={[4, 4, 0, 0]} />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        )}
+
+        {/* ── Where Your Money Goes ───────────────────────────────────── */}
+        {allocations.length > 0 && (
+          <div className="bg-white rounded-xl border border-stone-200 p-6">
+            <p className="text-xs font-semibold uppercase tracking-widest text-stone-400 mb-1">
+              Fund Allocation
+            </p>
+            <p className="text-lg font-bold text-stone-900 mb-6">Where your money goes</p>
+            <div className="space-y-5">
+              {allocations.map((a) => {
+                const donorShare = (a.percentOfFunds / 100) * totalDonated;
+                return (
+                  <div key={a.programArea}>
+                    <div className="flex items-center justify-between mb-1.5">
+                      <div className="flex items-center gap-2">
+                        <span className="text-sm font-semibold text-stone-800">{a.programArea}</span>
+                        <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-haven-teal-50 text-haven-teal-700">
+                          {a.percentOfFunds}%
+                        </span>
+                      </div>
+                      {totalDonated > 0 && (
+                        <span className="text-xs text-stone-500">
+                          ≈ ₱{donorShare.toLocaleString('en-PH', { minimumFractionDigits: 0 })}
+                        </span>
+                      )}
+                    </div>
+                    <div className="w-full bg-stone-100 rounded-full h-2 mb-1">
+                      <div
+                        className="bg-haven-teal-500 h-2 rounded-full"
+                        style={{ width: `${a.percentOfFunds}%` }}
+                      />
+                    </div>
+                    <p className="text-xs text-stone-400">{a.description}</p>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
+        {/* ── Your Impact in Numbers ──────────────────────────────────── */}
+        {snapshot && (
+          <div className="bg-haven-teal-50 rounded-xl border border-haven-teal-100 p-6">
+            <p className="text-xs font-semibold uppercase tracking-widest text-haven-teal-600 mb-1">
+              Collective Impact
+            </p>
+            <p className="text-lg font-bold text-stone-900 mb-1">Your generosity is part of this</p>
+            <p className="text-sm text-stone-500 mb-6">
+              Together with donors like you, Haven has made a real difference.
+            </p>
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+              <div>
+                <p className="text-2xl font-bold text-haven-teal-700">
+                  {snapshot.totalGirlsServed.toLocaleString()}
+                </p>
+                <p className="text-xs text-stone-500 mt-0.5">Girls served</p>
+              </div>
+              <div>
+                <p className="text-2xl font-bold text-haven-teal-700">
+                  {snapshot.activeResidents}
+                </p>
+                <p className="text-xs text-stone-500 mt-0.5">Active residents</p>
+              </div>
+              <div>
+                <p className="text-2xl font-bold text-haven-teal-700">
+                  {snapshot.reintegrationSuccessRate}%
+                </p>
+                <p className="text-xs text-stone-500 mt-0.5">Reintegration rate</p>
+              </div>
+              <div>
+                <p className="text-2xl font-bold text-haven-teal-700">
+                  {snapshot.activeSafehouses}
+                </p>
+                <p className="text-xs text-stone-500 mt-0.5">Active safehouses</p>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* ── Donate CTA ─────────────────────────────────────────────── */}
         <div className="flex justify-end">
           <Link
             to="/donate"
@@ -83,7 +278,7 @@ function DonorDashboardPage() {
           </Link>
         </div>
 
-        {/* Donation history */}
+        {/* ── Donation history table ──────────────────────────────────── */}
         {fetchError && (
           <div className="bg-rose-50 border border-rose-200 rounded-lg px-4 py-3">
             <p className="text-sm text-rose-700">{fetchError}</p>
@@ -107,6 +302,9 @@ function DonorDashboardPage() {
           </div>
         ) : (
           <div className="bg-white rounded-xl border border-stone-200 overflow-hidden">
+            <div className="px-6 py-4 border-b border-stone-100">
+              <p className="text-sm font-semibold text-stone-700">Donation History</p>
+            </div>
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-stone-100 bg-stone-50">
