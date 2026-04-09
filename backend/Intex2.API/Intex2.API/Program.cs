@@ -16,10 +16,14 @@ builder.Services.AddControllers();
 builder.Services.AddOpenApi();
 
 builder.Services.AddDbContext<Intex2104Context>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("IntexConnection")));
+    options.UseSqlServer(
+        builder.Configuration.GetConnectionString("IntexConnection"),
+        sql => sql.EnableRetryOnFailure(maxRetryCount: 5, maxRetryDelay: TimeSpan.FromSeconds(10), errorNumbersToAdd: null)));
 
 builder.Services.AddDbContext<AuthIdentityDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("AuthConnection")));
+    options.UseSqlServer(
+        builder.Configuration.GetConnectionString("AuthConnection"),
+        sql => sql.EnableRetryOnFailure(maxRetryCount: 5, maxRetryDelay: TimeSpan.FromSeconds(10), errorNumbersToAdd: null)));
 
 builder.Services.AddIdentityApiEndpoints<DonorUser>()
     .AddRoles<IdentityRole>()
