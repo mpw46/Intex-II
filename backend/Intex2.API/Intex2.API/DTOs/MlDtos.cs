@@ -33,3 +33,14 @@ public class MlSocialEngagementDriverDto
     public DateTime ScoredAt { get; set; }
     public string ModelVersion { get; set; } = string.Empty;
 }
+
+public class MlReintegrationDriverDto
+{
+    public int Rank { get; set; }
+    public string FeatureName { get; set; } = string.Empty;
+    public double Importance { get; set; }
+    public string? Direction { get; set; }   // "positive" (faster) | "negative" (slower) — OLS only; null for Tree
+    public string ModelType { get; set; } = string.Empty;
+    public DateTime ScoredAt { get; set; }
+    public string ModelVersion { get; set; } = string.Empty;
+}

@@ -1,5 +1,5 @@
 import { readApiError } from './authAPI';
-import type { MlResidentRiskDto, MlDonorRiskDto, MlSocialEngagementDriverDto } from '../types/ml';
+import type { MlResidentRiskDto, MlDonorRiskDto, MlSocialEngagementDriverDto, MlReintegrationDriverDto } from '../types/ml';
 
 const apiBaseUrl = import.meta.env.VITE_API_URL ?? '';
 
@@ -25,5 +25,12 @@ export async function getMlSocialEngagement(modelType = 'OLS'): Promise<MlSocial
   const params = new URLSearchParams({ modelType });
   const response = await fetch(`${apiBaseUrl}/MlSocialEngagement?${params}`, { credentials: 'include' });
   if (!response.ok) throw new Error(await readApiError(response, 'Unable to load social engagement data.'));
+  return response.json();
+}
+
+export async function getMlReintegrationDrivers(modelType = 'OLS'): Promise<MlReintegrationDriverDto[]> {
+  const params = new URLSearchParams({ modelType });
+  const response = await fetch(`${apiBaseUrl}/MlReintegrationDriver?${params}`, { credentials: 'include' });
+  if (!response.ok) throw new Error(await readApiError(response, 'Unable to load reintegration driver data.'));
   return response.json();
 }

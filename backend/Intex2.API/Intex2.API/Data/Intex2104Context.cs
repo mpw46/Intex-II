@@ -53,6 +53,7 @@ public partial class Intex2104Context : DbContext
     public DbSet<MlResidentRiskScore> MlResidentRiskScores { get; set; }
     public DbSet<MlDonorRiskScore> MlDonorRiskScores { get; set; }
     public DbSet<MlSocialEngagementDriver> MlSocialEngagementDrivers { get; set; }
+    public DbSet<MlReintegrationDriver> MlReintegrationDrivers { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -502,6 +503,21 @@ public partial class Intex2104Context : DbContext
         {
             entity.HasKey(e => e.DriverId);
             entity.ToTable("ml_social_engagement_drivers");
+            entity.Property(e => e.DriverId).HasColumnName("driver_id");
+            entity.Property(e => e.ScoredAt).HasColumnName("scored_at");
+            entity.Property(e => e.ModelType).HasColumnName("model_type");
+            entity.Property(e => e.Rank).HasColumnName("rank");
+            entity.Property(e => e.FeatureName).HasColumnName("feature_name");
+            entity.Property(e => e.Importance).HasColumnName("importance");
+            entity.Property(e => e.Direction).HasColumnName("direction");
+            entity.Property(e => e.ModelVersion).HasColumnName("model_version");
+            entity.Property(e => e.IsCurrent).HasColumnName("is_current");
+        });
+
+        modelBuilder.Entity<MlReintegrationDriver>(entity =>
+        {
+            entity.HasKey(e => e.DriverId);
+            entity.ToTable("ml_reintegration_drivers");
             entity.Property(e => e.DriverId).HasColumnName("driver_id");
             entity.Property(e => e.ScoredAt).HasColumnName("scored_at");
             entity.Property(e => e.ModelType).HasColumnName("model_type");

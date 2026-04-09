@@ -45,3 +45,9 @@ jobs:
           jupyter nbconvert --to notebook --execute \
             --ExecutePreprocessor.timeout=600 \
             ml-pipelines/social-media-effectiveness.ipynb
+
+      - name: Train & score — Reintegration Readiness
+        run: |
+          jupyter nbconvert --to notebook --execute \
+            --ExecutePreprocessor.timeout=600 \
+            ml-pipelines/reintegration-readiness.ipynb

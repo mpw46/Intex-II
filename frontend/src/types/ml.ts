@@ -28,3 +28,13 @@ export interface MlSocialEngagementDriverDto {
   scoredAt: string;
   modelVersion: string;
 }
+
+export interface MlReintegrationDriverDto {
+  rank: number;
+  featureName: string;
+  importance: number;
+  direction: string | null;    // 'positive' (faster) | 'negative' (slower) — OLS only; null for Tree
+  modelType: string;           // 'OLS' | 'DecisionTree'
+  scoredAt: string;
+  modelVersion: string;
+}
