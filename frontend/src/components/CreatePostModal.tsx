@@ -52,18 +52,20 @@ export default function CreatePostModal({ isOpen, onClose }: CreatePostModalProp
     setLoading(true);
     setCopied(false);
     setShared(false);
-    Promise.all([getImpactSnapshot(), getImpactAllocations(), getDonationImpactRates()])
+    // Fetch each independently so one failure doesn't block the others
+    const snapP  = getImpactSnapshot().catch(() => null);
+    const allocP = getImpactAllocations().catch(() => [] as AllocationSummaryDto[]);
+    const rateP  = getDonationImpactRates().catch(() => [] as DonationImpactRateDto[]);
+
+    Promise.all([snapP, allocP, rateP])
       .then(([snap, allocs, rates]) => {
-        setSnapshot(snap);
-        setAllocations(allocs);
-        setImpactRates(rates);
+        if (snap) setSnapshot(snap);
+        setAllocations(allocs ?? []);
+        setImpactRates(rates ?? []);
         setSelectedMetrics(new Set([
-          'snapshot.totalGirlsServed',
-          'snapshot.reintegrationSuccessRate',
-          'snapshot.activeSafehouses',
+          ...(snap ? ['snapshot.totalGirlsServed', 'snapshot.reintegrationSuccessRate', 'snapshot.activeSafehouses'] : []),
         ]));
       })
-      .catch(() => { /* graceful — checkboxes will be empty */ })
       .finally(() => setLoading(false));
   }, [isOpen]);
 
