@@ -2,6 +2,9 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { createDonation } from '../api/donationApi';
 import { useAuth } from '../context/AuthContext';
+import DonationImpactCards, { SAMPLE_RATES } from './DonationImpactCards';
+import type { DonationImpactRate } from './DonationImpactCards';
+import { getDonationImpactRates } from '../api/publicImpactApi';
 
 interface Props {
   isOpen: boolean;
@@ -16,6 +19,23 @@ export default function DonateModal({ isOpen, onClose }: Props) {
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState('');
+  const [impactRates, setImpactRates] = useState<DonationImpactRate[]>(SAMPLE_RATES);
+
+  useEffect(() => {
+    getDonationImpactRates()
+      .then((rates) =>
+        setImpactRates(
+          rates.map((r) => ({
+            impactCategory: r.impactCategory,
+            costPerUnit: r.costPerUnit,
+            unitLabel: r.unitLabel,
+          }))
+        )
+      )
+      .catch(() => {
+        // Keep SAMPLE_RATES as fallback
+      });
+  }, []);
 
   // Close on Escape key
   useEffect(() => {
@@ -204,6 +224,7 @@ export default function DonateModal({ isOpen, onClose }: Props) {
                       </button>
                     ))}
                   </div>
+                  <DonationImpactCards amount={parseFloat(amount) || 0} rates={impactRates} />
                 </div>
 
                 {/* Recurring toggle */}

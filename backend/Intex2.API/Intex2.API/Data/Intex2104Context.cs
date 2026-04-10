@@ -54,6 +54,7 @@ public partial class Intex2104Context : DbContext
     public DbSet<MlDonorRiskScore> MlDonorRiskScores { get; set; }
     public DbSet<MlSocialEngagementDriver> MlSocialEngagementDrivers { get; set; }
     public DbSet<MlReintegrationDriver> MlReintegrationDrivers { get; set; }
+    public DbSet<MlDonationImpactRate> MlDonationImpactRates { get; set; }
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Donation>(entity =>
@@ -524,6 +525,21 @@ public partial class Intex2104Context : DbContext
             entity.Property(e => e.FeatureName).HasColumnName("feature_name");
             entity.Property(e => e.Importance).HasColumnName("importance");
             entity.Property(e => e.Direction).HasColumnName("direction");
+            entity.Property(e => e.ModelVersion).HasColumnName("model_version");
+            entity.Property(e => e.IsCurrent).HasColumnName("is_current");
+        });
+
+        modelBuilder.Entity<MlDonationImpactRate>(entity =>
+        {
+            entity.HasKey(e => e.RateId);
+            entity.ToTable("ml_donation_impact_rates");
+            entity.Property(e => e.RateId).HasColumnName("rate_id");
+            entity.Property(e => e.ImpactCategory).HasColumnName("impact_category");
+            entity.Property(e => e.CostPerUnit).HasColumnName("cost_per_unit");
+            entity.Property(e => e.UnitLabel).HasColumnName("unit_label");
+            entity.Property(e => e.TotalAllocated).HasColumnName("total_allocated");
+            entity.Property(e => e.TotalUnits).HasColumnName("total_units");
+            entity.Property(e => e.ScoredAt).HasColumnName("scored_at");
             entity.Property(e => e.ModelVersion).HasColumnName("model_version");
             entity.Property(e => e.IsCurrent).HasColumnName("is_current");
         });

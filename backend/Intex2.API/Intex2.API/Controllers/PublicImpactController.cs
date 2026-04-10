@@ -179,6 +179,22 @@ public class PublicImpactController : ControllerBase
         return Ok(result);
     }
 
+    [HttpGet("donation-rates")]
+    public async Task<ActionResult> GetDonationRates()
+    {
+        var rates = await _context.MlDonationImpactRates
+            .Where(r => r.IsCurrent)
+            .Select(r => new
+            {
+                r.ImpactCategory,
+                r.CostPerUnit,
+                r.UnitLabel,
+            })
+            .ToListAsync();
+
+        return Ok(rates);
+    }
+
     [HttpGet("program-outcomes")]
     public async Task<ActionResult<IEnumerable<ProgramOutcomeMetricDto>>> GetProgramOutcomes()
     {

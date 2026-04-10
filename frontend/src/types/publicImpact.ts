@@ -13,3 +13,9 @@ export interface AllocationSummaryDto {
   percentOfFunds: number;
   description: string;
 }
+
+export interface DonationImpactRateDto {
+  impactCategory: string;
+  costPerUnit: number;
+  unitLabel: string;
+}
