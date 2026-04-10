@@ -12,6 +12,11 @@ import {
 
 import { useAuth } from '../context/AuthContext';
 import { getImpactSnapshot, type ImpactSnapshot } from '../api/impactApi';
+import type { AuthSession } from '../types/AuthSession';
+
+function postLoginDestination(session: AuthSession): '/admin' | '/donor' {
+  return session.roles.includes('Admin') ? '/admin' : '/donor';
+}
 
 // ---------------------------------------------------------------------------
 // Types
@@ -139,6 +144,30 @@ export default function LoginPage() {
     void loadExternalProviders();
   }, []);
 
+  const postOAuth = searchParams.get('postOAuth');
+
+  useEffect(() => {
+    if (postOAuth !== '1') return;
+    let cancelled = false;
+    void (async () => {
+      try {
+        await refreshAuthState();
+        const session = await getAuthSession();
+        if (cancelled) return;
+        if (session.isAuthenticated) {
+          void navigate(postLoginDestination(session), { replace: true });
+        } else {
+          void navigate('/login', { replace: true });
+        }
+      } catch {
+        if (!cancelled) void navigate('/login', { replace: true });
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [postOAuth, refreshAuthState, navigate]);
+
   async function loadExternalProviders() {
     try {
       const providers = await getExternalProviders();
@@ -160,7 +189,7 @@ export default function LoginPage() {
         rememberMe
       );
       const [session] = await Promise.all([getAuthSession(), refreshAuthState()]);
-      void navigate(session.roles.includes('Admin') ? '/admin' : '/donor');
+      void navigate(postLoginDestination(session));
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Sign-in failed. Please try again.');
     } finally {
@@ -191,7 +220,7 @@ export default function LoginPage() {
           : { organizationName: register.organizationName, supporterType: 'MonetaryDonor' }
       );
       const [session] = await Promise.all([getAuthSession(), refreshAuthState()]);
-      void navigate(session.roles.includes('Admin') ? '/admin' : '/donor');
+      void navigate(postLoginDestination(session));
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Registration failed. Please try again.');
     } finally {
@@ -200,7 +229,7 @@ export default function LoginPage() {
   }
 
   function handleExternalLogin(providerName: string) {
-    window.location.assign(buildExternalLoginUrl(providerName, '/donor'));
+    window.location.assign(buildExternalLoginUrl(providerName, '/login?postOAuth=1'));
   }
 
   // -------------------------------------------------------------------------
