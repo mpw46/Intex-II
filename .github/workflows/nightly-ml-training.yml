@@ -51,9 +51,3 @@ jobs:
           jupyter nbconvert --to notebook --execute \
             --ExecutePreprocessor.timeout=600 \
             ml-pipelines/reintegration-readiness.ipynb
-
-      - name: Train & score — Donor Impact
-        run: |
-          jupyter nbconvert --to notebook --execute \
-            --ExecutePreprocessor.timeout=600 \
-            ml-pipelines/predict-donor-impact.ipynb

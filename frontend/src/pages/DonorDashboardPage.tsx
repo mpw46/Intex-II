@@ -4,12 +4,10 @@ import {
   BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer,
 } from 'recharts';
 import { useAuth } from '../context/AuthContext';
-import { getDonations } from '../api/donationsApi';
+import { getDonations, getAllocations } from '../api/donationsApi';
 import { getImpactSnapshot } from '../api/publicImpactApi';
-import { getMlDonorImpact } from '../api/mlApi';
-import type { DonationDto } from '../types/donation';
+import type { DonationDto, DonationAllocationDto } from '../types/donation';
 import type { ImpactSnapshotDto } from '../types/publicImpact';
-import type { MlDonorImpactDto } from '../types/ml';
 
 const TIERS = [
   { name: 'Friend',   min: 0,     next: 5000   },
@@ -24,7 +22,7 @@ function DonorDashboardPage() {
   const [fetching, setFetching] = useState(true);
   const [fetchError, setFetchError] = useState('');
   const [snapshot, setSnapshot] = useState<ImpactSnapshotDto | null>(null);
-  const [donorImpact, setDonorImpact] = useState<MlDonorImpactDto[]>([]);
+  const [actualAllocations, setActualAllocations] = useState<{ area: string; pct: number; amount: number }[]>([]);
 
   useEffect(() => {
     getImpactSnapshot().then(setSnapshot).catch(() => {});
@@ -34,11 +32,22 @@ function DonorDashboardPage() {
     if (!isAuthenticated) return;
     Promise.all([
       getDonations().catch(() => [] as DonationDto[]),
-      getMlDonorImpact().catch(() => [] as MlDonorImpactDto[]),
+      getAllocations().catch(() => [] as DonationAllocationDto[]),
     ])
-      .then(([donationData, impactData]) => {
+      .then(([donationData, allocationData]) => {
         setDonations(donationData);
-        setDonorImpact(impactData);
+
+        const areaMap = new Map<string, number>();
+        for (const a of allocationData) {
+          if (!a.programArea || !a.amountAllocated) continue;
+          areaMap.set(a.programArea, (areaMap.get(a.programArea) ?? 0) + a.amountAllocated);
+        }
+        const total = [...areaMap.values()].reduce((s, v) => s + v, 0);
+        setActualAllocations(
+          [...areaMap.entries()]
+            .map(([area, amount]) => ({ area, amount, pct: total > 0 ? (amount / total) * 100 : 0 }))
+            .sort((a, b) => b.amount - a.amount)
+        );
       })
       .catch(() => setFetchError('Unable to load your donation history.'))
       .finally(() => setFetching(false));
@@ -192,38 +201,41 @@ function DonorDashboardPage() {
         )}
 
 
-        {/* ── ML — Predicted Program Impact ───────────────────────────── */}
-        <div className="bg-white rounded-xl border border-stone-200 p-6">
-          <div className="flex items-center justify-between mb-1">
-            <p className="text-lg font-bold text-stone-900">Predicted Program Impact</p>
-            <span className="text-xs font-medium px-2 py-0.5 rounded-full border text-haven-teal-700 bg-haven-teal-50 border-haven-teal-200">
-              ML Model
-            </span>
-          </div>
-          <p className="text-xs text-stone-400 mb-5">
-            Based on your giving history, here is how contributions like yours are typically allocated across programs.
-          </p>
-          {donorImpact.length === 0 ? (
-            <p className="text-sm text-stone-400">No prediction available yet — model runs nightly.</p>
-          ) : (
-            <div className="space-y-4">
-              {donorImpact.map(d => (
-                <div key={d.programArea}>
-                  <div className="flex justify-between text-xs text-stone-600 mb-1">
-                    <span className="font-medium">{d.programArea.replace(/_/g, ' ')}</span>
-                    <span className="font-semibold text-haven-teal-700">{d.predictedPct.toFixed(1)}%</span>
+        {/* ── Where Your Donations Went ──────────────────────────────── */}
+        {actualAllocations.length > 0 && (
+          <div className="bg-white rounded-xl border border-stone-200 p-6">
+            <p className="text-xs font-semibold uppercase tracking-widest text-stone-400 mb-1">
+              Allocation Breakdown
+            </p>
+            <p className="text-lg font-bold text-stone-900 mb-6">Where your donations have gone</p>
+            <div className="space-y-5">
+              {actualAllocations.map(a => (
+                <div key={a.area}>
+                  <div className="flex items-center justify-between mb-1.5">
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm font-semibold text-stone-800">
+                        {a.area.replace(/_/g, ' ')}
+                      </span>
+                      <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium
+                        bg-haven-teal-50 text-haven-teal-700">
+                        {a.pct.toFixed(1)}%
+                      </span>
+                    </div>
+                    <span className="text-xs text-stone-500">
+                      ₱{a.amount.toLocaleString('en-PH', { minimumFractionDigits: 0 })}
+                    </span>
                   </div>
                   <div className="w-full bg-stone-100 rounded-full h-2">
                     <div
                       className="bg-haven-teal-500 h-2 rounded-full"
-                      style={{ width: `${d.predictedPct}%` }}
+                      style={{ width: `${a.pct}%` }}
                     />
                   </div>
                 </div>
               ))}
             </div>
-          )}
-        </div>
+          </div>
+        )}
 
         {/* ── Your Impact in Numbers ──────────────────────────────────── */}
         {snapshot && (

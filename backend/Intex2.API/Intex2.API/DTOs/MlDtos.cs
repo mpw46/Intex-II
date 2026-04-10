@@ -44,11 +44,3 @@ public class MlReintegrationDriverDto
     public DateTime ScoredAt { get; set; }
     public string ModelVersion { get; set; } = string.Empty;
 }
-
-public class MlDonorImpactDto
-{
-    public string ProgramArea { get; set; } = string.Empty;
-    public double PredictedPct { get; set; }
-    public string ModelVersion { get; set; } = string.Empty;
-    public DateTime ScoredAt { get; set; }
-}

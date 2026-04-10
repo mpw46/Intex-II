@@ -8,7 +8,6 @@ namespace Intex2.API.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-[Authorize(Policy = AuthPolicies.AdminOnly)]
 public class DonationAllocationsController : ControllerBase
 {
     private readonly Intex2104Context _context;
@@ -19,21 +18,35 @@ public class DonationAllocationsController : ControllerBase
     }
 
     [HttpGet]
+    [Authorize]
     public async Task<ActionResult<IEnumerable<DonationAllocationDto>>> GetAll(
         [FromQuery] int? donationId,
         [FromQuery] int? safehouseId,
         [FromQuery] string? programArea)
     {
-        var query = _context.DonationAllocations.AsQueryable();
+        IQueryable<DonationAllocation> query = _context.DonationAllocations;
 
-        if (donationId.HasValue)
-            query = query.Where(a => a.DonationId == donationId.Value);
+        if (!User.IsInRole(AuthRoles.Admin))
+        {
+            var email = User.Identity?.Name;
+            var supporter = await _context.Supporters
+                .FirstOrDefaultAsync(s => s.Email == email);
+            if (supporter == null) return Ok(Array.Empty<DonationAllocationDto>());
 
-        if (safehouseId.HasValue)
-            query = query.Where(a => a.SafehouseId == safehouseId.Value);
-
-        if (!string.IsNullOrEmpty(programArea))
-            query = query.Where(a => a.ProgramArea == programArea);
+            var donorDonationIds = _context.Donations
+                .Where(d => d.SupporterId == supporter.SupporterId)
+                .Select(d => d.DonationId);
+            query = query.Where(a => donorDonationIds.Contains(a.DonationId));
+        }
+        else
+        {
+            if (donationId.HasValue)
+                query = query.Where(a => a.DonationId == donationId.Value);
+            if (safehouseId.HasValue)
+                query = query.Where(a => a.SafehouseId == safehouseId.Value);
+            if (!string.IsNullOrEmpty(programArea))
+                query = query.Where(a => a.ProgramArea == programArea);
+        }
 
         var results = await query
             .Select(a => new DonationAllocationDto
