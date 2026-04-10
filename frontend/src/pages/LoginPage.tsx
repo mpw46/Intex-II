@@ -4,6 +4,7 @@ import {
   getAuthSession,
   loginUser,
   registerUser,
+  updateMyProfile,
   getExternalProviders,
   buildExternalLoginUrl,
   type ExternalAuthProvider
@@ -24,6 +25,10 @@ interface SignInForm {
 }
 
 interface RegisterForm {
+  accountType: 'individual' | 'organization';
+  firstName: string;
+  lastName: string;
+  organizationName: string;
   email: string;
   password: string;
   confirmPassword: string;
@@ -94,6 +99,10 @@ export default function LoginPage() {
 
   // Register state
   const [register, setRegister] = useState<RegisterForm>({
+    accountType: 'individual',
+    firstName: '',
+    lastName: '',
+    organizationName: '',
     email: '',
     password: '',
     confirmPassword: '',
@@ -176,6 +185,11 @@ export default function LoginPage() {
     try {
       await registerUser(register.email, register.password);
       await loginUser(register.email, register.password, true);
+      await updateMyProfile(
+        register.accountType === 'individual'
+          ? { firstName: register.firstName, lastName: register.lastName, supporterType: 'MonetaryDonor' }
+          : { organizationName: register.organizationName, supporterType: 'MonetaryDonor' }
+      );
       const [session] = await Promise.all([getAuthSession(), refreshAuthState()]);
       void navigate(session.roles.includes('Admin') ? '/admin' : '/donor');
     } catch (err) {
@@ -388,6 +402,95 @@ export default function LoginPage() {
           {/* ---------------------------------------------------------------- */}
           {mode === 'register' && (
             <form onSubmit={handleRegister} noValidate className="space-y-5">
+              {/* Account type toggle */}
+              <div>
+                <label className="block text-xs font-semibold text-stone-700 uppercase tracking-wide mb-1.5">
+                  Account Type
+                </label>
+                <div className="flex rounded-lg border border-stone-300 overflow-hidden text-sm font-medium">
+                  <button
+                    type="button"
+                    onClick={() => setRegister(s => ({ ...s, accountType: 'individual' }))}
+                    className={`flex-1 py-2.5 transition-colors ${
+                      register.accountType === 'individual'
+                        ? 'bg-haven-teal-600 text-white'
+                        : 'bg-white text-stone-600 hover:bg-stone-50'
+                    }`}
+                  >
+                    Individual
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setRegister(s => ({ ...s, accountType: 'organization' }))}
+                    className={`flex-1 py-2.5 border-l border-stone-300 transition-colors ${
+                      register.accountType === 'organization'
+                        ? 'bg-haven-teal-600 text-white'
+                        : 'bg-white text-stone-600 hover:bg-stone-50'
+                    }`}
+                  >
+                    Organization
+                  </button>
+                </div>
+              </div>
+
+              {/* Name fields */}
+              {register.accountType === 'individual' ? (
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label htmlFor="reg-firstname"
+                      className="block text-xs font-semibold text-stone-700 uppercase tracking-wide mb-1.5">
+                      First Name
+                    </label>
+                    <input
+                      id="reg-firstname"
+                      type="text"
+                      required
+                      value={register.firstName}
+                      onChange={e => setRegister(s => ({ ...s, firstName: e.target.value }))}
+                      className="w-full px-4 py-2.5 bg-white border border-stone-300 rounded-lg
+                        text-sm text-stone-900 placeholder:text-stone-400 hover:border-stone-400
+                        focus:outline-none focus:ring-2 focus:ring-haven-teal-500 focus:border-transparent"
+                      placeholder="Maria"
+                    />
+                  </div>
+                  <div>
+                    <label htmlFor="reg-lastname"
+                      className="block text-xs font-semibold text-stone-700 uppercase tracking-wide mb-1.5">
+                      Last Name
+                    </label>
+                    <input
+                      id="reg-lastname"
+                      type="text"
+                      required
+                      value={register.lastName}
+                      onChange={e => setRegister(s => ({ ...s, lastName: e.target.value }))}
+                      className="w-full px-4 py-2.5 bg-white border border-stone-300 rounded-lg
+                        text-sm text-stone-900 placeholder:text-stone-400 hover:border-stone-400
+                        focus:outline-none focus:ring-2 focus:ring-haven-teal-500 focus:border-transparent"
+                      placeholder="Santos"
+                    />
+                  </div>
+                </div>
+              ) : (
+                <div>
+                  <label htmlFor="reg-orgname"
+                    className="block text-xs font-semibold text-stone-700 uppercase tracking-wide mb-1.5">
+                    Organization Name
+                  </label>
+                  <input
+                    id="reg-orgname"
+                    type="text"
+                    required
+                    value={register.organizationName}
+                    onChange={e => setRegister(s => ({ ...s, organizationName: e.target.value }))}
+                    className="w-full px-4 py-2.5 bg-white border border-stone-300 rounded-lg
+                      text-sm text-stone-900 placeholder:text-stone-400 hover:border-stone-400
+                      focus:outline-none focus:ring-2 focus:ring-haven-teal-500 focus:border-transparent"
+                    placeholder="Helping Hands Foundation"
+                  />
+                </div>
+              )}
+
               {/* Email */}
               <div>
                 <label htmlFor="reg-email"
