@@ -10,6 +10,7 @@ import { getSupporters } from '../../api/supportersApi';
 import type { MlDonorRiskDto, MlResidentRiskDto, MlSocialEngagementDriverDto, MlReintegrationDriverDto } from '../../types/ml';
 import EmailModal from '../../components/EmailModal';
 import ScheduleSessionModal from '../../components/ScheduleSessionModal';
+import CreatePostModal from '../../components/CreatePostModal';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -137,6 +138,7 @@ export default function ReportsPage() {
   const [toast, setToast] = useState<string | null>(null);
   const [scheduleOpen, setScheduleOpen] = useState(false);
   const [schedulingResident, setSchedulingResident] = useState<MlResidentRiskDto | null>(null);
+  const [showCreatePost, setShowCreatePost] = useState(false);
 
   // Derived values — recomputed whenever monthlyDonations changes
   const BAR_MAX = monthlyDonations.length > 0 ? Math.max(...monthlyDonations.map(m => m.monetary)) : 1;
@@ -566,8 +568,20 @@ export default function ReportsPage() {
 
           {/* Posts table */}
           <div className="bg-white rounded-xl border border-stone-200 shadow-sm overflow-hidden mb-6">
-            <div className="px-6 py-4 border-b border-stone-200">
+            <div className="px-6 py-4 border-b border-stone-200 flex items-center justify-between">
               <h3 className="text-base font-semibold text-stone-900">Recent Posts</h3>
+              <button
+                type="button"
+                onClick={() => setShowCreatePost(true)}
+                className="inline-flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-semibold rounded-lg
+                  bg-haven-teal-600 text-white hover:bg-haven-teal-700 transition-colors
+                  focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-haven-teal-500 focus-visible:ring-offset-2"
+              >
+                <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                </svg>
+                Create Post
+              </button>
             </div>
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
@@ -1016,6 +1030,8 @@ export default function ReportsPage() {
           onClose={() => { setScheduleOpen(false); setSchedulingResident(null); }}
         />
       )}
+
+      <CreatePostModal isOpen={showCreatePost} onClose={() => setShowCreatePost(false)} />
 
       {/* Toast */}
       {toast && (
