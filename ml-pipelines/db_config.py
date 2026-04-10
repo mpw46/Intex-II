@@ -93,7 +93,12 @@ if _conn_url:
     try:
         from sqlalchemy import create_engine
         from sqlalchemy import text as _text
-        engine = create_engine(_conn_url)
+        _engine = create_engine(_conn_url)
+        # Eagerly test the connection so an IP block or network error falls back
+        # to CSV here rather than crashing mid-notebook.
+        with _engine.connect() as _probe:
+            _probe.execute(_text("SELECT 1"))
+        engine = _engine
         text = _text
         USE_DB = True
         print("✓ DB connection established (source:",
@@ -102,7 +107,8 @@ if _conn_url:
     except ImportError:
         print("⚠ sqlalchemy not installed — pip install sqlalchemy pymssql")
     except Exception as exc:
-        print(f"⚠ DB connection failed: {exc}")
+        print(f"⚠ DB connection failed ({type(exc).__name__}) — falling back to local CSV files")
+        print(f"  Detail: {exc}")
 else:
     print("⚠ No DB connection found — falling back to local CSV files")
     print("  Set DB_CONNECTION_STRING env var, or add the connection string to")
