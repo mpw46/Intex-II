@@ -65,6 +65,7 @@ public class DonationAllocationsController : ControllerBase
     }
 
     [HttpGet("{id}")]
+    [Authorize(Policy = AuthPolicies.AdminOnly)]
     public async Task<ActionResult<DonationAllocationDto>> GetById(int id)
     {
         var a = await _context.DonationAllocations.FindAsync(id);
@@ -83,6 +84,7 @@ public class DonationAllocationsController : ControllerBase
     }
 
     [HttpPost]
+    [Authorize(Policy = AuthPolicies.AdminOnly)]
     public async Task<ActionResult<DonationAllocationDto>> Create([FromBody] DonationAllocationCreateDto dto)
     {
         var entity = new DonationAllocation
@@ -111,6 +113,7 @@ public class DonationAllocationsController : ControllerBase
     }
 
     [HttpPut("{id}")]
+    [Authorize(Policy = AuthPolicies.AdminOnly)]
     public async Task<IActionResult> Update(int id, [FromBody] DonationAllocationCreateDto dto)
     {
         var entity = await _context.DonationAllocations.FindAsync(id);
@@ -128,6 +131,7 @@ public class DonationAllocationsController : ControllerBase
     }
 
     [HttpDelete("{id}")]
+    [Authorize(Policy = AuthPolicies.AdminOnly)]
     public async Task<IActionResult> Delete(int id)
     {
         var entity = await _context.DonationAllocations.FindAsync(id);
