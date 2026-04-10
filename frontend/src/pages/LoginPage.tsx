@@ -201,6 +201,22 @@ export default function LoginPage() {
     e.preventDefault();
     setError(null);
 
+    if (register.accountType === 'individual') {
+      if (!register.firstName.trim() || !register.lastName.trim()) {
+        setError('First name and last name are required.');
+        return;
+      }
+    } else {
+      if (!register.organizationName.trim()) {
+        setError('Organization name is required.');
+        return;
+      }
+    }
+    if (!register.email.trim()) {
+      setError('Email is required.');
+      return;
+    }
+
     if (register.password !== register.confirmPassword) {
       setError('Passwords do not match.');
       return;
@@ -468,7 +484,7 @@ export default function LoginPage() {
                   <div>
                     <label htmlFor="reg-firstname"
                       className="block text-xs font-semibold text-stone-700 uppercase tracking-wide mb-1.5">
-                      First Name
+                      First Name <span className="text-rose-500 ml-0.5">*</span>
                     </label>
                     <input
                       id="reg-firstname"
@@ -485,7 +501,7 @@ export default function LoginPage() {
                   <div>
                     <label htmlFor="reg-lastname"
                       className="block text-xs font-semibold text-stone-700 uppercase tracking-wide mb-1.5">
-                      Last Name
+                      Last Name <span className="text-rose-500 ml-0.5">*</span>
                     </label>
                     <input
                       id="reg-lastname"
@@ -504,7 +520,7 @@ export default function LoginPage() {
                 <div>
                   <label htmlFor="reg-orgname"
                     className="block text-xs font-semibold text-stone-700 uppercase tracking-wide mb-1.5">
-                    Organization Name
+                    Organization Name <span className="text-rose-500 ml-0.5">*</span>
                   </label>
                   <input
                     id="reg-orgname"
@@ -524,7 +540,7 @@ export default function LoginPage() {
               <div>
                 <label htmlFor="reg-email"
                   className="block text-xs font-semibold text-stone-700 uppercase tracking-wide mb-1.5">
-                  Email
+                  Email <span className="text-rose-500 ml-0.5">*</span>
                 </label>
                 <input
                   id="reg-email"
