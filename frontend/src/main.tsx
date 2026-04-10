@@ -11,7 +11,6 @@ import HomePage from './pages/HomePage'
 import PublicImpactPage from './pages/PublicImpactPage'
 import LoginPage from './pages/LoginPage'
 import PrivacyPage from './pages/PrivacyPage'
-import RegisterPage from './pages/RegisterPage'
 import LogoutPage from './pages/LogoutPage'
 import DonatePage from './pages/DonatePage'
 import CookieConsentBanner from './components/CookieConsentBanner'
@@ -36,7 +35,6 @@ const router = createBrowserRouter([
       { path: 'impact', element: <PublicImpactPage /> },
       { path: 'login', element: <LoginPage /> },
       { path: 'privacy', element: <PrivacyPage /> },
-      { path: 'register', element: <RegisterPage /> },
       { path: 'logout', element: <LogoutPage /> },
       { path: 'donate', element: <DonatePage /> },
       { path: 'donor', element: <DonorDashboardPage /> },
