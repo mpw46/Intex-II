@@ -2,21 +2,21 @@
   "pipeline": "social-media-effectiveness",
   "target": "engagement_rate",
   "n_posts": 812,
-  "ols_r_squared_in_sample": 0.44627266225471984,
+  "ols_r_squared_in_sample": 0.4481235612329262,
   "boxcox_lambda_y": 0.36840333293490357,
-  "ols_adjusted_r_squared_in_sample": 0.4992979481641583,
+  "ols_adjusted_r_squared_in_sample": 0.5008954890023269,
   "greedy_backward": {
-    "n_features_selected": 20,
-    "best_validation_rmse": 0.04308559794191536
+    "n_features_selected": 21,
+    "best_validation_rmse": 0.042949001445274776
   },
   "decision_tree": {
     "max_depth_selected": 8
   },
   "test_metrics": {
     "linear_greedy_features": {
-      "mae": 0.034816645642801056,
-      "rmse": 0.04228766057033567,
-      "r2": 0.3877203412100738
+      "mae": 0.035308330822823135,
+      "rmse": 0.04301740150908244,
+      "r2": 0.3664062889558891
     },
     "decision_tree_tuned": {
       "mae": 0.029333256807360028,
@@ -27,169 +27,169 @@
   "top_ols_terms": [
     {
       "term": "sentiment_tone_Informative",
-      "coefficient": -0.06825084901692724,
-      "robust_se": 0.0060706739631063425,
-      "pvalue": 2.515295348215405e-29,
+      "coefficient": -0.06772984556791292,
+      "robust_se": 0.006066222092579599,
+      "pvalue": 6.043782052049653e-29,
       "note": "OLS association; not causal."
     },
     {
       "term": "sentiment_tone_Grateful",
-      "coefficient": -0.04591253204691932,
-      "robust_se": 0.006377044277880657,
-      "pvalue": 6.036417518450716e-13,
-      "note": "OLS association; not causal."
-    },
-    {
-      "term": "features_resident_story",
-      "coefficient": 0.040215810669583955,
-      "robust_se": 0.005945545890613341,
-      "pvalue": 1.3421152689630905e-11,
-      "note": "OLS association; not causal."
-    },
-    {
-      "term": "is_boosted",
-      "coefficient": 0.04021581066958391,
-      "robust_se": 0.005945545890613333,
-      "pvalue": 1.342115268963081e-11,
+      "coefficient": -0.045638553135044835,
+      "robust_se": 0.006414195116433385,
+      "pvalue": 1.1171630688806604e-12,
       "note": "OLS association; not causal."
     },
     {
       "term": "sentiment_tone_Hopeful",
-      "coefficient": -0.030870929352438452,
-      "robust_se": 0.006451375039267881,
-      "pvalue": 1.7084226592746506e-06,
+      "coefficient": -0.030490824268254932,
+      "robust_se": 0.006477850882834462,
+      "pvalue": 2.514688131923731e-06,
       "note": "OLS association; not causal."
     },
     {
       "term": "call_to_action_type_ShareStory",
-      "coefficient": 0.02902674837617073,
-      "robust_se": 0.005955471194536176,
-      "pvalue": 1.0938128692429816e-06,
+      "coefficient": 0.029250127495539985,
+      "robust_se": 0.005980158770913225,
+      "pvalue": 1.0022519774132063e-06,
       "note": "OLS association; not causal."
     },
     {
       "term": "z_post_hour",
-      "coefficient": 0.024772835283525016,
-      "robust_se": 0.0016095934917188665,
-      "pvalue": 1.8885934753634338e-53,
+      "coefficient": 0.024776348253718553,
+      "robust_se": 0.0016126017401618658,
+      "pvalue": 2.8449480816476976e-53,
       "note": "OLS association; not causal."
     },
     {
       "term": "call_to_action_type_SignUp",
-      "coefficient": 0.01988162966402688,
-      "robust_se": 0.005425861570556829,
-      "pvalue": 0.0002480793320269513,
+      "coefficient": 0.020112365181071196,
+      "robust_se": 0.005457550508150283,
+      "pvalue": 0.00022849022997523593,
       "note": "OLS association; not causal."
     },
     {
       "term": "sentiment_tone_Urgent",
-      "coefficient": -0.01891782309036636,
-      "robust_se": 0.00725969443641339,
-      "pvalue": 0.00916411199090567,
+      "coefficient": -0.018620018394193468,
+      "robust_se": 0.007254989931002839,
+      "pvalue": 0.010272708395072041,
       "note": "OLS association; not causal."
     },
     {
       "term": "call_to_action_type_LearnMore",
-      "coefficient": 0.01793809083941383,
-      "robust_se": 0.005190953131966816,
-      "pvalue": 0.0005489779835642176,
+      "coefficient": 0.0174741739067011,
+      "robust_se": 0.005207600038171054,
+      "pvalue": 0.0007921769780850748,
       "note": "OLS association; not causal."
     },
     {
       "term": "call_to_action_type_DonateNow",
-      "coefficient": 0.014920127384945941,
-      "robust_se": 0.005477735459445509,
-      "pvalue": 0.006454015648579889,
+      "coefficient": 0.014531366115612414,
+      "robust_se": 0.005508224284951332,
+      "pvalue": 0.00833666530833567,
+      "note": "OLS association; not causal."
+    },
+    {
+      "term": "is_boosted",
+      "coefficient": -0.012821805832070108,
+      "robust_se": 0.00740560016784209,
+      "pvalue": 0.08338647081604833,
       "note": "OLS association; not causal."
     },
     {
       "term": "content_topic_Gratitude",
-      "coefficient": -0.010734643854390064,
-      "robust_se": 0.00726439450792458,
-      "pvalue": 0.13948632171589928,
+      "coefficient": -0.010272144456814822,
+      "robust_se": 0.007324944596754502,
+      "pvalue": 0.16081041403551322,
       "note": "OLS association; not causal."
     },
     {
       "term": "platform_Instagram",
-      "coefficient": 0.010291455067858548,
-      "robust_se": 0.01006749381145362,
-      "pvalue": 0.30666449403362706,
+      "coefficient": 0.009673145883740627,
+      "robust_se": 0.010009798015162512,
+      "pvalue": 0.3338602007461361,
       "note": "OLS association; not causal."
     },
     {
       "term": "content_topic_Education",
-      "coefficient": -0.006596267633671132,
-      "robust_se": 0.006613864891115269,
-      "pvalue": 0.3185998253115857,
+      "coefficient": -0.006322839139386304,
+      "robust_se": 0.006607385256248364,
+      "pvalue": 0.33859999300913646,
+      "note": "OLS association; not causal."
+    },
+    {
+      "term": "day_of_week_Tuesday",
+      "coefficient": -0.006031366238242242,
+      "robust_se": 0.0055146960515079,
+      "pvalue": 0.27409109572672075,
       "note": "OLS association; not causal."
     },
     {
       "term": "campaign_name_Other_campaign",
-      "coefficient": -0.006443034187056343,
-      "robust_se": 0.011454433265046127,
-      "pvalue": 0.5737804298746467,
+      "coefficient": -0.005780268712148563,
+      "robust_se": 0.01167584632004469,
+      "pvalue": 0.6205563030741219,
       "note": "OLS association; not causal."
     }
   ],
   "top_tree_importances": [
     {
       "feature": "num__post_hour",
-      "importance": 0.6310636533953146
+      "importance": 0.631063653395317
     },
     {
       "feature": "cat__sentiment_tone_Informative",
-      "importance": 0.16378121043250635
+      "importance": 0.16378121043249888
     },
     {
       "feature": "cat__call_to_action_type_(no CTA)",
-      "importance": 0.055199602627339736
+      "importance": 0.05519960262734062
     },
     {
       "feature": "cat__sentiment_tone_Grateful",
-      "importance": 0.04033509789142299
+      "importance": 0.040335097891425704
     },
     {
       "feature": "cat__sentiment_tone_Hopeful",
-      "importance": 0.03900027283547507
+      "importance": 0.03900027283547518
     },
     {
       "feature": "cat__sentiment_tone_Celebratory",
-      "importance": 0.018512448216629732
+      "importance": 0.018512448216629958
     },
     {
       "feature": "cat__sentiment_tone_Emotional",
-      "importance": 0.01701050388975176
+      "importance": 0.017010503889752518
     },
     {
       "feature": "cat__call_to_action_type_ShareStory",
-      "importance": 0.014407640207329956
+      "importance": 0.014407640207330097
     },
     {
       "feature": "num__follower_count_at_post",
-      "importance": 0.013722241907930059
+      "importance": 0.013722241907930003
     },
     {
       "feature": "num__mentions_count",
-      "importance": 0.004952011105869892
+      "importance": 0.0049520111058706864
     },
     {
       "feature": "cat__media_type_Photo",
-      "importance": 0.0019550364350713295
+      "importance": 0.001955036435070867
     },
     {
       "feature": "num__caption_length",
-      "importance": 6.028105535848734e-05
+      "importance": 6.028105535850762e-05
     },
     {
-      "feature": "cat__platform_YouTube",
+      "feature": "cat__content_topic_Health",
       "importance": 0.0
     },
     {
-      "feature": "cat__day_of_week_Friday",
+      "feature": "cat__call_to_action_type_SignUp",
       "importance": 0.0
     },
     {
-      "feature": "cat__day_of_week_Monday",
+      "feature": "cat__content_topic_AwarenessRaising",
       "importance": 0.0
     }
   ],

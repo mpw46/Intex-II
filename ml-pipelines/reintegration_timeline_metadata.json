@@ -15,7 +15,6 @@
     "occupancy_ratio",
     "occupancy_bucket",
     "case_category",
-    "reintegration_type",
     "initial_risk_level",
     "case_status",
     "sex",
@@ -24,22 +23,21 @@
     "family_risk_flag_count",
     "total_vulnerability_score",
     "risk_ordinal",
-    "reintegration_x_risk",
     "case_x_occ_bucket"
   ],
   "ols_train_n": 24,
   "ols_predictor_count_ex_const": 13,
-  "linear_reg_test_mae_days": 230.7579590855465,
-  "linear_reg_test_rmse_days": 291.32337447656977,
-  "linear_reg_test_r2": -8.892808919152198,
-  "tree_test_mae_days": 125.02777777777777,
-  "tree_test_rmse_days": 143.7729852799068,
-  "tree_test_r2": -1.4094811768769162,
-  "tree_cv_mae_mean_train_days": 165.45166666666665,
+  "linear_reg_test_mae_days": 2207.656834574856,
+  "linear_reg_test_rmse_days": 2618.2775246754204,
+  "linear_reg_test_r2": -798.0984945730348,
+  "tree_test_mae_days": 107.92592592592594,
+  "tree_test_rmse_days": 121.00159846578774,
+  "tree_test_r2": -0.7066763564497027,
+  "tree_cv_mae_mean_train_days": 173.37968434343438,
   "tree_best_params": {
-    "max_depth": 5,
-    "min_samples_leaf": 2
+    "max_depth": 2,
+    "min_samples_leaf": 8
   },
   "ols_r_squared_train": 0.28452034512597046,
-  "trained_at": "2026-04-08T22:16:29.406661+00:00"
+  "trained_at": "2026-04-10T04:53:41.329950+00:00"
 }

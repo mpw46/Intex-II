@@ -5,14 +5,14 @@
   "ols_model": "statsmodels OLS log1p(days) train-only explanatory",
   "n_cases": 30,
   "linear_reg_test_metrics": {
-    "mae": 230.7579590855465,
-    "rmse": 291.32337447656977,
-    "r2": -8.892808919152198
+    "mae": 2207.656834574856,
+    "rmse": 2618.2775246754204,
+    "r2": -798.0984945730348
   },
   "tree_test_metrics": {
-    "mae": 125.02777777777777,
-    "rmse": 143.7729852799068,
-    "r2": -1.4094811768769162
+    "mae": 107.92592592592594,
+    "rmse": 121.00159846578774,
+    "r2": -0.7066763564497027
   },
   "top_ols_terms": [
     {
@@ -109,63 +109,63 @@
   ],
   "top_tree_importances": [
     {
+      "feature": "cat__case_status_Transferred",
+      "importance": 1.0
+    },
+    {
+      "feature": "num__safehouse_id",
+      "importance": 0.0
+    },
+    {
+      "feature": "cat__referral_bucket_Self-Referral",
+      "importance": 0.0
+    },
+    {
+      "feature": "cat__sex_F",
+      "importance": 0.0
+    },
+    {
+      "feature": "cat__referral_bucket_Community",
+      "importance": 0.0
+    },
+    {
+      "feature": "cat__referral_bucket_Court Order",
+      "importance": 0.0
+    },
+    {
+      "feature": "cat__referral_bucket_Government Agency",
+      "importance": 0.0
+    },
+    {
+      "feature": "cat__referral_bucket_NGO",
+      "importance": 0.0
+    },
+    {
+      "feature": "cat__referral_bucket_Police",
+      "importance": 0.0
+    },
+    {
+      "feature": "cat__case_x_occ_bucket_Abandoned | high",
+      "importance": 0.0
+    },
+    {
       "feature": "num__occupancy_ratio",
-      "importance": 0.25023595444130403
+      "importance": 0.0
     },
     {
-      "feature": "cat__case_category_Abandoned",
-      "importance": 0.20865996592462718
+      "feature": "cat__case_x_occ_bucket_Abandoned | low",
+      "importance": 0.0
     },
     {
-      "feature": "cat__reintegration_type_Independent Living",
-      "importance": 0.19812167348960316
-    },
-    {
-      "feature": "num__family_risk_flag_count",
-      "importance": 0.1278081008348947
-    },
-    {
-      "feature": "cat__region_Visayas",
-      "importance": 0.11612897352346693
-    },
-    {
-      "feature": "cat__case_x_occ_bucket_Surrendered | medium",
-      "importance": 0.06403374840321774
-    },
-    {
-      "feature": "cat__reintegration_type_Adoption (Domestic)",
-      "importance": 0.031244841010977513
-    },
-    {
-      "feature": "cat__occupancy_bucket_high",
-      "importance": 0.0037667423719088
+      "feature": "cat__case_x_occ_bucket_Abandoned | medium",
+      "importance": 0.0
     },
     {
       "feature": "cat__case_x_occ_bucket_Foundling | high",
       "importance": 0.0
     },
     {
-      "feature": "cat__case_x_occ_bucket_Neglected | medium",
-      "importance": 0.0
-    },
-    {
-      "feature": "cat__reintegration_x_risk_(unknown) \u00d7 High",
-      "importance": 0.0
-    },
-    {
-      "feature": "cat__reintegration_x_risk_(unknown) \u00d7 Medium",
-      "importance": 0.0
-    },
-    {
-      "feature": "cat__case_x_occ_bucket_Surrendered | low",
-      "importance": 0.0
-    },
-    {
-      "feature": "cat__reintegration_x_risk_Adoption (Domestic) \u00d7 High",
-      "importance": 0.0
-    },
-    {
-      "feature": "cat__reintegration_x_risk_Adoption (Domestic) \u00d7 Low",
+      "feature": "cat__case_x_occ_bucket_Neglected | high",
       "importance": 0.0
     }
   ],
